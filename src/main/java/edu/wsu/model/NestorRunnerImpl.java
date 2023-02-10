@@ -1,6 +1,6 @@
 package edu.wsu.model;
 
-public class TicTacToeImpl implements TicTacToe{
+public class NestorRunnerImpl implements NestorRunner {
 
   @Override
   public String getWinner() {

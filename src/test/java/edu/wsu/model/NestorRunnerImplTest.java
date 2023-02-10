@@ -2,11 +2,11 @@ package edu.wsu.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TicTacToeImplTest {
+class NestorRunnerImplTest {
 
   @org.junit.jupiter.api.Test
   void getWinner() {
-    TicTacToe ttt = new TicTacToeImpl();
+    NestorRunner ttt = new NestorRunnerImpl();
     assertEquals("Bertie", ttt.getWinner());
   }
 }

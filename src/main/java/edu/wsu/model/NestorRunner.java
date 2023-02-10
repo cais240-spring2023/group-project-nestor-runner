@@ -1,6 +1,6 @@
 package edu.wsu.model;
 
-public interface TicTacToe {
+public interface NestorRunner {
 
   /**
    * Get the winner of the game, will return null if the game is not over.
