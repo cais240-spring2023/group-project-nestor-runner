@@ -1,16 +1,15 @@
 package edu.wsu.controller;
 
 import edu.wsu.App;
-import edu.wsu.model.NestorRunnerImpl;
 import edu.wsu.model.NestorRunnerSingleton;
 import java.io.IOException;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 
-public class PrimaryController {
+public class GameController {
 
-    public PrimaryController() {
+    public GameController() {
 
     }
 
@@ -38,8 +37,8 @@ public class PrimaryController {
     }
 
     @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
+    private void switchToMenuView() throws IOException {
+        App.setRoot("menu");
     }
 
 
