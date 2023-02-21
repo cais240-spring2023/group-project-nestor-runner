@@ -10,8 +10,16 @@ public class NestorRunnerImpl implements NestorRunner {
     menuView = view;
   }
 
+  public MenuViewImpl getMenuView() {
+    return this.menuView;
+  }
+
   public void setGameView(GameViewImpl view) {
     gameView = view;
+  }
+
+  public GameViewImpl getGameView() {
+    return this.gameView;
   }
 
   @Override

@@ -1,9 +1,10 @@
 package edu.wsu;
 
+import edu.wsu.controller.GameController;
+import edu.wsu.controller.MenuController;
 import edu.wsu.model.NestorRunnerSingleton;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -37,9 +38,9 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
-        NestorRunnerSingleton.getInstance().setMenuView(menuLoader.getController());
-        NestorRunnerSingleton.getInstance().setGameView(gameLoader.getController());
+    public void start(Stage stage) {
+        NestorRunnerSingleton.getInstance().setMenuView(MenuController.getMenu());
+        NestorRunnerSingleton.getInstance().setGameView(GameController.getGame());
         scene = new Scene(menuPane, 640, 480);
         stage.setScene(scene);
         stage.show();
