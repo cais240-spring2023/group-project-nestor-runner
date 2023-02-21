@@ -1,5 +1,18 @@
 package edu.wsu.view;
 
-public class GameView {
+import javafx.scene.Scene;
 
+import java.io.IOException;
+
+public interface GameView {
+
+    /**
+     * Disables the end screen if it isn't already.
+     */
+    void disableEndScreen();
+
+    /**
+     * Enables the end screen if it isn't already.
+     */
+    void enableEndScreen();
 }
