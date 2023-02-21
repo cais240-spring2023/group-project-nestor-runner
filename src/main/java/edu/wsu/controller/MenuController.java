@@ -18,13 +18,18 @@ public class MenuController {
 
         @Override
         public void handle(MouseEvent mouseEvent) {
-            try {
-                NestorRunnerSingleton.getInstance().select(x,y);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                 NestorRunnerSingleton.getInstance().select(x,y);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
         }
     }
+
+    public void startGame() {
+        // NestorRunnerSingleton.getInstance().initialize();
+    }
+
     @FXML
     private void switchToGameView() throws IOException {
         App.setRoot("game");

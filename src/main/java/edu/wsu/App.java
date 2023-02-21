@@ -45,7 +45,7 @@ public class App extends Application {
         stage.show();
     }
 
-    public static void setRoot(String fxml) throws IOException {
+    public static void setRoot(String fxml) {
         if(fxml.equals("game")) {
             scene.setRoot(gamePane);
         } else if(fxml.equals("menu")) {
