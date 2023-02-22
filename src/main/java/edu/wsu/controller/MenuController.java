@@ -43,9 +43,8 @@ public class MenuController {
     @FXML
     public void startGame() {
         App.setRoot("game");
+        GameController.initialize();
     }
-
-
 
     public void howToPlay() {
 
