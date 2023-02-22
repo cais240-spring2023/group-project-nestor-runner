@@ -2,25 +2,22 @@ package edu.wsu.model;
 
 import edu.wsu.view.GameViewImpl;
 import edu.wsu.view.MenuViewImpl;
+import javafx.scene.layout.StackPane;
 
 public class NestorRunnerImpl implements NestorRunner {
-  GameViewImpl gameView;
+  static GameViewImpl gameView;
   MenuViewImpl menuView;
 
   public void setMenuView(MenuViewImpl view) {
     menuView = view;
   }
 
-  public MenuViewImpl getMenuView() {
-    return this.menuView;
+  public static StackPane getGameRoot() {
+      return gameView.gameRoot;
   }
 
   public void setGameView(GameViewImpl view) {
     gameView = view;
-  }
-
-  public GameViewImpl getGameView() {
-    return this.gameView;
   }
 
   @Override

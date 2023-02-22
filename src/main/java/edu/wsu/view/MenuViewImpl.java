@@ -16,6 +16,10 @@ public class MenuViewImpl {
     public Button startGame;
     public Button howToPlay;
 
+    /*
+    When in the main menu, if the start button is pressed, this function is called.
+    This function will call the startGame method within the MenuController.
+     */
     public void startGame() {
         MenuController.startGame();
     }

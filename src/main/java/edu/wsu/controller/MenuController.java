@@ -1,15 +1,14 @@
 package edu.wsu.controller;
 
 import edu.wsu.App;
-import edu.wsu.model.NestorRunnerSingleton;
-import edu.wsu.view.MenuViewImpl;
 
 public class MenuController {
 
-    public static MenuViewImpl getMenu() {
-        return NestorRunnerSingleton.getInstance().getMenuView();
-    }
-
+    /*
+    When the start game button is pressed in the main menu, this function will be called from MenuViewImpl.
+    When this function is called, it will change the application to view the game, and it will call
+    GameController.initialize which will start the timeline.
+     */
     public static void startGame() {
         App.setRoot("game");
         GameController.initialize();

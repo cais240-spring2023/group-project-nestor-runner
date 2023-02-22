@@ -44,6 +44,10 @@ public class GameViewImpl implements GameView {
 
     }
 
+    /*
+     * When in the game and the game ends, if you press the main menu button, this
+     * function will call the GameController function to switch to the menu view.
+     */
     @FXML
     private void switchToMenuView() {
         GameController.switchToMenuView();

@@ -1,7 +1,5 @@
 package edu.wsu;
 
-import edu.wsu.controller.GameController;
-import edu.wsu.controller.MenuController;
 import edu.wsu.model.NestorRunnerSingleton;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +19,7 @@ public class App extends Application {
     private static StackPane gamePane;
     private static StackPane menuPane;
 
+    // menuLoader will load the fxml file above and will set menuPane to the loaded fxml
     static {
         try {
             menuPane = menuLoader.load();
@@ -29,6 +28,7 @@ public class App extends Application {
         }
     }
 
+    // gameLoader will load the fxml file above and will set gamePane to the loaded fxml
     static {
         try {
             gamePane = gameLoader.load();
@@ -39,8 +39,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        NestorRunnerSingleton.getInstance().setMenuView(MenuController.getMenu());
-        NestorRunnerSingleton.getInstance().setGameView(GameController.getGame());
+        // These set the model's views to the loader's controller, being the actual view.
+        NestorRunnerSingleton.getInstance().setMenuView(menuLoader.getController());
+        NestorRunnerSingleton.getInstance().setGameView(gameLoader.getController());
         scene = new Scene(menuPane, 640, 480);
         stage.setScene(scene);
         stage.show();
