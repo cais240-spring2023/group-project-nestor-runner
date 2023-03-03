@@ -1,20 +1,27 @@
 package edu.wsu.controller;
 
 import edu.wsu.App;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class MenuController {
 
-    /*
-    When the start game button is pressed in the main menu, this function will be called from MenuViewImpl.
-    When this function is called, it will change the application to view the game, and it will call
-    GameController.initialize which will start the timeline.
-     */
-    public static void startGame() {
-        App.setRoot("game");
-        GameController.initialize();
-    }
+    @FXML
+    public void startGame(ActionEvent actionEvent) throws Exception {
+        FXMLLoader gameLoader = new FXMLLoader(App.class.getResource("game.fxml"));
+        Parent gameRoot = gameLoader.load();
+        GameController gameController = gameLoader.getController();
+        gameController.start();
 
-    public void howToPlay() {
+        Node source = (Node) actionEvent.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
 
+        Scene gameScene = new Scene(gameRoot, 640, 480);
+        stage.setScene(gameScene);
     }
 }

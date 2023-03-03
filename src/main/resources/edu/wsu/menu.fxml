@@ -8,8 +8,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="menuRoot" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wsu.view.MenuViewImpl">
+<StackPane fx:id="menuRoot" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wsu.controller.MenuController">
    <Pane fx:id="menuBackground" prefHeight="200.0" prefWidth="200.0"/>
    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
       <Label fx:id="title" text="Nestor Runner">
@@ -32,8 +32,7 @@
             </VBox.margin>
          </Button>
          <Button fx:id="howToPlay" mnemonicParsing="false"
-           style="-fx-background-color: BLACK;" text="How To Play" textFill="WHITE"
-           onAction="#howToPlay">
+           style="-fx-background-color: BLACK;" text="How To Play" textFill="WHITE">
             <font>
                <Font name="Franklin Gothic Medium" size="20.0"/>
             </font>
