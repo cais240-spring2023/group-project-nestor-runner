@@ -4,6 +4,8 @@ import edu.wsu.model.Entity;
 import edu.wsu.model.Nestor;
 import edu.wsu.model.Obstacle;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -60,12 +62,18 @@ public class GameController {
         gc.fillRect(ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
     }
 
+    private void playAgain() {
+
+    }
+    private void mainMenu() {
+
+    }
 
     private StackPane getEndScreen() {
-        ////////////////////////////////////////////////
         VBox gameEndMenu = new VBox();
         gameEndMenu.setAlignment(Pos.CENTER);
 
+        ////////////////////////////////////////////////
         Label resultsTitle = new Label("Game Over!");
         resultsTitle.setFont(Font.font("Blackadder ITC", 100));
         resultsTitle.setTextFill(Color.WHITE);
@@ -77,6 +85,7 @@ public class GameController {
         playAgain.setTextFill(Color.WHITE);
         playAgain.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(playAgain, new Insets(5, 5, 5, 5));
+        playAgain.setOnAction(event -> playAgain());
 
         Button mainMenu = new Button("Main Menu");
         mainMenu.setCursor(Cursor.HAND);
@@ -84,7 +93,7 @@ public class GameController {
         mainMenu.setTextFill(Color.WHITE);
         mainMenu.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-
+        mainMenu.setOnAction(event -> mainMenu());
 
         gameEndMenu.getChildren().addAll(resultsTitle, playAgain, mainMenu);
         ////////////////////////////////////////////////
