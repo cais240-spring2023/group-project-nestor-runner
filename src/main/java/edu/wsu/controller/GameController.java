@@ -1,13 +1,19 @@
 package edu.wsu.controller;
 
+import edu.wsu.App;
 import edu.wsu.model.Entity;
 import edu.wsu.model.Nestor;
 import edu.wsu.model.Obstacle;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -16,7 +22,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class GameController {
@@ -34,7 +42,7 @@ public class GameController {
     @FXML
     Pane ground;
 
-
+    private StackPane endScreen;
     private Canvas canvas;
     private GraphicsContext gc;
 
@@ -45,7 +53,10 @@ public class GameController {
     private int obstacleCounter;
     private Random rand;
 
-    public GameController() {}
+    @FXML
+    public void initialize() {
+        endScreen = getEndScreen();
+    }
 
     public int getWidth() {
         return (int) canvas.getWidth();
@@ -60,6 +71,20 @@ public class GameController {
         gc.fillRect(ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
     }
 
+    private void mainMenu(ActionEvent event) {
+        try {
+            FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("menu.fxml"));
+            Parent menuRoot = menuLoader.load();
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+
+            Scene menuScene = new Scene(menuRoot, 640, 480);
+            stage.setScene(menuScene);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private StackPane getEndScreen() {
         ////////////////////////////////////////////////
@@ -77,6 +102,7 @@ public class GameController {
         playAgain.setTextFill(Color.WHITE);
         playAgain.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(playAgain, new Insets(5, 5, 5, 5));
+        playAgain.setOnAction(event -> start());
 
         Button mainMenu = new Button("Main Menu");
         mainMenu.setCursor(Cursor.HAND);
@@ -84,7 +110,7 @@ public class GameController {
         mainMenu.setTextFill(Color.WHITE);
         mainMenu.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-
+        mainMenu.setOnAction(event -> mainMenu(event));
 
         gameEndMenu.getChildren().addAll(resultsTitle, playAgain, mainMenu);
         ////////////////////////////////////////////////
@@ -100,7 +126,9 @@ public class GameController {
         return endScreen;
     }
 
-    public void start() {
+        public void start() {
+        gameRoot.getChildren().remove(endScreen);
+
         canvas = new Canvas(playSpace.getPrefWidth(), playSpace.getPrefHeight());
         gc = canvas.getGraphicsContext2D();
         canvas.setFocusTraversable(true);
@@ -147,7 +175,7 @@ public class GameController {
                     draw(obstacle);
                     if (obstacle.leftCollidesWith(nestor)) {
                         stop();
-                        gameRoot.getChildren().add(getEndScreen());
+                        gameRoot.getChildren().add(endScreen);
                     }
                 }
 
