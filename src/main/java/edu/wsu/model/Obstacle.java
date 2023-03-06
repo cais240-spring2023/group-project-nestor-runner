@@ -5,6 +5,9 @@ import javafx.scene.paint.Color;
 
 public class Obstacle implements Entity {
     private static final int SPEED = 200;
+
+    private static final int canvasHeight = 400;
+    private static final int canvasWidth = 600;
     private final int width;
     private final int height;
     private double x;
@@ -49,7 +52,7 @@ public class Obstacle implements Entity {
     }
 
     @Override
-    public void update(double deltaTime, Canvas canvas) {
+    public void update(double deltaTime) {
         x = x - (SPEED * deltaTime);
     }
 

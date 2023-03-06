@@ -157,6 +157,7 @@ public class GameController {
                     lastTime = now;
                     return;
                 }
+                // 1e9 = 10^-9
                 double deltaTime = (now - lastTime) / 1e9;
                 lastTime = now;
 
@@ -165,14 +166,15 @@ public class GameController {
                 gc.fillRect(0, 0, getWidth(), getHeight());
 
                 // Update and draw the nestor
-                nestor.update(deltaTime, canvas);
+                nestor.update(deltaTime);
                 draw(nestor);
 
                 // Update and draw the obstacles
                 for (int i = 0; i < numObstacles; i++) {
                     Obstacle obstacle = obstacles[i];
-                    obstacle.update(deltaTime, canvas);
+                    obstacle.update(deltaTime);
                     draw(obstacle);
+
                     if (obstacle.leftCollidesWith(nestor)) {
                         stop();
                         gameRoot.getChildren().add(endScreen);
@@ -180,6 +182,7 @@ public class GameController {
                 }
 
                 // Spawn a new obstacle if needed
+                //
                 obstacleCounter -= OBSTACLE_SPEED * deltaTime;
                 if (obstacleCounter <= 0) {
                     obstacleCounter = obstacleSpacing;

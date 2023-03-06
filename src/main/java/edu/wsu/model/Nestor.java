@@ -7,6 +7,8 @@ public class Nestor implements Entity {
 
     private static final int JUMP_SPEED = 400;
     private static final double GRAVITY = 600;
+    private static final int canvasHeight = 400;
+    private static final int canvasWidth = 600;
     private final int width;
     private final int height;
     final private double x;
@@ -45,12 +47,12 @@ public class Nestor implements Entity {
      * @param deltaTime change in time, can be changed later if we decide to do something else.
      */
     @Override
-    public void update(double deltaTime, Canvas canvas) {
+    public void update(double deltaTime) {
         ySpeed += GRAVITY * deltaTime;
         y += ySpeed * deltaTime;
 
-        if (y >= ((int) canvas.getHeight()) - height) {
-            y = ((int) canvas.getHeight()) - height;
+        if (y >= ((int) canvasHeight) - height) {
+            y = ((int) canvasHeight) - height;
             ySpeed = 0;
             isJumping = false;
         }
