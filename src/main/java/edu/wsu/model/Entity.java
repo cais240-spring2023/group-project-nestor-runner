@@ -10,7 +10,7 @@ public interface Entity {
     double getWidth();
     double getHeight();
     Color getColor();
-    void update(double deltaTime, Canvas canvas);
+    void update(double deltaTime);
     boolean leftCollidesWith(Entity other);
     boolean rightCollidesWith(Entity other);
 }
