@@ -1,34 +1,38 @@
 package edu.wsu.model;
 
-import javafx.scene.canvas.Canvas;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 
 public class NestorRunner {
-// comment
     private static final int OBSTACLE_HEIGHT = 50;
     private static final int canvasHeight = 400;
     private static final int canvasWidth = 600;
 
+    private static final int nestorStartX = 50;
+    private static final int nestorStartY = canvasHeight;
+
+    private int score;
     private int obstacleSpeed;
     Nestor nestor;
     ArrayList<Obstacle> obstacles;
     int obstacleSpacing;
-    int obstacleCounter;
+    int obstacleCountdown;
     Random rand;
     Difficulty difficulty;
+    int maxJumpHeight;
 
 
     public NestorRunner(Difficulty difficulty) {
+        this.score = 0;
         this.difficulty = difficulty;
         difficultySetter();
-        this.nestor = new Nestor(50, 500);
+        this.nestor = new Nestor(nestorStartX, nestorStartY);
         this.obstacles = new ArrayList<>();
         this.obstacleSpacing = 200;
-        this.obstacleCounter = 0;
+        this.obstacleCountdown = 0;
         this.rand = new Random();
+        this.maxJumpHeight = (int) nestor.getMaxJumpHeight();
     }
 
     private void difficultySetter(){
@@ -41,22 +45,30 @@ public class NestorRunner {
         }
     }
 
+    public void jump(){
+        nestor.jump();
+    }
+
     public boolean update(double deltaTime){
         nestor.update(deltaTime);
         for (int i = 0; i < obstacles.size(); i++) {
             Obstacle obstacle = obstacles.get(i);
             obstacle.update(deltaTime);
-            if (obstacle.leftCollidesWith(nestor)){
-                return true;
-            }
-            if (obstacle.getX() <= 0 - obstacle.getWidth()){
-                obstacles.remove(0);
+            if (obstacle.getX() < 110){
+                if (obstacle.leftCollidesWith(nestor)){
+                    return true;
+                }
+                if (obstacle.getX() <= 0 - obstacle.getWidth()){
+                    obstacles.remove(0);
+                    score++;
+                }
             }
         }
-        obstacleCounter -= obstacleSpeed * deltaTime;
-        if (obstacleCounter <= 0) {
-            obstacleCounter = obstacleSpacing;
-            obstacles.add(new Obstacle(canvasWidth, canvasHeight - OBSTACLE_HEIGHT));
+        obstacleCountdown -= obstacleSpeed * deltaTime;
+        if (obstacleCountdown <= 0) {
+            obstacleCountdown = obstacleSpacing;
+            obstacles.add(randObstacleGenerator());
+            //obstacles.add(new Obstacle(canvasWidth, canvasHeight - OBSTACLE_HEIGHT));
         }
         return false;
     }
@@ -67,6 +79,10 @@ public class NestorRunner {
         return nestor.getY();
     }
 
+    public int getScore(){
+        return score;
+    }
+
     public ArrayList<Double> getObstaclePositions(){
         ArrayList<Double> positions = new ArrayList<>();
         for (int i = 0; i < obstacles.size(); i++) {
@@ -74,4 +90,17 @@ public class NestorRunner {
         }
         return positions;
     }
+     public ArrayList<Entity> getEntities(){
+        ArrayList<Entity> entities = new ArrayList<>();
+        entities.add(nestor);
+        entities.addAll(obstacles);
+        return entities;
+     }
+
+     private Obstacle randObstacleGenerator(){
+        int maxObstacleHeight = (int) (maxJumpHeight * .75);
+        int randHeight = (rand.nextInt(maxObstacleHeight) + 1);
+        int randWidth = (rand.nextInt(8) + 1) * 10;
+        return new Obstacle(canvasWidth, canvasHeight - randHeight, randWidth, randHeight);
+     }
 }
