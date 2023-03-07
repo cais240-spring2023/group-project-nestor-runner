@@ -86,46 +86,6 @@ public class GameController {
         }
     }
 
-    private StackPane getPauseScreen() {
-        ////////////////////////////////////////////////
-        VBox gameEndMenu = new VBox();
-        gameEndMenu.setAlignment(Pos.CENTER);
-
-        Label resultsTitle = new Label("Paused");
-        resultsTitle.setFont(Font.font("Blackadder ITC", 100));
-        resultsTitle.setTextFill(Color.WHITE);
-        VBox.setMargin(resultsTitle, new Insets(5, 5, 5, 5));
-
-        Button resume = new Button("Resume");
-        resume.setCursor(Cursor.HAND);
-        resume.setFont(Font.font("Franklin Gothic Medium", 20));
-        resume.setTextFill(Color.WHITE);
-        resume.setStyle("-fx-background-color: #000000;");
-        VBox.setMargin(resume, new Insets(5, 5, 5, 5));
-        // resume.setOnAction(event -> start());
-
-        Button mainMenu = new Button("Main Menu");
-        mainMenu.setCursor(Cursor.HAND);
-        mainMenu.setFont(Font.font("Franklin Gothic Medium", 20));
-        mainMenu.setTextFill(Color.WHITE);
-        mainMenu.setStyle("-fx-background-color: #000000;");
-        VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-        mainMenu.setOnAction(event -> mainMenu(event));
-
-        gameEndMenu.getChildren().addAll(resultsTitle, resume, mainMenu);
-        ////////////////////////////////////////////////
-
-        Pane grayFilter = new Pane();
-        grayFilter.setOpacity(.75);
-        grayFilter.setStyle("-fx-background-color: #808080;");
-
-        StackPane endScreen = new StackPane();
-        endScreen.setAlignment(Pos.CENTER);
-        endScreen.getChildren().addAll(grayFilter, gameEndMenu);
-
-        return endScreen;
-    }
-
     private StackPane getEndScreen() {
         ////////////////////////////////////////////////
         VBox gameEndMenu = new VBox();
