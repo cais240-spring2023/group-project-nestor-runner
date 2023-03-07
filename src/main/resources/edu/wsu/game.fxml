@@ -35,7 +35,7 @@
                   <Font name="Franklin Gothic Medium" size="20.0" />
                </font>
             </Label>
-            <Label fx:id="scoreField" text="0000" GridPane.rowIndex="1">
+            <Label fx:id="score" text="0000" GridPane.rowIndex="1">
                <font>
                   <Font name="Franklin Gothic Medium Italic" size="30.0" />
                </font>

@@ -1,7 +1,9 @@
 package edu.wsu.controller;
 
 import edu.wsu.App;
-import edu.wsu.model.*;
+import edu.wsu.model.Entity;
+import edu.wsu.model.Nestor;
+import edu.wsu.model.Obstacle;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +25,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Random;
 
 public class GameController {
     private static final int WINDOW_WIDTH = 800;
@@ -31,12 +33,10 @@ public class GameController {
     private static final int OBSTACLE_HEIGHT = 50;
     private static final int OBSTACLE_SPEED = 100;
 
-    private NestorRunner gameInstance;
-
     @FXML
     StackPane gameRoot;
     @FXML
-    Label scoreField;
+    BorderPane hud;
     @FXML
     StackPane playSpace;
     @FXML
@@ -46,6 +46,12 @@ public class GameController {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    private Nestor nestor;
+    private Obstacle[] obstacles;
+    private int numObstacles;
+    private int obstacleSpacing;
+    private int obstacleCounter;
+    private Random rand;
 
     @FXML
     public void initialize() {
@@ -65,14 +71,7 @@ public class GameController {
         gc.fillRect(ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
     }
 
-    public void drawEntities(ArrayList<Entity> entities){
-        for (Entity entity : entities) {
-            draw(entity);
-        }
-    }
-
-
-    private void returnToMainMenu(ActionEvent event) {
+    private void mainMenu(ActionEvent event) {
         try {
             FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("menu.fxml"));
             Parent menuRoot = menuLoader.load();
@@ -85,17 +84,6 @@ public class GameController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * This belongs in GameView (just like draw entities etc.), but it's here for now just so score updates.
-     * The logic is going to be the same regardless of where it is.
-     * @author Jacob York
-     */
-    private void drawScore(int newScore) {
-        int numDigits = ("" + newScore).length();
-        String scoreText = "0".repeat(4 - numDigits) + newScore;
-        scoreField.setText(scoreText);
     }
 
     private StackPane getPauseScreen() {
@@ -122,7 +110,7 @@ public class GameController {
         mainMenu.setTextFill(Color.WHITE);
         mainMenu.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-        mainMenu.setOnAction(event -> returnToMainMenu(event));
+        mainMenu.setOnAction(event -> mainMenu(event));
 
         gameEndMenu.getChildren().addAll(resultsTitle, resume, mainMenu);
         ////////////////////////////////////////////////
@@ -162,7 +150,7 @@ public class GameController {
         mainMenu.setTextFill(Color.WHITE);
         mainMenu.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-        mainMenu.setOnAction(event -> returnToMainMenu(event));
+        mainMenu.setOnAction(event -> mainMenu(event));
 
         gameEndMenu.getChildren().addAll(resultsTitle, playAgain, mainMenu);
         ////////////////////////////////////////////////
@@ -179,20 +167,24 @@ public class GameController {
     }
 
         public void start() {
-        this.gameInstance = new NestorRunner(Difficulty.EASY);
-
-        //view constructor takes care of this
         gameRoot.getChildren().remove(endScreen);
+
         canvas = new Canvas(playSpace.getPrefWidth(), playSpace.getPrefHeight());
         gc = canvas.getGraphicsContext2D();
         canvas.setFocusTraversable(true);
         playSpace.getChildren().add(canvas);
 
+        nestor = new Nestor(200, 200);
+        obstacles = new Obstacle[10];
+        numObstacles = 0;
+        obstacleSpacing = 300;
+        obstacleCounter = obstacleSpacing;
+        rand = new Random();
 
         // javafx keyboard event set focus at the end
         canvas.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
-                gameInstance.jump();
+                nestor.jump();
             }
         });
 
@@ -209,19 +201,36 @@ public class GameController {
                 double deltaTime = (now - lastTime) / 1e9;
                 lastTime = now;
 
-                // Clear the canvas (this should be in view)
+                // Clear the canvas
                 gc.setFill(Color.WHITE);
                 gc.fillRect(0, 0, getWidth(), getHeight());
 
-                // update the game, update returns true if there is a collision event
-                boolean collision = gameInstance.update(deltaTime);
-                drawEntities(gameInstance.getEntities());
-                drawScore(gameInstance.getScore());
-                if (collision){
-                    stop();
-                    gameRoot.getChildren().add(endScreen);
+                // Update and draw the nestor
+                nestor.update(deltaTime);
+                draw(nestor);
+
+                // Update and draw the obstacles
+                for (int i = 0; i < numObstacles; i++) {
+                    Obstacle obstacle = obstacles[i];
+                    obstacle.update(deltaTime);
+                    draw(obstacle);
+
+                    if (obstacle.leftCollidesWith(nestor)) {
+                        stop();
+                        gameRoot.getChildren().add(endScreen);
+                    }
                 }
 
+                // Spawn a new obstacle if needed
+                //
+                obstacleCounter -= OBSTACLE_SPEED * deltaTime;
+                if (obstacleCounter <= 0) {
+                    obstacleCounter = obstacleSpacing;
+                    if (numObstacles < obstacles.length) {
+                        obstacles[numObstacles] = new Obstacle(getWidth(), getHeight() - OBSTACLE_HEIGHT);
+                        numObstacles++;
+                    }
+                }
             }
         };
         timer.start();
