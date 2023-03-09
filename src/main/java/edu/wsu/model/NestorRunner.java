@@ -1,5 +1,8 @@
 package edu.wsu.model;
 
+import edu.wsu.model.enums.Difficulty;
+import edu.wsu.model.enums.EntityType;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -12,6 +15,8 @@ public class NestorRunner {
     private static final int nestorStartX = 50;
     private static final int nestorStartY = canvasHeight;
 
+    private ArrayList<EntityType> obstacleTypes;
+
     private int score;
     private int obstacleSpeed;
     Nestor nestor;
@@ -20,8 +25,6 @@ public class NestorRunner {
     int obstacleCountdown;
     Random rand;
     Difficulty difficulty;
-    int maxJumpHeight;
-
 
     public NestorRunner(Difficulty difficulty) {
         this.score = 0;
@@ -32,7 +35,15 @@ public class NestorRunner {
         this.obstacleSpacing = 200;
         this.obstacleCountdown = 0;
         this.rand = new Random();
-        this.maxJumpHeight = (int) nestor.getMaxJumpHeight();
+        initializeObstacleTypes();
+    }
+
+    private void initializeObstacleTypes(){
+        this.obstacleTypes = new ArrayList<>();
+        obstacleTypes.add(EntityType.SMALL_BUILDING);
+        obstacleTypes.add(EntityType.BIG_BUILDING);
+        obstacleTypes.add(EntityType.PROJECTILE);
+        obstacleTypes.add(EntityType.HOLE);
     }
 
     private void difficultySetter(){
@@ -98,9 +109,7 @@ public class NestorRunner {
      }
 
      private Obstacle randObstacleGenerator(){
-        int maxObstacleHeight = (int) (maxJumpHeight * .75);
-        int randHeight = (rand.nextInt(maxObstacleHeight) + 1);
-        int randWidth = (rand.nextInt(8) + 1) * 10;
-        return new Obstacle(canvasWidth, canvasHeight - randHeight, randWidth, randHeight);
+        int obstacleSelector = rand.nextInt(4);
+        return new Obstacle(obstacleTypes.get(obstacleSelector));
      }
 }

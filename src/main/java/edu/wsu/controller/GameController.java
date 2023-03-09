@@ -2,6 +2,7 @@ package edu.wsu.controller;
 
 import edu.wsu.App;
 import edu.wsu.model.*;
+import edu.wsu.model.enums.Difficulty;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

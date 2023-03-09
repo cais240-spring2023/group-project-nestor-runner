@@ -1,5 +1,6 @@
 package edu.wsu.model;
 
+import edu.wsu.model.enums.EntityType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
@@ -13,4 +14,6 @@ public interface Entity {
     void update(double deltaTime);
     boolean leftCollidesWith(Entity other);
     boolean rightCollidesWith(Entity other);
+
+    EntityType getEntityType();
 }
