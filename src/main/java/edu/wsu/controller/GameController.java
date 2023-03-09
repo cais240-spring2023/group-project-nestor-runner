@@ -16,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameController {
     private static final int WINDOW_WIDTH = 800;
@@ -61,8 +63,18 @@ public class GameController {
     }
 
     public void draw(Entity ent) {
-        gc.setFill(ent.getColor());
-        gc.fillRect(ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+        Nestor nestor = new Nestor(0, 0);
+
+        if (ent.getClass().equals(nestor.getClass())) {
+
+            String nestorImgURL = "/edu/wsu/Nestor.png";
+            Image nestorImg = new Image(Objects.requireNonNull(getClass().getResource(nestorImgURL)).toString());
+            gc.drawImage(nestorImg, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+        } else {
+            String obstacleImgURL = "/edu/wsu/Obstacle.png";
+            Image obstacleImg = new Image(Objects.requireNonNull(getClass().getResource(obstacleImgURL)).toString());
+            gc.drawImage(obstacleImg, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+        }
     }
 
     public void drawEntities(ArrayList<Entity> entities){
