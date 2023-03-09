@@ -1,5 +1,6 @@
 package edu.wsu.model;
 
+import edu.wsu.model.enums.EntityType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
@@ -15,7 +16,6 @@ public class Nestor implements Entity {
     private double y;
     private double ySpeed;
     private boolean isJumping;
-    private double maxJumpHeight;
 
     public Nestor(double startXPos, double startYPos) {
         x = startXPos;
@@ -24,7 +24,6 @@ public class Nestor implements Entity {
         isJumping = false;
         this.width = 50;
         this.height = 50;
-        this.maxJumpHeight = calcMaxJumpHeight();
     }
 
     public Nestor(double startXPos, double startYPos, int width, int height) {
@@ -37,25 +36,7 @@ public class Nestor implements Entity {
     }
 
     // issue: actual jump calculations are done based on change in time
-    private double calcMaxJumpHeight(){
-        double jumpHeight = 0;
-        /*
-        // gravity = 600 m/s^2
-        // jump speed = 400 m/s
 
-        // time = (final velocity - initial velocity) / acceleration
-        // we want final velocity to be zero, because that is when we reach the peak
-        double jumpTime = (0 - JUMP_SPEED)/(-GRAVITY);
-
-        // delta y = initial velocity * time - 1/2 * acceleration * (time^2)
-        jumpHeight = (JUMP_SPEED * jumpTime) + ((GRAVITY * (jumpTime * jumpTime))/2);
-
-         */
-
-        // alternate approach: h = (v^2) / (2g)
-        jumpHeight = (JUMP_SPEED * JUMP_SPEED) / (2 * GRAVITY);
-        return jumpHeight;
-    }
 
     public void jump() {
         if (!isJumping) {
@@ -96,6 +77,11 @@ public class Nestor implements Entity {
     }
 
     @Override
+    public EntityType getEntityType() {
+        return EntityType.NESTOR;
+    }
+
+    @Override
     public double getX() {
         return x;
     }
@@ -118,9 +104,5 @@ public class Nestor implements Entity {
     @Override
     public Color getColor() {
         return Color.BLUE;
-    }
-
-    public double getMaxJumpHeight() {
-        return maxJumpHeight;
     }
 }

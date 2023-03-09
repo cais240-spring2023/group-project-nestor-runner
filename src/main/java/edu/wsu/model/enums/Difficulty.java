@@ -1,4 +1,4 @@
-package edu.wsu.model;
+package edu.wsu.model.enums;
 
 public enum Difficulty {
     EASY,
