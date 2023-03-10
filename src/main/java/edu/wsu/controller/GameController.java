@@ -193,7 +193,7 @@ public class GameController {
                 lastTime = now;
 
                 // Clear the canvas (this should be in view)
-                gc.setFill(Color.WHITE);
+                gc.setFill(Color.LIGHTBLUE);
                 gc.fillRect(0, 0, getWidth(), getHeight());
 
                 // update the game, update returns true if there is a collision event
