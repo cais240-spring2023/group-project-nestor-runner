@@ -1,11 +1,14 @@
 module edu.wsu {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
 
     opens edu.wsu to javafx.fxml;
     exports edu.wsu;
-  exports edu.wsu.controller;
-  opens edu.wsu.controller to javafx.fxml;
-  exports edu.wsu.view;
-  opens edu.wsu.view to javafx.fxml;
+
+    opens edu.wsu.controller to javafx.fxml;
+    exports edu.wsu.controller;
+
+    opens edu.wsu.view to javafx.fxml;
+    exports edu.wsu.view;
 }
