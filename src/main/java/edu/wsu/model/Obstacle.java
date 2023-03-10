@@ -33,14 +33,14 @@ public class Obstacle implements Entity {
         this.entityType = entityType;
         switch (this.entityType){
             case BIG_BUILDING:
-                this.width = 50;
-                this.height = 70;
+                this.width = 54;
+                this.height = 75;
                 this.x = canvasWidth;
                 this.y = canvasHeight - this.height;
                 break;
             case SMALL_BUILDING:
-                this.width = 50;
-                this.height = 50;
+                this.width = 70;
+                this.height = 70;
                 this.x = canvasWidth;
                 this.y = canvasHeight - this.height;
                 break;

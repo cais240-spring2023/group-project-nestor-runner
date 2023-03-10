@@ -42,8 +42,9 @@ public class NestorRunner {
         this.obstacleTypes = new ArrayList<>();
         obstacleTypes.add(EntityType.SMALL_BUILDING);
         obstacleTypes.add(EntityType.BIG_BUILDING);
-        obstacleTypes.add(EntityType.PROJECTILE);
-        obstacleTypes.add(EntityType.HOLE);
+        // omitted because these obstacles have not been implemented yet
+        //obstacleTypes.add(EntityType.PROJECTILE);
+        //obstacleTypes.add(EntityType.HOLE);
     }
 
     private void difficultySetter(){
@@ -109,7 +110,7 @@ public class NestorRunner {
      }
 
      private Obstacle randObstacleGenerator(){
-        int obstacleSelector = rand.nextInt(4);
+        int obstacleSelector = rand.nextInt(2); // set bound equal to # of available obstacles
         return new Obstacle(obstacleTypes.get(obstacleSelector));
      }
 }
