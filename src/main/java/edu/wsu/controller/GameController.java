@@ -3,6 +3,7 @@ package edu.wsu.controller;
 import edu.wsu.App;
 import edu.wsu.model.*;
 import edu.wsu.model.enums.Difficulty;
+import java.io.File;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -48,6 +51,10 @@ public class GameController {
     private StackPane endScreen;
     private Canvas canvas;
     private GraphicsContext gc;
+
+    private final String backgroundTrack = "src/main/resources/edu/wsu/Fluffing-a-Duck.mp3";
+    private final Media backgroundMedia = new Media(new File(backgroundTrack).toURI().toString());
+    private final MediaPlayer backgroundPlayer = new MediaPlayer(backgroundMedia);
 
 
     @FXML
@@ -151,6 +158,12 @@ public class GameController {
         public void start() {
         this.gameInstance = new NestorRunner(Difficulty.EASY);
 
+        //start background music
+        backgroundPlayer.seek(backgroundPlayer.getStartTime());
+        backgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        backgroundPlayer.setVolume(0.2);
+        backgroundPlayer.play();
+
         //view constructor takes care of this
         gameRoot.getChildren().remove(endScreen);
         canvas = new Canvas(playSpace.getPrefWidth(), playSpace.getPrefHeight());
@@ -189,6 +202,8 @@ public class GameController {
                 drawScore(gameInstance.getScore());
                 if (collision){
                     stop();
+                    //stop background music (on player death)
+                    backgroundPlayer.stop();
                     gameRoot.getChildren().add(endScreen);
                 }
 
