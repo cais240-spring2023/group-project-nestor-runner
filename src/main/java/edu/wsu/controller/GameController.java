@@ -64,9 +64,7 @@ public class GameController {
     }
 
     public void draw(Entity ent) {
-        Nestor nestor = new Nestor(0, 0);
-
-        if (ent.getClass().equals(nestor.getClass())) {
+        if (ent instanceof Nestor) {
 
             String nestorImgURL = "/edu/wsu/Nestor.png";
             Image nestorImg = new Image(Objects.requireNonNull(getClass().getResource(nestorImgURL)).toString());
