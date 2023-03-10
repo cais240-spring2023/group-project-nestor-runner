@@ -3,6 +3,7 @@ package edu.wsu.controller;
 import edu.wsu.App;
 import edu.wsu.model.*;
 import edu.wsu.model.enums.Difficulty;
+import edu.wsu.model.enums.EntityType;
 import java.io.File;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -71,16 +72,20 @@ public class GameController {
     }
 
     public void draw(Entity ent) {
-        if (ent instanceof Nestor) {
-
-            String nestorImgURL = "/edu/wsu/Nestor.png";
-            Image nestorImg = new Image(Objects.requireNonNull(getClass().getResource(nestorImgURL)).toString());
-            gc.drawImage(nestorImg, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
-        } else {
-            String obstacleImgURL = "/edu/wsu/Obstacle.png";
-            Image obstacleImg = new Image(Objects.requireNonNull(getClass().getResource(obstacleImgURL)).toString());
-            gc.drawImage(obstacleImg, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+        String imgURL = "";
+        switch (ent.getEntityType()) {
+            case NESTOR:
+                imgURL = "/edu/wsu/Nestor.png";
+                break;
+            case BIG_BUILDING:
+                imgURL = "/edu/wsu/BigBuilding.png";
+                break;
+            case SMALL_BUILDING:
+                imgURL = "/edu/wsu/SmallBuilding.png";
+                break;
         }
+        Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
+        gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
     }
 
     public void drawEntities(ArrayList<Entity> entities){
