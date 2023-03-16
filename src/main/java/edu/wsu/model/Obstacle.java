@@ -5,7 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
 public class Obstacle implements Entity {
-    private static final int SPEED = 200;
+    private final int speed;
 
     private static final int canvasHeight = 400;
     private static final int canvasWidth = 600;
@@ -16,20 +16,8 @@ public class Obstacle implements Entity {
 
     private EntityType entityType;
 
-    public Obstacle() {
-        this.width = 50;
-        this.height = 70;
-        this.x = canvasWidth;
-        this.y = canvasHeight - 70;
-    }
-    public Obstacle(double x, double y, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-    }
-
-    public Obstacle(EntityType entityType) {
+    public Obstacle(EntityType entityType, int obstacleSpeed) {
+        this.speed = obstacleSpeed;
         this.entityType = entityType;
         switch (this.entityType){
             case BIG_BUILDING:
@@ -45,8 +33,8 @@ public class Obstacle implements Entity {
                 this.y = canvasHeight - this.height;
                 break;
             case HOLE:
-                this.width = 60;
-                this.height = 5;
+                this.width = 30;
+                this.height = 2;
                 this.x = canvasWidth;
                 this.y = canvasHeight - this.height;
                 break;
@@ -92,7 +80,7 @@ public class Obstacle implements Entity {
 
     @Override
     public void update(double deltaTime) {
-        x = x - (SPEED * deltaTime);
+        x = x - (speed * deltaTime);
     }
 
     @Override

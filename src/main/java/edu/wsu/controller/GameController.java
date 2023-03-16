@@ -83,9 +83,17 @@ public class GameController {
             case SMALL_BUILDING:
                 imgURL = "/edu/wsu/SmallBuilding.png";
                 break;
+            default:
+                imgURL = "/edu/wsu/BigBuilding.png";
         }
         Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
-        gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+
+        // hole image is different from its hitbox, so we need to draw it differently
+        if (ent.getEntityType() == EntityType.HOLE){
+            gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth() * 2, ent.getHeight() * 2);
+        } else {
+            gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
+        }
     }
 
     public void drawEntities(ArrayList<Entity> entities){

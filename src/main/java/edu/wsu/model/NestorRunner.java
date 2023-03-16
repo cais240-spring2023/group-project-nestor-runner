@@ -24,6 +24,8 @@ public class NestorRunner {
     int obstacleCountdown;
     Random rand;
     Difficulty difficulty;
+    private double speedCounter = 0;
+    private double deltaTimeModifier = 1;
 
     private final String deathSound = "src/main/resources/edu/wsu/deathSound.wav";
     private final String jumpSound = "src/main/resources/edu/wsu/jumpSound.mp3";
@@ -38,7 +40,7 @@ public class NestorRunner {
         difficultySetter();
         this.nestor = new Nestor(nestorStartX, nestorStartY);
         this.obstacles = new ArrayList<>();
-        this.obstacleSpacing = 200;
+        this.obstacleSpacing = 500;
         this.obstacleCountdown = 0;
         this.rand = new Random();
         initializeObstacleTypes();
@@ -49,17 +51,17 @@ public class NestorRunner {
         obstacleTypes.add(EntityType.SMALL_BUILDING);
         obstacleTypes.add(EntityType.BIG_BUILDING);
         // omitted because these obstacles have not been implemented yet
-        //obstacleTypes.add(EntityType.PROJECTILE);
-        //obstacleTypes.add(EntityType.HOLE);
+        obstacleTypes.add(EntityType.PROJECTILE);
+        obstacleTypes.add(EntityType.HOLE);
     }
 
     private void difficultySetter(){
         if (this.difficulty == Difficulty.EASY){
-            obstacleSpeed = 75;
+            obstacleSpeed = 200;
         } else if (this.difficulty == Difficulty.MEDIUM){
-            obstacleSpeed = 100;
+            obstacleSpeed = 300;
         } else {
-            obstacleSpeed = 125;
+            obstacleSpeed = 400;
         }
     }
 
@@ -73,10 +75,19 @@ public class NestorRunner {
     }
 
     public boolean update(double deltaTime){
-        nestor.update(deltaTime);
+        // nestor.update updates nestors current position
+        double deltaTimeMod = deltaTime * deltaTimeModifier;
+        nestor.update(deltaTimeMod);
+        this.speedCounter += deltaTime;
+        if (this.speedCounter >= 5){
+            this.deltaTimeModifier += .1;
+            this.speedCounter = 0;
+        }
+
+        // for each obstacle, update them and check for collision
         for (int i = 0; i < obstacles.size(); i++) {
             Obstacle obstacle = obstacles.get(i);
-            obstacle.update(deltaTime);
+            obstacle.update(deltaTimeMod);
             if (obstacle.getX() < 110){
                 if (obstacle.leftCollidesWith(nestor)){
                     // play death sound upon collision
@@ -84,13 +95,17 @@ public class NestorRunner {
                     deathPlayer.play();
                     return true;
                 }
+                // if obstacle is past nestor and outside the screen, delete it.
                 if (obstacle.getX() <= 0 - obstacle.getWidth()){
                     obstacles.remove(0);
                     score++;
                 }
             }
         }
-        obstacleCountdown -= obstacleSpeed * deltaTime;
+        // update obstacle countdown based on change in time
+        obstacleCountdown -= obstacleSpeed * deltaTimeMod;
+
+        // if the obstacle countdown reaches zero, its time to spawn an obstacle and reset the countdown
         if (obstacleCountdown <= 0) {
             obstacleCountdown = obstacleSpacing;
             obstacles.add(randObstacleGenerator());
@@ -124,7 +139,7 @@ public class NestorRunner {
      }
 
      private Obstacle randObstacleGenerator(){
-        int obstacleSelector = rand.nextInt(2); // set bound equal to # of available obstacles
-        return new Obstacle(obstacleTypes.get(obstacleSelector));
+        int obstacleSelector = rand.nextInt(4); // set bound equal to # of available obstacles
+        return new Obstacle(obstacleTypes.get(obstacleSelector), this.obstacleSpeed);
      }
 }
