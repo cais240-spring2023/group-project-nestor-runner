@@ -90,7 +90,7 @@ public class GameController {
 
         // hole image is different from its hitbox, so we need to draw it differently
         if (ent.getEntityType() == EntityType.HOLE){
-            gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth() * 2, ent.getHeight() * 2);
+            gc.drawImage(img, ent.getX() - (ent.getWidth()), ent.getY(), ent.getWidth() * 3, ent.getHeight() * 2);
         } else {
             gc.drawImage(img, ent.getX(), ent.getY(), ent.getWidth(), ent.getHeight());
         }
