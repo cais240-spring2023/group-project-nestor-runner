@@ -1,5 +1,5 @@
 package edu.wsu.view;
 
-public class MenuView {
+public class MenuView implements View {
 
 }

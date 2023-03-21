@@ -1,14 +1,10 @@
 package edu.wsu.model;
 
 import edu.wsu.model.enums.EntityType;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.Color;
+import edu.wsu.view.View;
 
 public class Obstacle implements Entity {
-    private static final int SPEED = 200;
-
-    private static final int canvasHeight = 400;
-    private static final int canvasWidth = 600;
+    public static final int SPEED = 200;
     private final int width;
     private final int height;
     private double x;
@@ -19,8 +15,8 @@ public class Obstacle implements Entity {
     public Obstacle() {
         this.width = 50;
         this.height = 70;
-        this.x = canvasWidth;
-        this.y = canvasHeight - 70;
+        this.x = View.SCENE_WIDTH;
+        this.y = View.GROUND_Y - 70;
     }
     public Obstacle(double x, double y, int width, int height) {
         this.width = width;
@@ -35,34 +31,26 @@ public class Obstacle implements Entity {
             case BIG_BUILDING:
                 this.width = 54;
                 this.height = 75;
-                this.x = canvasWidth;
-                this.y = canvasHeight - this.height;
                 break;
             case SMALL_BUILDING:
                 this.width = 70;
                 this.height = 70;
-                this.x = canvasWidth;
-                this.y = canvasHeight - this.height;
                 break;
             case HOLE:
                 this.width = 60;
                 this.height = 5;
-                this.x = canvasWidth;
-                this.y = canvasHeight - this.height;
                 break;
             case PROJECTILE:
                 this.width = 30;
                 this.height = 30;
-                this.x = canvasWidth;
-                this.y = canvasHeight - 50 - this.height;
                 break;
             default:
                 this.width = 50;
                 this.height = 70;
-                this.x = canvasWidth;
-                this.y = canvasHeight - this.height;
                 break;
         }
+        this.x = View.SCENE_WIDTH;
+        this.y = View.GROUND_Y- this.height;
     }
 
     @Override
@@ -73,11 +61,6 @@ public class Obstacle implements Entity {
     @Override
     public double getHeight() {
         return height;
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
     }
 
     @Override
