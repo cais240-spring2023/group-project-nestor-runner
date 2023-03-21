@@ -1,13 +1,13 @@
 package edu.wsu.model;
 
 import edu.wsu.model.enums.EntityType;
-import edu.wsu.view.View;
 
 public class Nestor implements Entity {
 
     public static final int START_X = 50;
     public static final int JUMP_SPEED = 400; // m/s
     public static final double GRAVITY = 600; // m/s^2
+    public final int ground;
     private final int width;
     private final int height;
     final private double x;
@@ -15,26 +15,30 @@ public class Nestor implements Entity {
     private double ySpeed;
     private boolean isJumping;
 
-    public Nestor() {
+    public Nestor(int ground) {
+        this.ground = ground;
+        y = ground;
         x = START_X;
-        y = View.GROUND_Y;
-        ySpeed = 0;
-        isJumping = false;
-        this.width = 50;
-        this.height = 50;
-    }
-    public Nestor(double startXPos, double startYPos) {
-        x = startXPos;
-        y = startYPos;
         ySpeed = 0;
         isJumping = false;
         this.width = 50;
         this.height = 50;
     }
 
-    public Nestor(double startXPos, double startYPos, int width, int height) {
+    public Nestor(int ground, double startXPos) {
+        this.ground = ground;
         x = startXPos;
-        y = startYPos;
+        y = ground;
+        ySpeed = 0;
+        isJumping = false;
+        this.width = 50;
+        this.height = 50;
+    }
+
+    public Nestor(int ground, double startXPos, int width, int height) {
+        this.ground = ground;
+        x = startXPos;
+        y = ground;
         ySpeed = 0;
         isJumping = false;
         this.width = width;
@@ -67,8 +71,8 @@ public class Nestor implements Entity {
 
         // done
 
-        if (y >= View.GROUND_Y - height) {
-            y = (View.GROUND_Y - height);
+        if (y >= ground - height) {
+            y = (ground - height);
             ySpeed = 0;
             isJumping = false;
         }

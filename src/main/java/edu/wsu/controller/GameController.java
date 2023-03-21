@@ -143,7 +143,7 @@ public class GameController {
     }
 
     public void start() {
-        this.gameInstance = new NestorRunner(Difficulty.HARD);
+        this.gameInstance = new NestorRunner(Difficulty.HARD, (int) playSpace.getPrefHeight());
 
         // Patch notes: added Doom OST to improve player concentration during hard difficulty.
         if (gameInstance.getDifficulty() == Difficulty.HARD)
@@ -157,7 +157,7 @@ public class GameController {
 
         // view constructor takes care of this
         gameRoot.getChildren().remove(endPane);
-        canvas = new Canvas(View.SCENE_WIDTH, View.GROUND_Y);
+        canvas = new Canvas(View.SCENE_WIDTH, gameInstance.ground);
 
         // wipe old gc before getting new one.
         if (gc != null) updateGC();

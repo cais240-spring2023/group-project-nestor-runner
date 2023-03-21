@@ -10,22 +10,9 @@ public class Obstacle implements Entity {
     private double x;
     private final double y;
 
-    private EntityType entityType;
+    public final EntityType entityType;
 
-    public Obstacle() {
-        this.width = 50;
-        this.height = 70;
-        this.x = View.SCENE_WIDTH;
-        this.y = View.GROUND_Y - 70;
-    }
-    public Obstacle(double x, double y, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-    }
-
-    public Obstacle(EntityType entityType) {
+    public Obstacle(EntityType entityType, int ground) {
         this.entityType = entityType;
         switch (this.entityType){
             case BIG_BUILDING:
@@ -50,7 +37,7 @@ public class Obstacle implements Entity {
                 break;
         }
         this.x = View.SCENE_WIDTH;
-        this.y = View.GROUND_Y- this.height;
+        this.y = ground - this.height;
     }
 
     @Override

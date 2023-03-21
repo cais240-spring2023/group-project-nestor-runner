@@ -13,7 +13,8 @@ import javafx.scene.media.MediaPlayer;
 
 public class NestorRunner {
     public boolean paused;
-
+    public final int ground;
+    private int ticks;
     private ArrayList<EntityType> obstacleTypes;
     private int score;
     private int obstacleSpeed;
@@ -32,16 +33,34 @@ public class NestorRunner {
     private final MediaPlayer jumpPlayer = new MediaPlayer(jumpMedia);
 
     public NestorRunner(Difficulty difficulty) {
+        this.ground = 400;
         this.paused = false;
         this.score = 0;
         this.difficulty = difficulty;
         difficultySetter();
-        this.nestor = new Nestor();
+        this.nestor = new Nestor(ground);
         this.obstacles = new ArrayList<>();
         this.obstacleSpacing = 200;
         this.obstacleCountdown = 0;
         this.rand = new Random();
         initializeObstacleTypes();
+
+        ticks = 0;
+    }
+    public NestorRunner(Difficulty difficulty, int ground) {
+        this.ground = ground;
+        this.paused = false;
+        this.score = 0;
+        this.difficulty = difficulty;
+        difficultySetter();
+        this.nestor = new Nestor(ground);
+        this.obstacles = new ArrayList<>();
+        this.obstacleSpacing = 200;
+        this.obstacleCountdown = 0;
+        this.rand = new Random();
+        initializeObstacleTypes();
+
+        ticks = 0;
     }
 
     private void initializeObstacleTypes(){
@@ -73,6 +92,8 @@ public class NestorRunner {
     }
 
     public boolean update(double deltaTime) {
+        if (++ticks % 10 == 0) score++;
+
         nestor.update(deltaTime);
         for (int i = 0; i < obstacles.size(); i++) {
             Obstacle obstacle = obstacles.get(i);
@@ -86,7 +107,6 @@ public class NestorRunner {
                 }
                 if (obstacle.getX() <= 0 - obstacle.getWidth()){
                     obstacles.remove(0);
-                    score++;
                 }
             }
         }
@@ -131,7 +151,7 @@ public class NestorRunner {
      }
 
      private Obstacle randObstacleGenerator(){
-        int obstacleSelector = rand.nextInt(2); // set bound equal to # of available obstacles
-        return new Obstacle(obstacleTypes.get(obstacleSelector));
+        int obstacleSelector = rand.nextInt(obstacleTypes.size());
+        return new Obstacle(obstacleTypes.get(obstacleSelector), ground);
      }
 }
