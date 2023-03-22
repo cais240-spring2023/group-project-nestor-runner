@@ -6,15 +6,15 @@ import edu.wsu.model.enums.EntityType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 
 public class NestorRunner {
-    private static final int canvasHeight = 400;
-    private static final int nestorStartX = 50;
-    private static final int nestorStartY = canvasHeight;
-
+    public boolean paused;
+    public final int ground;
+    private int ticks;
     private ArrayList<EntityType> obstacleTypes;
     private int score;
     private int obstacleSpeed;
@@ -25,23 +25,42 @@ public class NestorRunner {
     Random rand;
     Difficulty difficulty;
 
-    private final String deathSound = "src/main/resources/edu/wsu/deathSound.wav";
-    private final String jumpSound = "src/main/resources/edu/wsu/jumpSound.mp3";
+    private final String deathSound = "src/main/resources/edu/wsu/sound/deathSound.wav";
+    private final String jumpSound = "src/main/resources/edu/wsu/sound/jumpSound.mp3";
     private final Media deathMedia = new Media(new File(deathSound).toURI().toString());
     private final Media jumpMedia = new Media(new File(jumpSound).toURI().toString());
     private final MediaPlayer deathPlayer = new MediaPlayer(deathMedia);
     private final MediaPlayer jumpPlayer = new MediaPlayer(jumpMedia);
 
     public NestorRunner(Difficulty difficulty) {
+        this.ground = 400;
+        this.paused = false;
         this.score = 0;
         this.difficulty = difficulty;
         difficultySetter();
-        this.nestor = new Nestor(nestorStartX, nestorStartY);
+        this.nestor = new Nestor(ground);
         this.obstacles = new ArrayList<>();
         this.obstacleSpacing = 200;
         this.obstacleCountdown = 0;
         this.rand = new Random();
         initializeObstacleTypes();
+
+        ticks = 0;
+    }
+    public NestorRunner(Difficulty difficulty, int ground) {
+        this.ground = ground;
+        this.paused = false;
+        this.score = 0;
+        this.difficulty = difficulty;
+        difficultySetter();
+        this.nestor = new Nestor(ground);
+        this.obstacles = new ArrayList<>();
+        this.obstacleSpacing = 200;
+        this.obstacleCountdown = 0;
+        this.rand = new Random();
+        initializeObstacleTypes();
+
+        ticks = 0;
     }
 
     private void initializeObstacleTypes(){
@@ -49,8 +68,8 @@ public class NestorRunner {
         obstacleTypes.add(EntityType.SMALL_BUILDING);
         obstacleTypes.add(EntityType.BIG_BUILDING);
         // omitted because these obstacles have not been implemented yet
-        //obstacleTypes.add(EntityType.PROJECTILE);
-        //obstacleTypes.add(EntityType.HOLE);
+        // obstacleTypes.add(EntityType.PROJECTILE);
+        // obstacleTypes.add(EntityType.HOLE);
     }
 
     private void difficultySetter(){
@@ -63,16 +82,18 @@ public class NestorRunner {
         }
     }
 
-    public void jump(){
+    public void jump() {
         if(!nestor.getJumpingStatus()) {
-            //only play the jump sound if the player is currently mid-jump (isJumping)
+            // only play the jump sound if the player is currently mid-jump (isJumping)
             jumpPlayer.seek(jumpPlayer.getStartTime());
             jumpPlayer.play();
         }
         nestor.jump();
     }
 
-    public boolean update(double deltaTime){
+    public boolean update(double deltaTime) {
+        if (++ticks % 10 == 0) score++;
+
         nestor.update(deltaTime);
         for (int i = 0; i < obstacles.size(); i++) {
             Obstacle obstacle = obstacles.get(i);
@@ -86,7 +107,6 @@ public class NestorRunner {
                 }
                 if (obstacle.getX() <= 0 - obstacle.getWidth()){
                     obstacles.remove(0);
-                    score++;
                 }
             }
         }
@@ -94,7 +114,7 @@ public class NestorRunner {
         if (obstacleCountdown <= 0) {
             obstacleCountdown = obstacleSpacing;
             obstacles.add(randObstacleGenerator());
-            //obstacles.add(new Obstacle(canvasWidth, canvasHeight - OBSTACLE_HEIGHT));
+            // obstacles.add(new Obstacle(canvasWidth, canvasHeight - OBSTACLE_HEIGHT));
         }
         return false;
     }
@@ -123,8 +143,15 @@ public class NestorRunner {
         return entities;
      }
 
+     public Difficulty getDifficulty() {
+        return difficulty;
+     }
+     public void setDifficulty(Difficulty newDifficulty) {
+        difficulty = newDifficulty;
+     }
+
      private Obstacle randObstacleGenerator(){
-        int obstacleSelector = rand.nextInt(2); // set bound equal to # of available obstacles
-        return new Obstacle(obstacleTypes.get(obstacleSelector));
+        int obstacleSelector = rand.nextInt(obstacleTypes.size());
+        return new Obstacle(obstacleTypes.get(obstacleSelector), ground);
      }
 }

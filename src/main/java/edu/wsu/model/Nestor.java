@@ -1,13 +1,13 @@
 package edu.wsu.model;
 
 import edu.wsu.model.enums.EntityType;
-import javafx.scene.paint.Color;
 
 public class Nestor implements Entity {
 
-    private static final int JUMP_SPEED = 400; // m/s
-    private static final double GRAVITY = 600; // m/s^2
-    private static final int canvasHeight = 400;
+    public static final int START_X = 50;
+    public static final int JUMP_SPEED = 400; // m/s
+    public static final double GRAVITY = 600; // m/s^2
+    public final int ground;
     private final int width;
     private final int height;
     final private double x;
@@ -15,18 +15,30 @@ public class Nestor implements Entity {
     private double ySpeed;
     private boolean isJumping;
 
-    public Nestor(double startXPos, double startYPos) {
-        x = startXPos;
-        y = startYPos;
+    public Nestor(int ground) {
+        this.ground = ground;
+        y = ground;
+        x = START_X;
         ySpeed = 0;
         isJumping = false;
         this.width = 50;
         this.height = 50;
     }
 
-    public Nestor(double startXPos, double startYPos, int width, int height) {
+    public Nestor(int ground, double startXPos) {
+        this.ground = ground;
         x = startXPos;
-        y = startYPos;
+        y = ground;
+        ySpeed = 0;
+        isJumping = false;
+        this.width = 50;
+        this.height = 50;
+    }
+
+    public Nestor(int ground, double startXPos, int width, int height) {
+        this.ground = ground;
+        x = startXPos;
+        y = ground;
         ySpeed = 0;
         isJumping = false;
         this.width = width;
@@ -59,8 +71,8 @@ public class Nestor implements Entity {
 
         // done
 
-        if (y >= canvasHeight - height) {
-            y = (canvasHeight - height);
+        if (y >= ground - height) {
+            y = (ground - height);
             ySpeed = 0;
             isJumping = false;
         }
@@ -101,10 +113,5 @@ public class Nestor implements Entity {
     @Override
     public double getHeight() {
         return height;
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.BLUE;
     }
 }
