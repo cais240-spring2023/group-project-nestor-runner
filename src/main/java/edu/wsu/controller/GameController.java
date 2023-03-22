@@ -47,6 +47,7 @@ public class GameController {
     private FreezePane pausePane;
     private Canvas canvas;
     private GraphicsContext gc;
+    private boolean paused = false;
 
     // Patch notes: added Doom OST to improve player concentration.
     private MediaPlayer backgroundPlayer;
@@ -129,7 +130,13 @@ public class GameController {
     }
 
     // temp
-    private void pause() {}
+    private void togglePause() {
+        if (paused){
+            paused = false;
+        } else {
+            paused = true;
+        }
+    }
     private void unPause() {}
 
     public void updateGC() {
@@ -180,14 +187,15 @@ public class GameController {
                 lastTime = now;
                 updateGC();
                 // update the game, update returns true if there is a collision event
-                boolean collision = gameInstance.update(deltaTime);
-                if (collision) {
-                    stop();
-                    //stop background music (on player death)
-                    backgroundPlayer.stop();
-                    gameRoot.getChildren().add(endPane);
+                if (!paused){
+                    boolean collision = gameInstance.update(deltaTime);
+                    if (collision) {
+                        stop();
+                        //stop background music (on player death)
+                        backgroundPlayer.stop();
+                        gameRoot.getChildren().add(endPane);
+                    }
                 }
-
             }
         };
 
@@ -197,7 +205,7 @@ public class GameController {
                 gameInstance.jump();
             }
             if (event.getCode() == KeyCode.ESCAPE) {
-                // pause
+                togglePause();
             }
         });
 
