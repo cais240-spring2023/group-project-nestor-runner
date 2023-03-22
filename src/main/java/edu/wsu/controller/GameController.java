@@ -43,7 +43,7 @@ public class GameController {
     @FXML
     Pane ground;
 
-    private StackPane endPane;
+    private FreezePane endPane;
     private FreezePane pausePane;
     private Canvas canvas;
     private GraphicsContext gc;
@@ -108,9 +108,12 @@ public class GameController {
      * @author Jacob York
      */
     private void drawScore(int newScore) {
-        int numDigits = ("" + newScore).length();
-        String scoreText = "0".repeat(4 - numDigits) + newScore;
-        scoreField.setText(scoreText);
+        scoreField.setText(formatScore(newScore));
+    }
+
+    private static String formatScore(int score) {
+        int numDigits = ("" + score).length();
+        return "0".repeat(4 - numDigits) + score;
     }
 
     private void swapToMainMenu(ActionEvent event) {
@@ -143,10 +146,10 @@ public class GameController {
     }
 
     public void start() {
-        this.gameInstance = new NestorRunner(Difficulty.HARD, (int) playSpace.getPrefHeight());
+        this.gameInstance = new NestorRunner(Difficulty.EASY, (int) playSpace.getPrefHeight());
 
         // Patch notes: added Doom OST to improve player concentration during hard difficulty.
-        if (gameInstance.getDifficulty() == Difficulty.HARD)
+        if (gameInstance.getDifficulty() == Difficulty.EASY)
             setBackgroundTrack("Copyright/Rip-and-Tear-Doom-OST.mp3");
 
         // start background music
@@ -183,8 +186,9 @@ public class GameController {
                 boolean collision = gameInstance.update(deltaTime);
                 if (collision) {
                     stop();
-                    //stop background music (on player death)
+                    // stop background music (on player death)
                     backgroundPlayer.stop();
+                    endPane.setTitle("Game Over!\nScore: " + formatScore(gameInstance.getScore()));
                     gameRoot.getChildren().add(endPane);
                 }
 

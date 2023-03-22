@@ -5,6 +5,7 @@
 package edu.wsu.view;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,8 +15,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
-import java.util.function.Consumer;
 
 public class FreezePane extends StackPane {
 
@@ -57,31 +56,31 @@ public class FreezePane extends StackPane {
         this.getChildren().addAll(grayFilter, vBox);
     }
     public FreezePane(String title, String button1Title, String button2Title,
-            Consumer<ActionEvent> button1Action, Consumer<ActionEvent> button2Action) {
+                      EventHandler<ActionEvent> button1Action, EventHandler<ActionEvent> button2Action) {
         super();
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
 
-        Label titleLabel = new Label(title);
+        titleLabel = new Label(title);
         titleLabel.setFont(View.TITLE_FONT);
         titleLabel.setTextFill(Color.WHITE);
         VBox.setMargin(titleLabel, new Insets(5, 5, 5, 5));
 
-        Button button1 = new Button(button1Title);
+        button1 = new Button(button1Title);
         button1.setCursor(Cursor.HAND);
         button1.setFont(View.BUTTON_FONT);
         button1.setTextFill(Color.WHITE);
         button1.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(button1, new Insets(5, 5, 5, 5));
-        button1.setOnAction(button1Action::accept);
+        button1.setOnAction(button1Action);
 
-        Button button2 = new Button(button2Title);
+        button2 = new Button(button2Title);
         button2.setCursor(Cursor.HAND);
         button2.setFont(View.BUTTON_FONT);
         button2.setTextFill(Color.WHITE);
         button2.setStyle("-fx-background-color: #000000;");
         VBox.setMargin(button2, new Insets(5, 5, 5, 5));
-        button2.setOnAction(button2Action::accept);
+        button2.setOnAction(button2Action);
 
         vBox.getChildren().addAll(titleLabel, button1, button2);
 
@@ -114,17 +113,17 @@ public class FreezePane extends StackPane {
         button2.setText(newButton2Title);
     }
 
-    public Consumer<ActionEvent> getButton1Action() {
-        return(Consumer<ActionEvent>) button1.getOnAction();
+    public EventHandler<ActionEvent> getButton1Action() {
+        return button1.getOnAction();
     }
-    public void setButton1Action(Consumer<ActionEvent> newButton1Action) {
-        button1.setOnAction(newButton1Action::accept);
+    public void setButton1Action(EventHandler<ActionEvent> newButton1Action) {
+        button1.setOnAction(newButton1Action);
     }
 
-    public Consumer<ActionEvent> getButton2Action() {
-        return(Consumer<ActionEvent>) button1.getOnAction();
+    public EventHandler<ActionEvent> getButton2Action() {
+        return button1.getOnAction();
     }
-    public void setButton2Action(Consumer<ActionEvent> newButton2Action) {
-        button2.setOnAction(newButton2Action::accept);
+    public void setButton2Action(EventHandler<ActionEvent> newButton2Action) {
+        button2.setOnAction(newButton2Action);
     }
 }
