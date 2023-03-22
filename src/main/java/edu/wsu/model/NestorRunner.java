@@ -38,7 +38,7 @@ public class NestorRunner {
         this.score = 0;
         this.difficulty = difficulty;
         difficultySetter();
-        this.nestor = new Nestor(ground);
+        this.nestor = NestorSingleton.getInstance();
         this.obstacles = new ArrayList<>();
         this.obstacleSpacing = 200;
         this.obstacleCountdown = 0;
@@ -53,7 +53,7 @@ public class NestorRunner {
         this.score = 0;
         this.difficulty = difficulty;
         difficultySetter();
-        this.nestor = new Nestor(ground);
+        this.nestor = NestorSingleton.getInstance();
         this.obstacles = new ArrayList<>();
         this.obstacleSpacing = 200;
         this.obstacleCountdown = 0;
