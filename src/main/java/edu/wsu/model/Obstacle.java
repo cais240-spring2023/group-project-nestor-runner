@@ -4,15 +4,20 @@ import edu.wsu.model.enums.EntityType;
 import edu.wsu.view.View;
 
 public class Obstacle implements Entity {
-    public static final int SPEED = 200;
+
+    private final int speed;
+
+    private static final int canvasHeight = 400;
+    private static final int canvasWidth = 600;
+
     private final int width;
     private final int height;
     private double x;
     private final double y;
 
-    public final EntityType entityType;
+    private EntityType entityType;
 
-    public Obstacle(EntityType entityType, int ground) {
+    public Obstacle(EntityType entityType, int obstacleSpeed) {
         this.entityType = entityType;
         switch (this.entityType){
             case BIG_BUILDING:
@@ -24,8 +29,10 @@ public class Obstacle implements Entity {
                 this.height = 70;
                 break;
             case HOLE:
-                this.width = 60;
-                this.height = 5;
+                this.width = 30;
+                this.height = 2;
+                this.x = canvasWidth;
+                this.y = canvasHeight - this.height;
                 break;
             case PROJECTILE:
                 this.width = 30;
@@ -62,7 +69,7 @@ public class Obstacle implements Entity {
 
     @Override
     public void update(double deltaTime) {
-        x = x - (SPEED * deltaTime);
+        x = x - (speed * deltaTime);
     }
 
     @Override
