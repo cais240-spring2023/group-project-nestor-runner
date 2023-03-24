@@ -3,21 +3,20 @@ package edu.wsu.controller;
 import edu.wsu.App;
 import edu.wsu.model.*;
 import edu.wsu.model.enums.Difficulty;
-import edu.wsu.model.enums.EntityType;
+
 import java.io.File;
+
+import edu.wsu.view.FreezePane;
+import edu.wsu.view.View;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -25,7 +24,6 @@ import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -33,10 +31,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameController {
-    private static final int WINDOW_WIDTH = 800;
-    private static final int WINDOW_HEIGHT = 600;
-    private static final int OBSTACLE_HEIGHT = 50;
-    private static final int OBSTACLE_SPEED = 100;
 
     private NestorRunner gameInstance;
 
@@ -49,18 +43,27 @@ public class GameController {
     @FXML
     Pane ground;
 
-    private StackPane endScreen;
+    private StackPane endPane;
+    private FreezePane pausePane;
     private Canvas canvas;
     private GraphicsContext gc;
+    private boolean paused = false;
 
-    private final String backgroundTrack = "src/main/resources/edu/wsu/Fluffing-a-Duck.mp3";
-    private final Media backgroundMedia = new Media(new File(backgroundTrack).toURI().toString());
-    private final MediaPlayer backgroundPlayer = new MediaPlayer(backgroundMedia);
+    // Patch notes: added Doom OST to improve player concentration.
+    private MediaPlayer backgroundPlayer;
 
 
     @FXML
     public void initialize() {
-        endScreen = getEndScreen();
+        setBackgroundTrack("edu/wsu/sound/Fluffing-a-Duck.mp3");
+        endPane = new FreezePane("Game Over!",
+                "Play Again", "Main Menu",
+                event -> start(), this::swapToMainMenu
+        );
+        pausePane = new FreezePane("Game Paused.",
+                "Resume", "Main Menu",
+                event -> unPause(), this::swapToMainMenu
+        );
     }
 
     public int getWidth() {
@@ -71,17 +74,23 @@ public class GameController {
         return (int) canvas.getHeight();
     }
 
+    public void setBackgroundTrack(String newBackgroundTrack) {
+        String backgroundTrack = "src/main/resources/" + newBackgroundTrack;
+        Media backgroundMedia = new Media(new File(backgroundTrack).toURI().toString());
+        backgroundPlayer = new MediaPlayer(backgroundMedia);
+    }
+
     public void draw(Entity ent) {
         String imgURL = "";
         switch (ent.getEntityType()) {
             case NESTOR:
-                imgURL = "/edu/wsu/Nestor.png";
+                imgURL = "/edu/wsu/sprites/Nestor.png";
                 break;
             case BIG_BUILDING:
-                imgURL = "/edu/wsu/BigBuilding.png";
+                imgURL = "/edu/wsu/sprites/BigBuilding.png";
                 break;
             case SMALL_BUILDING:
-                imgURL = "/edu/wsu/SmallBuilding.png";
+                imgURL = "/edu/wsu/sprites/SmallBuilding.png";
                 break;
             default:
                 imgURL = "/edu/wsu/BigBuilding.png";
@@ -115,7 +124,7 @@ public class GameController {
 
     private void swapToMainMenu(ActionEvent event) {
         try {
-            FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("menu.fxml"));
+            FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
             Parent menuRoot = menuLoader.load();
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
@@ -128,69 +137,49 @@ public class GameController {
         }
     }
 
-    private StackPane getEndScreen() {
-        ////////////////////////////////////////////////
-        VBox gameEndMenu = new VBox();
-        gameEndMenu.setAlignment(Pos.CENTER);
+    // temp
+    private void togglePause() {
+        if (paused){
+            paused = false;
+        } else {
+            paused = true;
+        }
+    }
+    private void unPause() {}
 
-        Label resultsTitle = new Label("Game Over!");
-        resultsTitle.setFont(Font.font("Blackadder ITC", 100));
-        resultsTitle.setTextFill(Color.WHITE);
-        VBox.setMargin(resultsTitle, new Insets(5, 5, 5, 5));
-
-        Button playAgain = new Button("Play Again");
-        playAgain.setCursor(Cursor.HAND);
-        playAgain.setFont(Font.font("Franklin Gothic Medium", 20));
-        playAgain.setTextFill(Color.WHITE);
-        playAgain.setStyle("-fx-background-color: #000000;");
-        VBox.setMargin(playAgain, new Insets(5, 5, 5, 5));
-        playAgain.setOnAction(event -> start());
-
-        Button mainMenu = new Button("Main Menu");
-        mainMenu.setCursor(Cursor.HAND);
-        mainMenu.setFont(Font.font("Franklin Gothic Medium", 20));
-        mainMenu.setTextFill(Color.WHITE);
-        mainMenu.setStyle("-fx-background-color: #000000;");
-        VBox.setMargin(mainMenu, new Insets(5, 5, 5, 5));
-        mainMenu.setOnAction(event -> swapToMainMenu(event));
-
-        gameEndMenu.getChildren().addAll(resultsTitle, playAgain, mainMenu);
-        ////////////////////////////////////////////////
-
-        Pane grayFilter = new Pane();
-        grayFilter.setOpacity(.75);
-        grayFilter.setStyle("-fx-background-color: #808080;");
-
-        StackPane endScreen = new StackPane();
-        endScreen.setAlignment(Pos.CENTER);
-        endScreen.getChildren().addAll(grayFilter, gameEndMenu);
-
-        return endScreen;
+    public void updateGC() {
+        // Clear the canvas,
+        gc.setFill(Color.rgb(0, 0, 0, 0));
+        gc.clearRect(0, 0, getWidth(), getHeight());
+        gc.fillRect(0, 0, getWidth(), getHeight());
+        // and redraw everything.
+        drawEntities(gameInstance.getEntities());
+        drawScore(gameInstance.getScore());
     }
 
-        public void start() {
-        this.gameInstance = new NestorRunner(Difficulty.EASY);
+    public void start() {
+        this.gameInstance = new NestorRunner(Difficulty.HARD, (int) playSpace.getPrefHeight());
 
-        //start background music
+        // Patch notes: added Doom OST to improve player concentration during hard difficulty.
+        if (gameInstance.getDifficulty() == Difficulty.HARD)
+            setBackgroundTrack("Copyright/Rip-and-Tear-Doom-OST.mp3");
+
+        // start background music
         backgroundPlayer.seek(backgroundPlayer.getStartTime());
         backgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         backgroundPlayer.setVolume(0.2);
         backgroundPlayer.play();
 
-        //view constructor takes care of this
-        gameRoot.getChildren().remove(endScreen);
-        canvas = new Canvas(playSpace.getPrefWidth(), playSpace.getPrefHeight());
+        // view constructor takes care of this
+        gameRoot.getChildren().remove(endPane);
+        canvas = new Canvas(View.SCENE_WIDTH, gameInstance.ground);
+
+        // wipe old gc before getting new one.
+        if (gc != null) updateGC();
         gc = canvas.getGraphicsContext2D();
+
         canvas.setFocusTraversable(true);
         playSpace.getChildren().add(canvas);
-
-
-        // javafx keyboard event set focus at the end
-        canvas.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.SPACE) {
-                gameInstance.jump();
-            }
-        });
 
         AnimationTimer timer = new AnimationTimer() {
             long lastTime = 0;
@@ -204,24 +193,30 @@ public class GameController {
                 // 1e9 = 10^-9
                 double deltaTime = (now - lastTime) / 1e9;
                 lastTime = now;
-
-                // Clear the canvas (this should be in view)
-                gc.setFill(Color.LIGHTBLUE);
-                gc.fillRect(0, 0, getWidth(), getHeight());
-
+                updateGC();
                 // update the game, update returns true if there is a collision event
-                boolean collision = gameInstance.update(deltaTime);
-                drawEntities(gameInstance.getEntities());
-                drawScore(gameInstance.getScore());
-                if (collision){
-                    stop();
-                    //stop background music (on player death)
-                    backgroundPlayer.stop();
-                    gameRoot.getChildren().add(endScreen);
+                if (!paused){
+                    boolean collision = gameInstance.update(deltaTime);
+                    if (collision) {
+                        stop();
+                        //stop background music (on player death)
+                        backgroundPlayer.stop();
+                        gameRoot.getChildren().add(endPane);
+                    }
                 }
-
             }
         };
+
+        // javafx keyboard event set focus at the end
+        canvas.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.SPACE) {
+                gameInstance.jump();
+            }
+            if (event.getCode() == KeyCode.ESCAPE) {
+                togglePause();
+            }
+        });
+
         timer.start();
         canvas.requestFocus();
     }

@@ -1,13 +1,14 @@
 package edu.wsu.model;
 
 import edu.wsu.model.enums.EntityType;
-import javafx.scene.paint.Color;
 
 public class Nestor implements Entity {
+
 
     private int jump_speed = 400; // pixels per second
     private double gravity = 600; // pixels per second squared
     private static final int canvasHeight = 400;
+
     private final int width;
     private final int height;
     private double x;
@@ -16,9 +17,20 @@ public class Nestor implements Entity {
     private double ySpeed;
     private boolean isJumping;
 
-    public Nestor(double startXPos, double startYPos) {
+    public Nestor(int ground) {
+        this.ground = ground;
+        y = ground;
+        x = START_X;
+        ySpeed = 0;
+        isJumping = false;
+        this.width = 50;
+        this.height = 50;
+    }
+
+    public Nestor(int ground, double startXPos) {
+        this.ground = ground;
         x = startXPos;
-        y = startYPos;
+        y = ground;
         ySpeed = 0;
         isJumping = false;
         this.width = 50;
@@ -51,8 +63,8 @@ public class Nestor implements Entity {
 
         // done
 
-        if (y >= canvasHeight - height) {
-            y = (canvasHeight - height);
+        if (y >= ground - height) {
+            y = (ground - height);
             ySpeed = 0;
             isJumping = false;
         }
@@ -98,10 +110,5 @@ public class Nestor implements Entity {
     @Override
     public double getHeight() {
         return height;
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.BLUE;
     }
 }
