@@ -1,5 +1,8 @@
+/*
 package edu.wsu.model;
 
+import edu.wsu.model.Entities.Entity;
+import edu.wsu.model.enums.CollisionType;
 import edu.wsu.model.enums.EntityType;
 import edu.wsu.view.View;
 
@@ -11,6 +14,7 @@ public class Obstacle implements Entity {
     private final double y;
 
     public final EntityType entityType;
+    private CollisionType collisionType;
 
     public Obstacle(EntityType entityType, int ground) {
         this.entityType = entityType;
@@ -18,18 +22,32 @@ public class Obstacle implements Entity {
             case BIG_BUILDING:
                 this.width = 54;
                 this.height = 75;
+                collisionType = CollisionType.OBSTACLE;
                 break;
             case SMALL_BUILDING:
                 this.width = 70;
                 this.height = 70;
+                collisionType = CollisionType.OBSTACLE;
                 break;
             case HOLE:
                 this.width = 60;
                 this.height = 5;
+                collisionType = CollisionType.HOLE;
                 break;
             case PROJECTILE:
                 this.width = 30;
+                this.height = 20;
+                collisionType = CollisionType.OBSTACLE;
+                break;
+            case COIN:
+                this.width = 30;
                 this.height = 30;
+                collisionType = CollisionType.COIN;
+                break;
+            case SHIELD:
+                this.width = 26;
+                this.height = 36;
+                collisionType = CollisionType.SHIELD;
                 break;
             default:
                 this.width = 50;
@@ -78,7 +96,13 @@ public class Obstacle implements Entity {
     }
 
     @Override
-    public EntityType getEntityType() {
+    public EntityType type() {
         return this.entityType;
     }
+
+    @Override
+    public CollisionType getCollisionType() {
+        return collisionType;
+    }
 }
+*/

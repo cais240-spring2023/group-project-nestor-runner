@@ -1,8 +1,9 @@
+/*
 package edu.wsu.controller;
 
 import edu.wsu.App;
 import edu.wsu.model.*;
-import edu.wsu.model.enums.Difficulty;
+import edu.wsu.model.Entities.Entity;
 
 import java.io.File;
 
@@ -24,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -79,17 +81,28 @@ public class GameController {
         backgroundPlayer = new MediaPlayer(backgroundMedia);
     }
 
-    public void draw(Entity ent) {
+    public void draw(String entity) {
         String imgURL = "";
-        switch (ent.getEntityType()) {
-            case NESTOR:
+        switch (entity) {
+            case "Coin":
+                imgURL = "/edu/wsu/sprites/Coin.png";
+                break;
+            case "Hole":
+                Rectangle rectangle = new Rectangle();
+            case "Nestor":
                 imgURL = "/edu/wsu/sprites/Nestor.png";
                 break;
-            case BIG_BUILDING:
-                imgURL = "/edu/wsu/sprites/BigBuilding.png";
+            case "LargeObstacle":
+                imgURL = "/edu/wsu/sprites/LargeObstacle.png";
                 break;
-            case SMALL_BUILDING:
-                imgURL = "/edu/wsu/sprites/SmallBuilding.png";
+            case "SmallObstacle":
+                imgURL = "/edu/wsu/sprites/SmallObstacle.png";
+                break;
+            case "Projectile":
+                imgURL = "/edu/wsu/sprites/Projectile.png";
+                break;
+            case "Shield":
+                imgURL = "/edu/wsu/sprites/Shield.png";
                 break;
         }
         Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
@@ -102,11 +115,13 @@ public class GameController {
         }
     }
 
-    /**
+    */
+/**
      * This belongs in GameView (just like draw entities etc.), but it's here for now just so score updates.
      * The logic is going to be the same regardless of where it is.
      * @author Jacob York
-     */
+     *//*
+
     private void drawScore(int newScore) {
         int numDigits = ("" + newScore).length();
         String scoreText = "0".repeat(4 - numDigits) + newScore;
@@ -138,12 +153,12 @@ public class GameController {
         gc.clearRect(0, 0, getWidth(), getHeight());
         gc.fillRect(0, 0, getWidth(), getHeight());
         // and redraw everything.
-        drawEntities(gameInstance.getEntities());
+        //drawEntities(gameInstance.getEntities());
         drawScore(gameInstance.getScore());
     }
 
     public void start() {
-        this.gameInstance = new NestorRunner(Difficulty.HARD, (int) playSpace.getPrefHeight());
+        this.gameInstance = new NestorRunner(Difficulty.MEDIUM, (int) playSpace.getPrefHeight());
 
         // Patch notes: added Doom OST to improve player concentration during hard difficulty.
         if (gameInstance.getDifficulty() == Difficulty.HARD)
@@ -180,8 +195,29 @@ public class GameController {
                 lastTime = now;
                 updateGC();
                 // update the game, update returns true if there is a collision event
-                boolean collision = gameInstance.update(deltaTime);
-                if (collision) {
+                CollisionType collision = gameInstance.update(deltaTime);
+                switch (collision) {
+                    case OBSTACLE:
+                        if (gameInstance.isShielded()) {
+                            stop();
+                            //stop background music (on player death)
+                            backgroundPlayer.stop();
+                            gameRoot.getChildren().add(endPane);
+                        }
+                        break;
+                    case HOLE:
+                        // implement falling animation here
+                        break;
+                    case COIN:
+                        // need some way to access the coin and clear it
+                        // when Nestor "consumes" it
+                        break;
+                    case SHIELD:
+                        // need some way to access the shield and clear it
+                        // when Nestor "consumes" it
+                        break;
+                }
+                if (collision.equals(CollisionType.OBSTACLE)) {
                     stop();
                     //stop background music (on player death)
                     backgroundPlayer.stop();
@@ -204,4 +240,4 @@ public class GameController {
         timer.start();
         canvas.requestFocus();
     }
-}
+}*/

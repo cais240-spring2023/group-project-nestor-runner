@@ -1,3 +1,4 @@
+/*
 package edu.wsu.view;
 
 import javafx.scene.canvas.Canvas;
@@ -31,3 +32,4 @@ public class GameView implements View {
     }
 
 }
+*/
