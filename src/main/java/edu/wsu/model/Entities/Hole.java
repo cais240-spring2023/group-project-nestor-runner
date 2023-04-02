@@ -6,9 +6,9 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 public class Hole implements Entity {
 
     public int width = 75;
-    public int height = GROUND_HEIGHT;
+    public int height = 1;
     public int x = START_X;
-    public int y = GROUND_Y;
+    public int y = GROUND_Y - height;
 
     @Override
     public int getX() {

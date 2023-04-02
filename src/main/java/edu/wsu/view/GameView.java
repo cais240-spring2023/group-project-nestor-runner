@@ -31,6 +31,7 @@ public class GameView extends StackPane implements View {
 
     private final Label scoreField;
     private final Sound sound;
+    private final Rectangle ground;
     private final FreezePane endPane;
     private final FreezePane pausePane;
     private final GraphicsContext gc;
@@ -51,7 +52,7 @@ public class GameView extends StackPane implements View {
         canvas.setFocusTraversable(true);
 
         StackPane playSpace = new StackPane();
-        Rectangle ground = new Rectangle(SCENE_WIDTH, SCENE_HEIGHT - groundLevel);
+        ground = new Rectangle(SCENE_WIDTH, SCENE_HEIGHT - groundLevel);
         StackPane.setAlignment(ground, Pos.BOTTOM_CENTER);
         ground.setFill(Color.BLACK);
         playSpace.getChildren().addAll(ground, canvas);
@@ -115,9 +116,14 @@ public class GameView extends StackPane implements View {
      * @param spriteName the name of the Sprite in resources (including file extension).
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
-        String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
-        Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
-        gc.drawImage(img, xPos, yPos, width, height);
+        if (spriteName.equals("Hole")) {
+            gc.setFill(Color.LIGHTBLUE);
+            gc.fillRect(xPos, yPos, width, ground.getHeight());
+        } else {
+            String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
+            Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
+            gc.drawImage(img, xPos, yPos, width, height);
+        }
     }
 
     public Sound getSound() {
