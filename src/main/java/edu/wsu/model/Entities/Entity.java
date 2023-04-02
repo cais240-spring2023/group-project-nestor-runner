@@ -1,9 +1,12 @@
 package edu.wsu.model.Entities;
 
 public interface Entity {
+    enum Type {
+        Nestor, BigBuilding, SMALL_BUILDING, Projectile,
+        Hole, Coin, SmallObstacle, Shield, LargeObstacle,
+    }
+
     int START_X = 640;
-    int GROUND_Y = 400;
-    int GROUND_HEIGHT = 175;
     int SPEED = 200;
 
     int getX();
@@ -12,5 +15,5 @@ public interface Entity {
     int getWidth();
     int getHeight();
 
-    String type();
+    Type type();
 }

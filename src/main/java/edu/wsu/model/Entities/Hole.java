@@ -1,5 +1,8 @@
 package edu.wsu.model.Entities;
 
+import static edu.wsu.model.NestorRunner.GROUND_HEIGHT;
+import static edu.wsu.model.NestorRunner.GROUND_Y;
+
 public class Hole implements Entity {
 
     public int width = 75;
@@ -33,7 +36,8 @@ public class Hole implements Entity {
     }
 
     @Override
-    public String type() {
-        return "Hole";
+    public Type type() {
+        return Type.Hole;
     }
+
 }

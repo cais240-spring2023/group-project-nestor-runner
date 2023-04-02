@@ -2,46 +2,39 @@ package edu.wsu.model;
 
 import edu.wsu.model.Entities.Entity;
 
-import java.io.File;
 import java.util.LinkedList;
-import java.util.Observable;
 import java.util.Queue;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+public class NestorRunner {
+    private static NestorRunner gameInstance;
+    public GameState state;
 
-public class NestorRunner extends Observable {
     public static final int GROUND_Y = 400;
+    public static final int GROUND_HEIGHT = 50;
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final double GRAVITY = 600; // m/s^2
     public static final int ENTITY_SPACING = 200;
-    private final Nestor nestor;
-    private final EntityFactory entityFactory;
-    private final String[] ENTITY_TYPES = {"Coin", "Hole", "LargeObstacle", "Projectile", "Shield", "SmallObstacle"};
+    private Nestor nestor;
+    private EntityFactory entityFactory;
     private int ticks;
     private Queue<Entity> entities;
     private int score;
     private boolean isShielded;
     private boolean isDead;
-    private boolean isPaused;
     private boolean isJumping;
     private double jumpSpeed;
     private int entitySpeed;
     int entityCountdown;
-    String difficulty;
+    Difficulty difficulty;
 
-    // handle sounds in view or controller
-    private final String deathSound = "src/main/resources/edu/wsu/sound/deathSound.wav";
-    private final String jumpSound = "src/main/resources/edu/wsu/sound/jumpSound.mp3";
-    private final Media deathMedia = new Media(new File(deathSound).toURI().toString());
-    private final Media jumpMedia = new Media(new File(jumpSound).toURI().toString());
-    private final MediaPlayer deathPlayer = new MediaPlayer(deathMedia);
-    private final MediaPlayer jumpPlayer = new MediaPlayer(jumpMedia);
-
-    public NestorRunner() {
-        nestor = new Nestor();
-        entityFactory = new EntityFactory();
-        entities = new LinkedList<>();
+    private NestorRunner() {
+        state = GameState.MAIN_MENU;
+    }
+    public static NestorRunner getInstance() {
+        if (gameInstance == null) {
+            gameInstance = new NestorRunner();
+        }
+        return gameInstance;
     }
 
     public int getNestorX() {
@@ -52,35 +45,49 @@ public class NestorRunner extends Observable {
         return nestor.getY();
     }
 
-    public void startGame() {
-        score = 0;
+    public void update(double deltaTime) {
+        if (state == GameState.PLAYING) {
+            passiveUpdateScore();
+            moveEntities(deltaTime);
+            entityCountdown -= entitySpeed * deltaTime;
+            if (entityCountdown <= 0) {
+                entityCountdown = ENTITY_SPACING;
+                entities.add(entityFactory.generate());
+            }
+            if (hasCollided()) handleCollision();
+            if (entityOffScreen()) entities.poll();
+            if (isJumping()) jump(deltaTime);
+        }
+    }
+
+    public void start() {
+        nestor = new Nestor();
+        entityFactory = new EntityFactory();
+        entities = new LinkedList<>();
+        state = GameState.PLAYING;
         ticks = 0;
-        entityCountdown = 0;
+        score = 0;
         isShielded = false;
         isDead = false;
         isJumping = false;
-        if (entities.size() > 0) {
-            for (Entity entity : entities)
-                entities.poll();
-        }
-        setChanged();
-        notifyObservers(this);
-        clearChanged();
+        jumpSpeed = 0;
+        entityCountdown = 0;
     }
 
-    public void setDifficulty(String difficulty){
+    public void setDifficulty(Difficulty difficulty) {
         switch (difficulty) {
-            case "Easy":
+            case EASY:
+                this.difficulty = Difficulty.EASY;
                 entitySpeed = 75;
                 break;
-            case "Normal":
+            case MEDIUM:
+                this.difficulty = Difficulty.MEDIUM;
                 entitySpeed = 100;
                 break;
-            case "Hard":
+            case HARD:
+                this.difficulty = Difficulty.HARD;
                 entitySpeed = 125;
                 break;
-            default:
-                throw new IllegalArgumentException("Invalid difficulty " + difficulty);
         }
     }
 
@@ -95,7 +102,7 @@ public class NestorRunner extends Observable {
         }
     }
 
-    public void jump(double deltaTime) {
+    private void jump(double deltaTime) {
         jumpSpeed += GRAVITY * deltaTime;
         nestor.setY((int)(nestor.getY() + (jumpSpeed * deltaTime)));
 
@@ -111,11 +118,7 @@ public class NestorRunner extends Observable {
     }
 
     public boolean isPaused() {
-        return isPaused;
-    }
-
-    public void togglePause() {
-        isPaused = !isPaused;
+        return state == GameState.PAUSED;
     }
 
     /**
@@ -129,9 +132,9 @@ public class NestorRunner extends Observable {
         assert entities.peek() != null;
         Entity entity = entities.peek();
         // ignores collision with certain obstacles while shielded
-        if (isShielded && (entity.type().equals("LargeObstacle")
-                || entity.type().equals("Projectile")
-                || entity.type().equals("SmallObstacle")))
+        if (isShielded && (entity.type() == Entity.Type.LargeObstacle
+                || entity.type() == Entity.Type.Projectile
+                || entity.type() == Entity.Type.SmallObstacle))
             return false;
         // checks for any overlap between Nestor and any entity
         return ((nestor.getX() + nestor.getWidth()) > entity.getX())
@@ -140,59 +143,43 @@ public class NestorRunner extends Observable {
                 && (nestor.getY() < (entity.getY() + entity.getHeight()));
     }
 
-    public void handleCollision() {
+    private void handleCollision() {
         assert entities.peek() != null;
         Entity entity = entities.peek();
-        String entityType = entity.type();
+        Entity.Type entityType = entity.type();
 
         switch (entityType) {
-            case "Coin":
+            case Coin:
                 // coin is consumed and score is increased
                 score += 10;
                 entities.poll();
                 break;
-            case "Shield":
+            case Shield:
                 // shield is consumed and equipped
                 isShielded = true;
                 entities.poll();
                 break;
-            case "Hole":
+            case Hole:
                 // if nestor still on screen, keep falling
                 while (nestor.getY() < 400) {
                     nestor.setY(nestor.getY() + BASE_JUMP_SPEED);
                 }
-                isDead = true;
+                state = GameState.OVER;
                 break;
             default:
-                isDead = true;
+                state = GameState.OVER;
                 break;
         }
     }
 
-    public boolean entityOffScreen() {
+    private boolean entityOffScreen() {
         Entity headEntity = entities.peek();
         assert headEntity != null;
 
         return (headEntity.getX() + headEntity.getWidth() <= 0);
     }
 
-    public void update(double deltaTime) {
-        updateScore();
-        moveEntities(deltaTime);
-        entityCountdown -= entitySpeed * deltaTime;
-        if (entityCountdown <= 0) {
-            entityCountdown = ENTITY_SPACING;
-            entities.add(randEntityGenerator());
-        }
-        if (hasCollided()) handleCollision();
-        if (entityOffScreen()) entities.poll();
-        if (isJumping()) jump(deltaTime);
-        setChanged();
-        notifyObservers(this);
-        clearChanged();
-    }
-
-    public void moveEntities(double deltaTime) {
+    private void moveEntities(double deltaTime) {
         for (Entity entity : entities) {
             entity.setX(entity.getX() - (int) (entitySpeed * deltaTime));;
         }
@@ -202,7 +189,7 @@ public class NestorRunner extends Observable {
         return score;
     }
 
-    public void updateScore() {
+    private void passiveUpdateScore() {
         if (++ticks % 10 == 0) score++;
     }
 
@@ -214,27 +201,8 @@ public class NestorRunner extends Observable {
         return entities;
     }
 
-    public String getDifficulty() {
+    public Difficulty getDifficulty() {
         return difficulty;
     }
-
-    /**
-     * This method will randomly generate an entity
-     * based on probability. Entities that help Nestor
-     * are less likely to spawn than obstacle entities.
-     * @return the randomly generated entity
-     */
-    private Entity randEntityGenerator() {
-        double entitySelector = Math.random();
-        String newEntityType = "";
-
-        if (entitySelector <= 0.1) newEntityType = "Coin";                  // 10% chance
-        else if (entitySelector <= 0.3) newEntityType = "Hole";             // 20% chance
-        else if (entitySelector <= 0.5) newEntityType = "LargeObstacle";    // 20% chance
-        else if (entitySelector <= 0.7) newEntityType = "Projectile";       // 20% chance
-        else if (entitySelector <= 0.8) newEntityType = "Shield";           // 10% chance
-        else newEntityType = "SmallObstacle";                               // 20% chance
-
-        return entityFactory.createEntity(newEntityType);
-    }
 }
+

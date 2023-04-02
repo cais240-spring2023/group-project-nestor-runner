@@ -1,5 +1,7 @@
 package edu.wsu.model.Entities;
 
+import static edu.wsu.model.NestorRunner.GROUND_Y;
+
 public class Shield implements Entity {
 
     public int width = 35;
@@ -33,8 +35,8 @@ public class Shield implements Entity {
     }
 
     @Override
-    public String type() {
-        return "Shield";
+    public Type type() {
+        return Type.Shield;
     }
 
 }

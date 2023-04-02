@@ -1,5 +1,7 @@
 package edu.wsu.model.Entities;
 
+import static edu.wsu.model.NestorRunner.GROUND_Y;
+
 public class SmallObstacle implements Entity {
 
     public int width = 50;
@@ -33,8 +35,8 @@ public class SmallObstacle implements Entity {
     }
 
     @Override
-    public String type() {
-        return "SmallObstacle";
+    public Type type() {
+        return Type.SmallObstacle;
     }
 
 }

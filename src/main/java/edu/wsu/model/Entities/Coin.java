@@ -1,5 +1,7 @@
 package edu.wsu.model.Entities;
 
+import static edu.wsu.model.NestorRunner.GROUND_Y;
+
 public class Coin implements Entity {
 
     public int width = 30;
@@ -33,7 +35,8 @@ public class Coin implements Entity {
     }
 
     @Override
-    public String type() {
-        return "Coin";
+    public Type type() {
+        return Type.Coin;
     }
+
 }

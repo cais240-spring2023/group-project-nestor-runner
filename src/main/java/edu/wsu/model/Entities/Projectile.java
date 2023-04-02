@@ -1,5 +1,7 @@
 package edu.wsu.model.Entities;
 
+import static edu.wsu.model.NestorRunner.GROUND_Y;
+
 public class Projectile implements Entity {
 
     public int width = 30;
@@ -33,7 +35,7 @@ public class Projectile implements Entity {
     }
 
     @Override
-    public String type() {
-        return "Projectile";
+    public Type type() {
+        return Type.Projectile;
     }
 }
