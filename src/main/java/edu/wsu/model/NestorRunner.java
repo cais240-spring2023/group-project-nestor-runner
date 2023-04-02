@@ -24,7 +24,6 @@ public class NestorRunner {
     private boolean isJumping;
     private double jumpSpeed;
     private int entitySpeed;
-    int entityCountdown;
     Difficulty difficulty;
 
     private NestorRunner() {
@@ -47,16 +46,16 @@ public class NestorRunner {
 
     public void update(double deltaTime) {
         if (state == GameState.PLAYING) {
-            passiveUpdateScore();
+            if (ticks % 10 == 0) score++;
+            if ((ticks % (10 * ENTITY_SPACING) == 0) && isShielded) isShielded = false;
             moveEntities(deltaTime);
-            entityCountdown -= entitySpeed * deltaTime;
-            if (entityCountdown <= 0) {
-                entityCountdown = ENTITY_SPACING;
+            if (ticks % ENTITY_SPACING == 0) {
                 entities.add(entityFactory.generate());
             }
             if (hasCollided()) handleCollision();
             if (entityOffScreen()) entities.poll();
             if (isJumping()) jump(deltaTime);
+            ticks++;
         }
     }
 
@@ -71,7 +70,6 @@ public class NestorRunner {
         isDead = false;
         isJumping = false;
         jumpSpeed = 0;
-        entityCountdown = 0;
     }
 
     public void setDifficulty(Difficulty difficulty) {
@@ -115,10 +113,6 @@ public class NestorRunner {
 
     public boolean isDead() {
         return isDead;
-    }
-
-    public boolean isPaused() {
-        return state == GameState.PAUSED;
     }
 
     /**
@@ -187,10 +181,6 @@ public class NestorRunner {
 
     public Integer getScore(){
         return score;
-    }
-
-    private void passiveUpdateScore() {
-        if (++ticks % 10 == 0) score++;
     }
 
     public boolean isShielded() {
