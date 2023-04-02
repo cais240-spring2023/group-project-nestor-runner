@@ -26,6 +26,7 @@ public class MenuController {
         selectDifficulty.getItems().add("Easy");
         selectDifficulty.getItems().add("Normal");
         selectDifficulty.getItems().add("Hard");
+        selectDifficulty.getSelectionModel().selectFirst();
     }
 
     public void handleStartGameAction(ActionEvent actionEvent) throws Exception {

@@ -24,6 +24,8 @@ public class NestorRunnerView extends StackPane implements Observer, View {
     FreezePane gameOverPane;
     FreezePane pausePane;
 
+    NestorRunnerController controller;
+
     public static final String LARGE_OBSTACLE_PNG = "/edu/wsu/sprites/LargeObstacle.png";
     public static final String COIN_PNG = "/edu/wsu/sprites/Coin.png";
     public static final String NESTOR_PNG = "/edu/wsu/sprites/Nestor.png";
@@ -34,7 +36,7 @@ public class NestorRunnerView extends StackPane implements Observer, View {
     public NestorRunnerView() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(NestorRunnerView.class.getResource("/edu/wsu/fxml/game2.fxml"));
         fxmlLoader.setRoot(this);
-        NestorRunnerController controller = new NestorRunnerController();
+        controller = new NestorRunnerController();
         fxmlLoader.setController(controller);
         fxmlLoader.load();
         largeObstacleImg = new Image(Objects.requireNonNull(getClass().getResource(LARGE_OBSTACLE_PNG)).toString());
@@ -55,6 +57,7 @@ public class NestorRunnerView extends StackPane implements Observer, View {
         nestorView = new ImageView(nestorImg);
         nestorView.setX(Nestor.X);
         this.getChildren().add(nestorView);
+        controller.start();
     }
 
     @Override
@@ -76,7 +79,7 @@ public class NestorRunnerView extends StackPane implements Observer, View {
                     break;
                 case "Hole":
                     Rectangle rectangle = new Rectangle(entity.getX(), entity.getY(), entity.getWidth(), entity.getHeight());
-                    rectangle.setFill(Color.WHITE);
+                    rectangle.setFill(Color.LIGHTSTEELBLUE);
                     break;
                 case "LargeObstacle":
                     entityView = new ImageView(largeObstacleImg);

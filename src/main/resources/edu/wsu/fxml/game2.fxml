@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane prefHeight="366.0" prefWidth="600.0" style="-fx-background-color: lightsteelblue;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="stackPane" type="StackPane" prefHeight="366.0" prefWidth="600.0" style="-fx-background-color: lightsteelblue;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="75.0" stroke="BLACK" strokeType="INSIDE" width="600.0" StackPane.alignment="BOTTOM_CENTER" />
       <Label text="Score:" StackPane.alignment="TOP_LEFT">
@@ -26,4 +26,4 @@
          </font>
       </Label>
    </children>
-</StackPane>
+</fx:root>
