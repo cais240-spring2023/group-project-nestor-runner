@@ -1,9 +1,9 @@
 package edu.wsu.model.Entities;
 
 public interface Entity {
-    int START_X = 640;
-    int GROUND_Y = 400;
-    int GROUND_HEIGHT = 175;
+    int START_X = 600;
+    int GROUND_Y = 325;
+    int GROUND_HEIGHT = 75;
     int SPEED = 200;
 
     int getX();

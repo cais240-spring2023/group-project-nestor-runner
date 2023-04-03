@@ -2,7 +2,7 @@ package edu.wsu.model;
 
 public class Nestor {
 
-    public static final int GROUND_Y = 400;
+    public static final int GROUND_Y = 325;
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
     public static final int X = 50;

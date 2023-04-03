@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
-public class NestorRunnerView extends StackPane implements Observer, View {
+public class NestorRunnerView extends Pane implements Observer, View {
 
     Image largeObstacleImg, coinImg, nestorImg, projectileImg, shieldImg, smallObstacleImg;
     ImageView nestorView;
@@ -50,12 +50,15 @@ public class NestorRunnerView extends StackPane implements Observer, View {
     }
 
     public Label getScoreLabel() {
-         return (Label) this.getChildren().get(1);
+         return (Label) this.getChildren().get(2);
     }
 
     public void initializeGame() {
         nestorView = new ImageView(nestorImg);
-        nestorView.setX(Nestor.X);
+        nestorView.setLayoutX(Nestor.X);
+        nestorView.setLayoutY(Nestor.GROUND_Y - Nestor.HEIGHT);
+        nestorView.setFitWidth(Nestor.WIDTH);
+        nestorView.setFitHeight(Nestor.HEIGHT);
         this.getChildren().add(nestorView);
         controller.start();
     }
@@ -69,7 +72,7 @@ public class NestorRunnerView extends StackPane implements Observer, View {
         Label score = getScoreLabel();
         score.setText(gameInstance.getScore().toString());
 
-        nestorView.setY(gameInstance.getNestorY());
+        nestorView.setLayoutY(gameInstance.getNestorY());
 
         for (Entity entity : gameInstance.getEntities()) {
             ImageView entityView = null;
@@ -95,8 +98,10 @@ public class NestorRunnerView extends StackPane implements Observer, View {
                     break;
             }
             if (entityView != null) {
-                entityView.setX(entity.getX());
-                entityView.setY(entity.getY());
+                entityView.setLayoutX(entity.getX());
+                entityView.setLayoutY(entity.getY());
+                entityView.setFitWidth(entity.getWidth());
+                entityView.setFitHeight(entity.getHeight());
             }
             this.getChildren().add(entityView);
         }

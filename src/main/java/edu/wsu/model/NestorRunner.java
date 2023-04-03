@@ -60,7 +60,7 @@ public class NestorRunner extends Observable {
         isDead = false;
         isJumping = false;
         if (entities.size() > 0) {
-            for (Entity entity : entities)
+            for (Entity ignored : entities)
                 entities.poll();
         }
         setChanged();
@@ -194,7 +194,7 @@ public class NestorRunner extends Observable {
 
     public void moveEntities(double deltaTime) {
         for (Entity entity : entities) {
-            entity.setX(entity.getX() - (int) (entitySpeed * deltaTime));;
+            entity.setX(entity.getX() - (int) (entitySpeed * deltaTime));
         }
     }
 
