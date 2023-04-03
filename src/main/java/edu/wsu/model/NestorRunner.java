@@ -1,175 +1,200 @@
 package edu.wsu.model;
 
-import edu.wsu.model.enums.Difficulty;
-import edu.wsu.model.enums.EntityType;
+import edu.wsu.model.Entities.Entity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Random;
-
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class NestorRunner {
-    public boolean paused;
-    public final int ground;
+    private static NestorRunner gameInstance;
+    public GameState state;
+
+    public static final int GROUND_Y = 400;
+    public static final int GROUND_HEIGHT = 50;
+    public static final int BASE_JUMP_SPEED = 400; // m/s
+    public static final double GRAVITY = 600; // m/s^2
+    public static final int ENTITY_SPACING = 200;
+    private Nestor nestor;
+    private EntityFactory entityFactory;
     private int ticks;
-    private ArrayList<EntityType> obstacleTypes;
+    private Queue<Entity> entities;
     private int score;
-    private int obstacleSpeed;
-    Nestor nestor;
-    ArrayList<Obstacle> obstacles;
-    int obstacleSpacing;
-    int obstacleCountdown;
-    Random rand;
+    private boolean isShielded;
+    private boolean isDead;
+    private boolean isJumping;
+    private double jumpSpeed;
+    private int entitySpeed;
     Difficulty difficulty;
     private double speedCounter = 0;
     private double deltaTimeModifier = 1;
 
-    private final String deathSound = "src/main/resources/edu/wsu/sound/deathSound.wav";
-    private final String jumpSound = "src/main/resources/edu/wsu/sound/jumpSound.mp3";
-    private final Media deathMedia = new Media(new File(deathSound).toURI().toString());
-    private final Media jumpMedia = new Media(new File(jumpSound).toURI().toString());
-    private final MediaPlayer deathPlayer = new MediaPlayer(deathMedia);
-    private final MediaPlayer jumpPlayer = new MediaPlayer(jumpMedia);
-
-    public NestorRunner(Difficulty difficulty) {
-        this.ground = 400;
-        this.paused = false;
-        this.score = 0;
-        this.difficulty = difficulty;
-        difficultySetter();
-        this.nestor = new Nestor(ground);
-        this.obstacles = new ArrayList<>();
-        this.obstacleSpacing = 500;
-        this.obstacleCountdown = 0;
-        this.rand = new Random();
-        initializeObstacleTypes();
-
-        ticks = 0;
+    private NestorRunner() {
+        state = GameState.MAIN_MENU;
     }
-    public NestorRunner(Difficulty difficulty, int ground) {
-        this.ground = ground;
-        this.paused = false;
-        this.score = 0;
-        this.difficulty = difficulty;
-        difficultySetter();
-        this.nestor = new Nestor(ground);
-        this.obstacles = new ArrayList<>();
-        this.obstacleSpacing = 200;
-        this.obstacleCountdown = 0;
-        this.rand = new Random();
-        initializeObstacleTypes();
-
-        ticks = 0;
-    }
-
-    private void initializeObstacleTypes(){
-        this.obstacleTypes = new ArrayList<>();
-        obstacleTypes.add(EntityType.SMALL_BUILDING);
-        obstacleTypes.add(EntityType.BIG_BUILDING);
-        // omitted because these obstacles have not been implemented yet
-        obstacleTypes.add(EntityType.PROJECTILE);
-        obstacleTypes.add(EntityType.HOLE);
-
-    }
-
-    private void difficultySetter(){
-        if (this.difficulty == Difficulty.EASY){
-            obstacleSpeed = 200;
-        } else if (this.difficulty == Difficulty.MEDIUM){
-            obstacleSpeed = 300;
-        } else {
-            obstacleSpeed = 400;
+    public static NestorRunner getInstance() {
+        if (gameInstance == null) {
+            gameInstance = new NestorRunner();
         }
+        return gameInstance;
     }
 
-    public void jump() {
-        if(!nestor.getJumpingStatus()) {
-            // only play the jump sound if the player is currently mid-jump (isJumping)
-            jumpPlayer.seek(jumpPlayer.getStartTime());
-            jumpPlayer.play();
-        }
-        nestor.jump();
-    }
-
-
-    public boolean update(double deltaTime){
-        // nestor.update updates nestors current position
-        double deltaTimeMod = deltaTime * deltaTimeModifier;
-        nestor.update(deltaTimeMod);
-        this.speedCounter += deltaTime;
-        if (this.speedCounter >= 5){
-            this.deltaTimeModifier += .1;
-            this.speedCounter = 0;
-        }
-
-        // for each obstacle, update them and check for collision
-
-        for (int i = 0; i < obstacles.size(); i++) {
-            Obstacle obstacle = obstacles.get(i);
-            obstacle.update(deltaTimeMod);
-            if (obstacle.getX() < 110){
-                if (obstacle.leftCollidesWith(nestor)){
-                    // play death sound upon collision
-                    deathPlayer.seek(deathPlayer.getStartTime());
-                    deathPlayer.play();
-                    return true;
-                }
-                // if obstacle is past nestor and outside the screen, delete it.
-                if (obstacle.getX() <= 0 - obstacle.getWidth()){
-                    obstacles.remove(0);
-                }
-            }
-        }
-        // update obstacle countdown based on change in time
-        obstacleCountdown -= obstacleSpeed * deltaTimeMod;
-
-        // if the obstacle countdown reaches zero, its time to spawn an obstacle and reset the countdown
-        if (obstacleCountdown <= 0) {
-            obstacleCountdown = obstacleSpacing;
-            obstacles.add(randObstacleGenerator());
-            // obstacles.add(new Obstacle(canvasWidth, canvasHeight - OBSTACLE_HEIGHT));
-        }
-        return false;
-    }
-    public double getNestorX(){
+    public int getNestorX() {
         return nestor.getX();
     }
-    public double getNestorY(){
+
+    public int getNestorY() {
         return nestor.getY();
     }
 
-    public int getScore(){
+    public void update(double deltaTime) {
+        if (state == GameState.PLAYING) {
+            if (ticks % 10 == 0) score++;
+            if ((ticks % (10 * ENTITY_SPACING) == 0) && isShielded) isShielded = false;
+            moveEntities(deltaTime);
+            if (ticks % ENTITY_SPACING == 0) {
+                entities.add(entityFactory.generate());
+            }
+            if (hasCollided()) handleCollision();
+            if (entityOffScreen()) entities.poll();
+            if (isJumping()) jump(deltaTime);
+            ticks++;
+        }
+    }
+
+    public void start() {
+        nestor = new Nestor();
+        entityFactory = new EntityFactory();
+        entities = new LinkedList<>();
+        state = GameState.PLAYING;
+        ticks = 0;
+        score = 0;
+        isShielded = false;
+        isDead = false;
+        isJumping = false;
+        jumpSpeed = 0;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        switch (difficulty) {
+            case EASY:
+                this.difficulty = Difficulty.EASY;
+                entitySpeed = 75;
+                break;
+            case MEDIUM:
+                this.difficulty = Difficulty.MEDIUM;
+                entitySpeed = 100;
+                break;
+            case HARD:
+                this.difficulty = Difficulty.HARD;
+                entitySpeed = 125;
+                break;
+        }
+    }
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public void setJump() {
+        if (!isJumping()) {
+            jumpSpeed = -BASE_JUMP_SPEED;
+            isJumping = true;
+        }
+    }
+
+    private void jump(double deltaTime) {
+        jumpSpeed += GRAVITY * deltaTime;
+        nestor.setY((int)(nestor.getY() + (jumpSpeed * deltaTime)));
+
+        if (nestor.getY() >= GROUND_Y - nestor.getHeight()) {
+            nestor.setY(GROUND_Y - nestor.getHeight());
+            jumpSpeed = 0;
+            isJumping = false;
+        }
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
+    /**
+     * This method checks for a valid collision between any
+     * entity and Nestor. A collision is valid if Nestor is
+     * not shielded.
+     * @return true if Nestor overlaps with an entity,
+     * false otherwise
+     */
+    public boolean hasCollided() {
+        assert entities.peek() != null;
+        Entity entity = entities.peek();
+        // ignores collision with certain obstacles while shielded
+        if (isShielded && (entity.type() == Entity.Type.LargeObstacle
+                || entity.type() == Entity.Type.Projectile
+                || entity.type() == Entity.Type.SmallObstacle))
+            return false;
+        // checks for any overlap between Nestor and any entity
+        return ((nestor.getX() + nestor.getWidth()) > entity.getX())
+                && (nestor.getX() < (entity.getX() + entity.getWidth()))
+                && ((nestor.getY() + nestor.getHeight()) > entity.getY())
+                && (nestor.getY() < (entity.getY() + entity.getHeight()));
+    }
+
+    private void handleCollision() {
+        assert entities.peek() != null;
+        Entity entity = entities.peek();
+        Entity.Type entityType = entity.type();
+
+        switch (entityType) {
+            case Coin:
+                // coin is consumed and score is increased
+                score += 10;
+                entities.poll();
+                break;
+            case Shield:
+                // shield is consumed and equipped
+                isShielded = true;
+                entities.poll();
+                break;
+            case Hole:
+                // if nestor still on screen, keep falling
+                while (nestor.getY() < 400) {
+                    nestor.setY(nestor.getY() + BASE_JUMP_SPEED);
+                }
+                state = GameState.OVER;
+                break;
+            default:
+                state = GameState.OVER;
+                break;
+        }
+    }
+
+    private boolean entityOffScreen() {
+        Entity headEntity = entities.peek();
+        assert headEntity != null;
+
+        return (headEntity.getX() + headEntity.getWidth() <= 0);
+    }
+
+    private void moveEntities(double deltaTime) {
+        for (Entity entity : entities) {
+            entity.setX(entity.getX() - (int) (entitySpeed * deltaTime));;
+        }
+    }
+
+    public Integer getScore(){
         return score;
     }
 
-    public ArrayList<Double> getObstaclePositions(){
-        ArrayList<Double> positions = new ArrayList<>();
-        for (Obstacle obstacle : obstacles) {
-            positions.add(obstacle.getX());
-        }
-        return positions;
+    public boolean isShielded() {
+        return isShielded;
     }
-     public ArrayList<Entity> getEntities(){
-        ArrayList<Entity> entities = new ArrayList<>();
-        entities.add(nestor);
-        entities.addAll(obstacles);
+
+    public Queue<Entity> getEntities() {
         return entities;
-     }
+    }
 
-     public Difficulty getDifficulty() {
+    public Difficulty getDifficulty() {
         return difficulty;
-     }
-     public void setDifficulty(Difficulty newDifficulty) {
-        difficulty = newDifficulty;
-     }
-
-     private Obstacle randObstacleGenerator(){
-
-        int obstacleSelector = rand.nextInt(4); // set bound equal to # of available obstacles
-        return new Obstacle(obstacleTypes.get(obstacleSelector), this.obstacleSpeed);
-
-     }
+    }
 }
+
