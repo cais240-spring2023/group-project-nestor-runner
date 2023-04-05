@@ -117,8 +117,11 @@ public class GameView extends StackPane implements View {
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
         if (spriteName.equals("Hole")) {
+            int holeViewWidth = 3 * width;
+            int viewXPos = xPos - ((holeViewWidth-width) / 2);
+
             gc.setFill(Color.LIGHTBLUE);
-            gc.fillRect(xPos, yPos, width, ground.getHeight());
+            gc.fillRect(viewXPos, yPos, holeViewWidth, ground.getHeight());
         } else {
             String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
             Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());

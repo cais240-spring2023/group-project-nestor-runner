@@ -19,7 +19,7 @@ public class EntityFactory {
         if (entitySelector <= 0.1) newEntityType = Entity.Type.Coin;                    // 10% chance
         else if (entitySelector <= 0.3) newEntityType = Entity.Type.Hole;               // 20% chance
         else if (entitySelector <= 0.5) newEntityType = Entity.Type.LargeObstacle;     // 20% chance
-        else if (entitySelector <= 0.7) newEntityType = Entity.Type.Projectile;         // 20% chance
+        else if (entitySelector <= 0.7) newEntityType = Entity.Type.Flyer;         // 20% chance
         else if (entitySelector <= 0.8) newEntityType = Entity.Type.Shield;             // 10% chance
         else newEntityType = Entity.Type.SmallObstacle;                                // 20% chance
 
@@ -30,8 +30,8 @@ public class EntityFactory {
                 return new Hole();
             case LargeObstacle:
                 return new LargeObstacle();
-            case Projectile:
-                return new Projectile();
+            case Flyer:
+                return new Flyer();
             case Shield:
                 return new Shield();
             case SmallObstacle:

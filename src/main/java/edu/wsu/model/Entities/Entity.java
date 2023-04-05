@@ -1,9 +1,9 @@
 package edu.wsu.model.Entities;
 
 public interface Entity {
-    enum Type {
-        Nestor, BigBuilding, SMALL_BUILDING, Projectile,
-        Hole, Coin, SmallObstacle, Shield, LargeObstacle,
+    enum Type {  // these need to mirror the Sprite file names in order to work.
+        Flyer, Hole, Coin, SmallObstacle,
+        Shield, LargeObstacle, Cannon
     }
 
     int START_X = 640;

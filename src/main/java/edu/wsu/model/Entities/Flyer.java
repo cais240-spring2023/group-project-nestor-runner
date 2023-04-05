@@ -2,12 +2,12 @@ package edu.wsu.model.Entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class Hole implements Entity {
+public class Flyer implements Entity {
 
-    public int width = 25;
-    public int height = 1;
+    public int width = 30;
+    public int height = 20;
     public int x = START_X;
-    public int y = GROUND_Y - height;
+    public int y = GROUND_Y - height - 60;
 
     @Override
     public int getX() {
@@ -36,7 +36,6 @@ public class Hole implements Entity {
 
     @Override
     public Type type() {
-        return Type.Hole;
+        return Type.Flyer;
     }
-
 }

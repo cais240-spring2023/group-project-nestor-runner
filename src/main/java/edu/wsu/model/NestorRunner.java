@@ -10,7 +10,6 @@ public class NestorRunner {
     public GameState state;
 
     public static final int GROUND_Y = 400;
-    public static final int GROUND_HEIGHT = 50;
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final double GRAVITY = 600; // m/s^2
     public static final int ENTITY_SPACING = 200;
@@ -129,7 +128,7 @@ public class NestorRunner {
         Entity entity = entities.peek();
         // ignores collision with certain obstacles while shielded
         if (isShielded && (entity.type() == Entity.Type.LargeObstacle
-                || entity.type() == Entity.Type.Projectile
+                || entity.type() == Entity.Type.Flyer
                 || entity.type() == Entity.Type.SmallObstacle))
             return false;
         // checks for any overlap between Nestor and any entity
