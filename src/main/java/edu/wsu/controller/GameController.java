@@ -17,8 +17,10 @@ public class GameController {
     }
 
     public void start() {
-        nestorRunner.start();
+        nestorRunner.startNewGame();
         gameView.getSound().startBackGroundTrack();
+        gameView.getSound().startDoomSoundTrack();
+        gameView.getSound().pauseDoomSoundTrack();
         gameView.getEndPane().setButton1Action(e -> {
             gameView.again();
             start();
@@ -39,9 +41,6 @@ public class GameController {
                 lastTime = now;
 
                 nestorRunner.update(deltaTime);
-
-                // this parameter is the only dependency between Model and View
-                // in the entire program. It can be resolved by just passing the raw data that you need.
                 gameView.update(nestorRunner);
 
                 gameView.setEventHandler(event -> {
@@ -56,6 +55,11 @@ public class GameController {
                             stop();
                             nestorRunner.state = GameState.PAUSED;
                             gameView.pause();
+                        }
+                    }
+                    if (event.getCode() == KeyCode.D) {
+                        if (nestorRunner.getCannonTimer() > 0) {
+                            nestorRunner.fireCannon();
                         }
                     }
                 });

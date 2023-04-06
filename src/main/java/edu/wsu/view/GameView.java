@@ -96,10 +96,31 @@ public class GameView extends StackPane implements View {
                         entity.getWidth(), entity.getHeight()
                 );
             }
-            draw("Nestor",
-                    nestorRunner.getNestorX(), nestorRunner.getNestorY(),
-                    Nestor.WIDTH, Nestor.HEIGHT);
-            drawScore(nestorRunner.getScore());
+
+        if (nestorRunner.cannonBallIsActive()) {
+            draw("CannonBall", nestorRunner.getCannonBallX() - 45,
+                    nestorRunner.getCannonBallY() - 5,
+                    80, 40);
+        }
+
+
+        if (nestorRunner.getCannonTimer() > 0) {
+                draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
+                        73, 55);
+                if (sound.backGroundTrackIsPlaying()) {
+                    sound.pauseBackGroundTrack();
+                    sound.startDoomSoundTrack();
+                }
+            }
+            else if (sound.doomSoundTrackIsPlaying()){
+                sound.pauseDoomSoundTrack();
+                sound.resumeBackGroundTrack();
+            }
+
+        draw("Nestor",
+                nestorRunner.getNestorX(), nestorRunner.getNestorY(),
+                Nestor.WIDTH, Nestor.HEIGHT);
+        drawScore(nestorRunner.getScore());
     }
 
     public void wipeGC() {
@@ -113,7 +134,7 @@ public class GameView extends StackPane implements View {
     }
 
     /**
-     * @param spriteName the name of the Sprite in resources (including file extension).
+     * @param spriteName the name of the Sprite in resources.
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
         if (spriteName.equals("Hole")) {
@@ -136,6 +157,7 @@ public class GameView extends StackPane implements View {
     public void end() {
         getChildren().add(endPane);
         sound.stopBackGroundTrack();
+        sound.stopDoomSoundTrack();
         sound.playDeathSound();
     }
     public void again() {

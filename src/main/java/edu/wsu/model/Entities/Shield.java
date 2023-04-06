@@ -7,7 +7,7 @@ public class Shield implements Entity {
     public int width = 35;
     public int height = 45;
     public int x = START_X;
-    public int y = GROUND_Y - height;
+    public int y = GROUND_Y - height - 5;
 
     @Override
     public int getX() {

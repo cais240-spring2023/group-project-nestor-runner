@@ -4,10 +4,10 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Cannon implements Entity {
 
-    public int width = 50;
-    public int height = 30;
+    public int width = 80;
+    public int height = 60;
     public int x = START_X;
-    public int y = GROUND_Y - height;
+    public int y = GROUND_Y - height - 7;
 
     @Override
     public int getX() {

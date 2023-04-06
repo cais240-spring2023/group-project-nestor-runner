@@ -11,16 +11,19 @@ public class NestorRunner {
 
     public static final int GROUND_Y = 400;
     public static final int BASE_JUMP_SPEED = 400; // m/s
+    public static final int CANNON_BALL_SPEED = 7;
     public static final double GRAVITY = 600; // m/s^2
     public static final int ENTITY_SPACING = 200;
     private Nestor nestor;
+    private CannonBall cannonBall;
     private EntityFactory entityFactory;
     private int ticks;
     private Queue<Entity> entities;
     private int score;
-    private boolean isShielded;
-    private boolean isDead;
+    public int shieldTimer;
+    public int cannonTimer;
     private boolean isJumping;
+    private boolean isCannonBall;
     private double jumpSpeed;
     private int entitySpeed;
     Difficulty difficulty;
@@ -44,31 +47,50 @@ public class NestorRunner {
     public int getNestorY() {
         return nestor.getY();
     }
+    public int getCannonBallX() {
+        if (cannonBall == null) return -1;
+        return cannonBall.getX();
+    }
+    public int getCannonBallY() {
+        if (cannonBall == null) return -1;
+        return cannonBall.getY();
+    }
 
     public void update(double deltaTime) {
         if (state == GameState.PLAYING) {
-            if (ticks % 10 == 0) score++;
-            if ((ticks % (10 * ENTITY_SPACING) == 0) && isShielded) isShielded = false;
             moveEntities(deltaTime);
+
+            if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
+
             if (ticks % ENTITY_SPACING == 0) {
                 entities.add(entityFactory.generate());
             }
+
+            if (ticks % 10 == 0) score++;
+            if (shieldTimer > 0) shieldTimer--;
+            if (cannonTimer > 0) cannonTimer--;
+            if (cannonBall != null) {
+                moveCannonBall();
+                if (cannonBallOffScreen()) cannonBall = null;
+                if (cannonBallHasHit()) handleCannonBallCollision();
+            }
             if (hasCollided()) handleCollision();
-            if (entityOffScreen()) entities.poll();
+            if (entityPassedLeft()) entities.poll();
             if (isJumping()) jump(deltaTime);
             ticks++;
         }
     }
 
-    public void start() {
+    public void startNewGame() {
         nestor = new Nestor();
+        cannonBall = null;
         entityFactory = new EntityFactory();
         entities = new LinkedList<>();
         state = GameState.PLAYING;
         ticks = 0;
         score = 0;
-        isShielded = false;
-        isDead = false;
+        shieldTimer = 0;
+        cannonTimer = 0;
         isJumping = false;
         jumpSpeed = 0;
     }
@@ -96,7 +118,8 @@ public class NestorRunner {
 
     public void setJump() {
         if (!isJumping()) {
-            jumpSpeed = -BASE_JUMP_SPEED;
+            if (cannonTimer > 0) jumpSpeed = -BASE_JUMP_SPEED - 100;
+            else jumpSpeed = -BASE_JUMP_SPEED;
             isJumping = true;
         }
     }
@@ -105,15 +128,11 @@ public class NestorRunner {
         jumpSpeed += GRAVITY * deltaTime;
         nestor.setY((int)(nestor.getY() + (jumpSpeed * deltaTime)));
 
-        if (nestor.getY() >= GROUND_Y - nestor.getHeight()) {
-            nestor.setY(GROUND_Y - nestor.getHeight());
+        if (nestor.getY() >= GROUND_Y - Nestor.HEIGHT) {
+            nestor.setY(GROUND_Y - Nestor.HEIGHT);
             jumpSpeed = 0;
             isJumping = false;
         }
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 
     /**
@@ -124,17 +143,18 @@ public class NestorRunner {
      * false otherwise
      */
     public boolean hasCollided() {
-        assert entities.peek() != null;
         Entity entity = entities.peek();
+        if (entity == null) return false;
+
         // ignores collision with certain obstacles while shielded
-        if (isShielded && (entity.type() == Entity.Type.LargeObstacle
+        if (shieldTimer > 0 && (entity.type() == Entity.Type.LargeObstacle
                 || entity.type() == Entity.Type.Flyer
                 || entity.type() == Entity.Type.SmallObstacle))
             return false;
         // checks for any overlap between Nestor and any entity
-        return ((nestor.getX() + nestor.getWidth()) > entity.getX())
+        return ((nestor.getX() + Nestor.WIDTH) > entity.getX())
                 && (nestor.getX() < (entity.getX() + entity.getWidth()))
-                && ((nestor.getY() + nestor.getHeight()) > entity.getY())
+                && ((nestor.getY() + Nestor.HEIGHT) > entity.getY())
                 && (nestor.getY() < (entity.getY() + entity.getHeight()));
     }
 
@@ -151,7 +171,11 @@ public class NestorRunner {
                 break;
             case Shield:
                 // shield is consumed and equipped
-                isShielded = true;
+                shieldTimer = 500;
+                entities.poll();
+                break;
+            case Cannon:
+                cannonTimer = 1_000;
                 entities.poll();
                 break;
             case Hole:
@@ -167,9 +191,9 @@ public class NestorRunner {
         }
     }
 
-    private boolean entityOffScreen() {
+    private boolean entityPassedLeft() {
         Entity headEntity = entities.peek();
-        assert headEntity != null;
+        if (headEntity == null) return false;
 
         return (headEntity.getX() + headEntity.getWidth() <= 0);
     }
@@ -180,12 +204,60 @@ public class NestorRunner {
         }
     }
 
-    public Integer getScore(){
-        return score;
+    public void fireCannon() {
+        assert cannonTimer > 0;
+        int recoil = 30;
+
+        if (cannonBall != null) return;
+        nestor.setX(nestor.getX() - recoil);
+        cannonBall = new CannonBall(getNestorY());
     }
 
-    public boolean isShielded() {
-        return isShielded;
+    private void moveCannonBall() {
+        assert cannonBall != null;
+        cannonBall.setX(cannonBall.getX() + CANNON_BALL_SPEED);
+    }
+
+    private boolean cannonBallHasHit() {
+        Entity headEntity = entities.peek();
+        if (headEntity == null || cannonBall == null) return false;
+
+        return cannonBall.getX() + CannonBall.WIDTH > headEntity.getX();
+    }
+
+    private void handleCannonBallCollision() {
+        assert entities.peek() != null;
+        Entity entity = entities.peek();
+        Entity.Type entityType = entity.type();
+
+        if (entityType == Entity.Type.LargeObstacle ||
+                entityType == Entity.Type.SmallObstacle ||
+                entityType == Entity.Type.Flyer) {
+            entities.poll();
+            cannonBall = null;
+            score += 100;
+        }
+    }
+
+    private boolean cannonBallOffScreen() {
+        assert cannonBall != null;
+        return cannonBall.getX() > Entity.START_X;
+    }
+
+
+    public int getCannonTimer() {
+        return cannonTimer;
+    }
+
+    public int getShieldTimer() {
+        return shieldTimer;
+    }
+    public boolean cannonBallIsActive() {
+        return cannonBall != null;
+    }
+
+    public int getScore(){
+        return score;
     }
 
     public Queue<Entity> getEntities() {
