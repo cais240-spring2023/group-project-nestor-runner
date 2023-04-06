@@ -6,6 +6,7 @@ public class CannonBall {
 
     public static final int WIDTH = 30;
     public static final int HEIGHT = 30;
+    public static final int SPEED = 10;
     public int x = 100;
     private int y;
 

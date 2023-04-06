@@ -11,7 +11,6 @@ public class NestorRunner {
 
     public static final int GROUND_Y = 400;
     public static final int BASE_JUMP_SPEED = 400; // m/s
-    public static final int CANNON_BALL_SPEED = 7;
     public static final double GRAVITY = 600; // m/s^2
     public static final int ENTITY_SPACING = 200;
     private Nestor nestor;
@@ -23,7 +22,6 @@ public class NestorRunner {
     public int shieldTimer;
     public int cannonTimer;
     private boolean isJumping;
-    private boolean isCannonBall;
     private double jumpSpeed;
     private int entitySpeed;
     Difficulty difficulty;
@@ -60,6 +58,7 @@ public class NestorRunner {
         if (state == GameState.PLAYING) {
             moveEntities(deltaTime);
 
+            // recoil from cannon
             if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
 
             if (ticks % ENTITY_SPACING == 0) {
@@ -215,14 +214,15 @@ public class NestorRunner {
 
     private void moveCannonBall() {
         assert cannonBall != null;
-        cannonBall.setX(cannonBall.getX() + CANNON_BALL_SPEED);
+        cannonBall.setX(cannonBall.getX() + CannonBall.SPEED);
     }
 
     private boolean cannonBallHasHit() {
         Entity headEntity = entities.peek();
         if (headEntity == null || cannonBall == null) return false;
 
-        return cannonBall.getX() + CannonBall.WIDTH > headEntity.getX();
+        return (cannonBall.getX() + CannonBall.WIDTH > headEntity.getX() &&
+                cannonBall.getY() + CannonBall.HEIGHT > headEntity.getY());
     }
 
     private void handleCannonBallCollision() {

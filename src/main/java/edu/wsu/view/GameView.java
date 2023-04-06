@@ -168,10 +168,12 @@ public class GameView extends StackPane implements View {
     public void pause() {
         getChildren().add(pausePane);
         sound.pauseBackGroundTrack();
+        sound.pauseDoomSoundTrack();
     }
     public void unPause() {
         getChildren().remove(pausePane);
         sound.resumeBackGroundTrack();
+        sound.resumeDoomSoundTrack();
     }
 
 
