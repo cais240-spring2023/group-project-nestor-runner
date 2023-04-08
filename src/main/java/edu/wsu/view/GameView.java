@@ -88,14 +88,14 @@ public class GameView extends StackPane implements View {
     }
 
     public void update(NestorRunner nestorRunner) {
-            wipeGC();
-            for (Entity entity : nestorRunner.getEntities()) {
-                draw(
-                        entity.type().toString(),
-                        entity.getX(), entity.getY(),
-                        entity.getWidth(), entity.getHeight()
-                );
-            }
+        wipeGC();
+        for (Entity entity : nestorRunner.getEntities()) {
+            draw(
+                    entity.type().toString(),
+                    entity.getX(), entity.getY(),
+                    entity.getWidth(), entity.getHeight()
+            );
+        }
 
         if (nestorRunner.cannonBallIsActive()) {
             draw("CannonBall", nestorRunner.getCannonBallX() - 45,
@@ -103,14 +103,13 @@ public class GameView extends StackPane implements View {
                     80, 40);
         }
 
-
         if (nestorRunner.getCannonTimer() > 0) {
-                draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
-                        73, 55);
-                if (sound.backGroundTrackIsPlaying()) {
-                    sound.pauseBackGroundTrack();
-                    sound.startDoomSoundTrack();
-                }
+            draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
+                    73, 55);
+            if (sound.backGroundTrackIsPlaying()) {
+                sound.pauseBackGroundTrack();
+                sound.startDoomSoundTrack();
+            }
             }
             else if (sound.doomSoundTrackIsPlaying()){
                 sound.pauseDoomSoundTrack();
