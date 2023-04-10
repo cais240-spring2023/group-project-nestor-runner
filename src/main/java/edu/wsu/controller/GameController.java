@@ -3,17 +3,34 @@ package edu.wsu.controller;
 import edu.wsu.model.GameState;
 import edu.wsu.model.NestorRunner;
 import edu.wsu.view.GameView;
+import edu.wsu.view.View;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventTarget;
 import javafx.scene.input.KeyCode;
 
-public class GameController {
+public class GameController{
 
     private final NestorRunner nestorRunner;
     private final GameView gameView;
 
+    AnimationTimer timer;
+
     public GameController(GameView gameView) {
         nestorRunner = NestorRunner.getInstance();
         this.gameView = gameView;
+        //gameView.getPausePane().setButton1Action();
+
+    }
+
+    public void togglePause(){
+        gameView.togglePause();
+        nestorRunner.togglePause();
+    }
+
+    private void animationTimerContent(long now){
+
     }
 
     public void start() {
@@ -23,8 +40,18 @@ public class GameController {
             gameView.again();
             start();
         });
+        gameView.getPausePane().setButton1Action(e -> {
+            togglePause();
+        });
+        gameView.getPausePane().setButton2Action(e -> {
+            nestorRunner.togglePause();
+            timer.stop();
+            gameView.swapToMainMenu(e);
+            gameView.togglePause();
+        });
 
-        AnimationTimer timer = new AnimationTimer() {
+
+        this.timer = new AnimationTimer() {
             long lastTime = 0;
 
             @Override
@@ -51,23 +78,23 @@ public class GameController {
                         }
                         nestorRunner.setJump();
                     }
+                    // escape to toggle pause/unpause
                     if (event.getCode() == KeyCode.ESCAPE) {
-                        if (nestorRunner.state == GameState.PLAYING) {
-                            stop();
-                            nestorRunner.state = GameState.PAUSED;
-                            gameView.pause();
-                        }
+                        togglePause();
+                        //stop();
+                        //nestorRunner.state = GameState.PAUSED;
+                        //gameView.pause();
                     }
                 });
 
                 if (nestorRunner.state == GameState.OVER) {
                     stop();
                     gameView.end();
+                } else if (nestorRunner.state == GameState.MAIN_MENU){
+                    stop();
                 }
             }
         };
-
-
         timer.start();
     }
 }
