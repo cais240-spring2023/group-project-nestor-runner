@@ -10,7 +10,8 @@ public class Sound {
     private MediaPlayer deathPlayer;
     private MediaPlayer jumpPlayer;
     private MediaPlayer collectPlayer;
-    private MediaPlayer backgroundPlayer;
+    private MediaPlayer backGroundPlayer;
+    private MediaPlayer doomPlayer;
 
     private static MediaPlayer generateMediaPlayer(String sound) {
         Media media = new Media(new File("src/main/resources/edu/wsu/sound/" + sound).toURI().toString());
@@ -21,7 +22,8 @@ public class Sound {
         deathPlayer = generateMediaPlayer("deathSound.wav");
         jumpPlayer = generateMediaPlayer("jumpSound.mp3");
         // collectPlayer = generateMediaPlayer("");
-        backgroundPlayer = generateMediaPlayer("Fluffing-a-Duck.mp3");
+        backGroundPlayer = generateMediaPlayer("Fluffing-a-Duck.mp3");
+        doomPlayer = generateMediaPlayer("Rip-and-Tear-Doom-OST.mp3");
     }
     public void playDeathSound() {
         deathPlayer.seek(deathPlayer.getStartTime());
@@ -39,21 +41,48 @@ public class Sound {
     }
 
     public void startBackGroundTrack() {
-        backgroundPlayer.seek(backgroundPlayer.getStartTime());
-        backgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        backgroundPlayer.setVolume(0.2);
-        backgroundPlayer.play();
+        backGroundPlayer.seek(backGroundPlayer.getStartTime());
+        backGroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        backGroundPlayer.setVolume(0.2);
+        backGroundPlayer.play();
     }
 
     public void pauseBackGroundTrack() {
-        backgroundPlayer.pause();
+        backGroundPlayer.pause();
     }
 
     public void resumeBackGroundTrack() {
-        backgroundPlayer.play();
+        backGroundPlayer.play();
     }
 
     public void stopBackGroundTrack() {
-        backgroundPlayer.stop();
+        backGroundPlayer.stop();
+    }
+
+    public void startDoomSoundTrack() {
+        doomPlayer.seek(doomPlayer.getStartTime());
+        doomPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        doomPlayer.setVolume(0.2);
+        doomPlayer.play();
+    }
+
+    public void pauseDoomSoundTrack() {
+        doomPlayer.pause();
+    }
+
+    public void resumeDoomSoundTrack() {
+        doomPlayer.play();
+    }
+
+    public void stopDoomSoundTrack() {
+        doomPlayer.stop();
+    }
+
+    public boolean backGroundTrackIsPlaying() {
+        return backGroundPlayer.getStatus() == MediaPlayer.Status.PLAYING;
+    }
+
+    public boolean doomSoundTrackIsPlaying() {
+        return doomPlayer.getStatus() == MediaPlayer.Status.PLAYING;
     }
 }
