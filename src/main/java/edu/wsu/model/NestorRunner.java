@@ -33,7 +33,7 @@ public class NestorRunner {
 
     private NestorRunner() {
         state = GameState.MAIN_MENU;
-        start();
+        startNewGame();
     }
     public static NestorRunner getInstance() {
         if (gameInstance == null) {
@@ -67,28 +67,36 @@ public class NestorRunner {
     }
 
     public void update(double deltaTime) {
-        double deltaTimeModified = deltaTime * deltaTimeModifier;
-        if (!isPaused){
-            if (state == GameState.PLAYING) {
-                if (ticks % 10 == 0){
-                    score++;
-                    if (deltaTimeModifier < 3.5){
-                        deltaTimeModifier += 0.01;
-                    }
-                    if (entitySpacing > 60){
-                        entitySpacing--;
-                    }
-                }
-                if ((ticks % (10 * entitySpacing) == 0) && isShielded) isShielded = false;
-                moveEntities(deltaTimeModified);
-                if (ticks % entitySpacing == 0) {
-                    entities.add(entityFactory.generate());
-                }
-                if (hasCollided()) handleCollision();
-                if (entityOffScreen()) entities.poll();
-                if (isJumping()) jump(deltaTimeModified);
-                ticks++;
+        if (state == GameState.PLAYING) {
+            moveEntities(deltaTime);
+
+            // recoil from cannon
+            if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
+            if (cannonTimer > 0) cannonTimer--;
+            if (cannonBall != null) {
+                moveCannonBall();
+                if (cannonBallOffScreen()) cannonBall = null;
+                if (cannonBallHasHit()) handleCannonBallCollision();
             }
+
+
+            if (ticks % 10 == 0) {
+                score++;
+                if (deltaTimeModifier < 3.5){
+                    deltaTimeModifier += 0.01;
+                }
+                if (entitySpacing > 60){
+                    entitySpacing--;
+                }
+            }
+            if (shieldTimer > 0) shieldTimer--;
+            if (ticks % entitySpacing == 0) {
+                entities.add(entityFactory.generate());
+            }
+            if (hasCollided()) handleCollision();
+            if (entityPassedLeft()) entities.poll();
+            if (isJumping()) jump(deltaTime);
+            ticks++;
         }
     }
 
@@ -158,20 +166,13 @@ public class NestorRunner {
      */
     public boolean hasCollided() {
         Entity entity = entities.peek();
-        if (entity != null) return false;
-            /*
-        if (isShielded && (entity.type() == Entity.Type.LargeObstacle
-                || entity.type() == Entity.Type.Flyer
-                || entity.type() == Entity.Type.SmallObstacle))
-            return false;
+        if (entity == null) return false;
 
-         */
         // checks for any overlap between Nestor and any entity
-        return ((nestor.getX() + nestor.getWidth()) > entity.getX())
+        return ((nestor.getX() + Nestor.WIDTH) > entity.getX())
                 && (nestor.getX() < (entity.getX() + entity.getWidth()))
-                && ((nestor.getY() + nestor.getHeight()) > entity.getY())
+                && ((nestor.getY() + Nestor.HEIGHT) > entity.getY())
                 && (nestor.getY() < (entity.getY() + entity.getHeight()));
-
     }
 
     private void handleCollision() {
@@ -202,8 +203,8 @@ public class NestorRunner {
                 state = GameState.OVER;
                 break;
             default:
-                if (isShielded){
-                    isShielded = false;
+                if (shieldTimer > 0) {
+                    shieldTimer = 0;
                     entities.poll();
                 } else {
                     state = GameState.OVER;
@@ -214,7 +215,8 @@ public class NestorRunner {
 
     private boolean entityPassedLeft() {
         Entity headEntity = entities.peek();
-        if (headEntity == null) return false
+        if (headEntity == null) return false;
+
         return (headEntity.getX() + headEntity.getWidth() <= 0);
         //return (headEntity.getX() + headEntity.getWidth() <= 0);
     }
