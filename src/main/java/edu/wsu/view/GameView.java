@@ -36,6 +36,7 @@ public class GameView extends StackPane implements View {
     private final FreezePane pausePane;
     private final GraphicsContext gc;
     private final Canvas canvas;
+    private boolean paused = false;
 
     public GameView(int groundLevel) {
         super();
@@ -76,7 +77,7 @@ public class GameView extends StackPane implements View {
         canvas.requestFocus();
     }
 
-    private void swapToMainMenu(ActionEvent event) {
+    public void swapToMainMenu(ActionEvent event) {
         try {
             FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
             Parent menuRoot = menuLoader.load();
@@ -86,6 +87,11 @@ public class GameView extends StackPane implements View {
             throw new RuntimeException(e);
         }
     }
+    public void getStage(){
+
+    }
+
+
 
     public void update(NestorRunner nestorRunner) {
         wipeGC();
@@ -164,17 +170,23 @@ public class GameView extends StackPane implements View {
         sound.startBackGroundTrack();
     }
 
+    public void togglePause(){
+        if (paused){
+            paused = false;
+            getChildren().remove(pausePane);
+            sound.resumeBackGroundTrack();
+        } else {
+            paused = true;
+            getChildren().add(pausePane);
+            sound.pauseBackGroundTrack();
+        }
+    }
+
     public void pause() {
         getChildren().add(pausePane);
         sound.pauseBackGroundTrack();
         sound.pauseDoomSoundTrack();
     }
-    public void unPause() {
-        getChildren().remove(pausePane);
-        sound.resumeBackGroundTrack();
-        sound.resumeDoomSoundTrack();
-    }
-
 
     public FreezePane getPausePane() {
         return pausePane;
