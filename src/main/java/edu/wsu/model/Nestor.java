@@ -6,11 +6,11 @@ public class Nestor {
 
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
-    public static final int X = 50;
+    private int x = 50;
     private int y = GROUND_Y - HEIGHT;
 
     public int getX() {
-        return X;
+        return x;
     }
 
     public int getY() {
@@ -20,12 +20,7 @@ public class Nestor {
     public void setY(int y) {
         this.y = y;
     }
-
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    public int getHeight() {
-        return HEIGHT;
+    public void setX(int x) {
+        this.x = x;
     }
 }

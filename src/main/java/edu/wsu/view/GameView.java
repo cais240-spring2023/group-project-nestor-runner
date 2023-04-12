@@ -94,18 +94,38 @@ public class GameView extends StackPane implements View {
 
 
     public void update(NestorRunner nestorRunner) {
-            wipeGC();
-            for (Entity entity : nestorRunner.getEntities()) {
-                draw(
-                        entity.type().toString(),
-                        entity.getX(), entity.getY(),
-                        entity.getWidth(), entity.getHeight()
-                );
+        wipeGC();
+        for (Entity entity : nestorRunner.getEntities()) {
+            draw(
+                    entity.type().toString(),
+                    entity.getX(), entity.getY(),
+                    entity.getWidth(), entity.getHeight()
+            );
+        }
+
+        if (nestorRunner.cannonBallIsActive()) {
+            draw("CannonBall", nestorRunner.getCannonBallX() - 45,
+                    nestorRunner.getCannonBallY() - 5,
+                    80, 40);
+        }
+
+        if (nestorRunner.getCannonTimer() > 0) {
+            draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
+                    73, 55);
+            if (sound.backGroundTrackIsPlaying()) {
+                sound.pauseBackGroundTrack();
+                sound.startDoomSoundTrack();
             }
-            draw("Nestor",
-                    nestorRunner.getNestorX(), nestorRunner.getNestorY(),
-                    Nestor.WIDTH, Nestor.HEIGHT);
-            drawScore(nestorRunner.getScore());
+            }
+            else if (sound.doomSoundTrackIsPlaying()){
+                sound.pauseDoomSoundTrack();
+                sound.resumeBackGroundTrack();
+            }
+
+        draw("Nestor",
+                nestorRunner.getNestorX(), nestorRunner.getNestorY(),
+                Nestor.WIDTH, Nestor.HEIGHT);
+        drawScore(nestorRunner.getScore());
     }
 
     public void wipeGC() {
@@ -119,12 +139,15 @@ public class GameView extends StackPane implements View {
     }
 
     /**
-     * @param spriteName the name of the Sprite in resources (including file extension).
+     * @param spriteName the name of the Sprite in resources.
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
         if (spriteName.equals("Hole")) {
+            int holeViewWidth = 3 * width;
+            int viewXPos = xPos - ((holeViewWidth-width) / 2);
+
             gc.setFill(Color.LIGHTBLUE);
-            gc.fillRect(xPos, yPos, width, ground.getHeight());
+            gc.fillRect(viewXPos, yPos, holeViewWidth, ground.getHeight());
         } else {
             String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
             Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
@@ -139,6 +162,7 @@ public class GameView extends StackPane implements View {
     public void end() {
         getChildren().add(endPane);
         sound.stopBackGroundTrack();
+        sound.stopDoomSoundTrack();
         sound.playDeathSound();
     }
     public void again() {
@@ -161,11 +185,8 @@ public class GameView extends StackPane implements View {
     public void pause() {
         getChildren().add(pausePane);
         sound.pauseBackGroundTrack();
+        sound.pauseDoomSoundTrack();
     }
-    public void unPause() {
-
-    }
-
 
     public FreezePane getPausePane() {
         return pausePane;

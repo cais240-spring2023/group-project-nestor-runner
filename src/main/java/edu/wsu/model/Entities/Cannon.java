@@ -2,12 +2,12 @@ package edu.wsu.model.Entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class LargeObstacle implements Entity {
+public class Cannon implements Entity {
 
-    public int width = 55;
-    public int height = 75;
-    public int x = START_X;
-    public int y = GROUND_Y - height;
+    private int width = 80;
+    private int height = 60;
+    private int x = START_X;
+    public int y = GROUND_Y - height - 7;
 
     @Override
     public int getX() {
@@ -41,7 +41,6 @@ public class LargeObstacle implements Entity {
 
     @Override
     public Type type() {
-        return Type.LargeObstacle;
+        return Type.Cannon;
     }
-
 }

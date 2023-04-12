@@ -1,11 +1,10 @@
 package edu.wsu.model.Entities;
 
-import static edu.wsu.model.NestorRunner.GROUND_HEIGHT;
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Hole implements Entity {
 
-    public int width = 75;
+    public int width = 25;
     public int height = 1;
     public int x = START_X;
     public int y = GROUND_Y - height;
@@ -23,6 +22,11 @@ public class Hole implements Entity {
     @Override
     public int getY() {
         return y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
     }
 
     @Override
