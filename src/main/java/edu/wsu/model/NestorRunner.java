@@ -67,8 +67,11 @@ public class NestorRunner {
     }
 
     public void update(double deltaTime) {
+        double deltaTimeModified = deltaTime * deltaTimeModifier;
+        if (isPaused) return;
+
         if (state == GameState.PLAYING) {
-            moveEntities(deltaTime);
+            moveEntities(deltaTimeModified);
 
             // recoil from cannon
             if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
@@ -95,7 +98,7 @@ public class NestorRunner {
             }
             if (hasCollided()) handleCollision();
             if (entityPassedLeft()) entities.poll();
-            if (isJumping()) jump(deltaTime);
+            if (isJumping()) jump(deltaTimeModified);
             ticks++;
         }
     }
