@@ -170,8 +170,8 @@ public class GameView extends StackPane implements View {
         sound.startBackGroundTrack();
     }
 
-    public void togglePause(){
-        if (paused){
+    public void togglePause() {
+        if (paused) {
             paused = false;
             getChildren().remove(pausePane);
             sound.resumeBackGroundTrack();
@@ -180,12 +180,6 @@ public class GameView extends StackPane implements View {
             getChildren().add(pausePane);
             sound.pauseBackGroundTrack();
         }
-    }
-
-    public void pause() {
-        getChildren().add(pausePane);
-        sound.pauseBackGroundTrack();
-        sound.pauseDoomSoundTrack();
     }
 
     public FreezePane getPausePane() {

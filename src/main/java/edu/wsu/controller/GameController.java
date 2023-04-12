@@ -24,12 +24,12 @@ public class GameController{
 
     }
 
-    public void togglePause(){
+    public void togglePause() {
         gameView.togglePause();
         nestorRunner.togglePause();
     }
 
-    private void animationTimerContent(long now){
+    private void animationTimerContent(long now) {
 
     }
 
@@ -58,7 +58,6 @@ public class GameController{
 
             @Override
             public void handle(long now) {
-                if (nestorRunner.state != GameState.PLAYING) return;
                 if (lastTime == 0) {
                     lastTime = now;
                     return;
@@ -80,9 +79,6 @@ public class GameController{
                     // escape to toggle pause/unpause
                     if (event.getCode() == KeyCode.ESCAPE) {
                         togglePause();
-                        //stop();
-                        //nestorRunner.state = GameState.PAUSED;
-                        //gameView.pause();
                     }
                     if (event.getCode() == KeyCode.D) {
                         if (nestorRunner.getCannonTimer() > 0) {

@@ -29,8 +29,6 @@ public class NestorRunner {
     private double deltaTimeCounter;
     private double deltaTimeModifier;
 
-    private boolean isPaused;
-
     private NestorRunner() {
         state = GameState.MAIN_MENU;
         startNewGame();
@@ -58,49 +56,47 @@ public class NestorRunner {
         return cannonBall.getY();
     }
 
-    public void togglePause(){
-        if (isPaused){
-            isPaused = false;
+    public void togglePause() {
+        if (state == GameState.PAUSED) {
+            state = GameState.PLAYING;
         } else {
-            isPaused = true;
+            state = GameState.PAUSED;
         }
     }
 
     public void update(double deltaTime) {
+        if (state == GameState.PAUSED) return;
+
         double deltaTimeModified = deltaTime * deltaTimeModifier;
-        if (isPaused) return;
+        moveEntities(deltaTimeModified);
 
-        if (state == GameState.PLAYING) {
-            moveEntities(deltaTimeModified);
-
-            // recoil from cannon
-            if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
-            if (cannonTimer > 0) cannonTimer--;
-            if (cannonBall != null) {
-                moveCannonBall();
-                if (cannonBallOffScreen()) cannonBall = null;
-                if (cannonBallHasHit()) handleCannonBallCollision();
-            }
-
-
-            if (ticks % 10 == 0) {
-                score++;
-                if (deltaTimeModifier < 3.5){
-                    deltaTimeModifier += 0.01;
-                }
-                if (entitySpacing > 60){
-                    entitySpacing--;
-                }
-            }
-            if (shieldTimer > 0) shieldTimer--;
-            if (ticks % entitySpacing == 0) {
-                entities.add(entityFactory.generate());
-            }
-            if (hasCollided()) handleCollision();
-            if (entityPassedLeft()) entities.poll();
-            if (isJumping()) jump(deltaTimeModified);
-            ticks++;
+        // recoil from cannon
+        if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
+        if (cannonTimer > 0) cannonTimer--;
+        if (cannonBall != null) {
+            moveCannonBall();
+            if (cannonBallOffScreen()) cannonBall = null;
+            if (cannonBallHasHit()) handleCannonBallCollision();
         }
+
+
+        if (ticks % 10 == 0) {
+            score++;
+            if (deltaTimeModifier < 3.5){
+                deltaTimeModifier += 0.01;
+            }
+            if (entitySpacing > 60){
+                entitySpacing--;
+            }
+        }
+        if (shieldTimer > 0) shieldTimer--;
+        if (ticks % entitySpacing == 0) {
+            entities.add(entityFactory.generate());
+        }
+        if (hasCollided()) handleCollision();
+        if (entityPassedLeft()) entities.poll();
+        if (isJumping()) jump(deltaTimeModified);
+        ticks++;
     }
 
     public void startNewGame() {
@@ -115,7 +111,6 @@ public class NestorRunner {
         cannonTimer = 0;
         isJumping = false;
         jumpSpeed = 0;
-        isPaused = false;
         deltaTimeModifier = 1;
         entitySpacing = 200;
     }
