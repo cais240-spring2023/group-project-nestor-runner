@@ -116,12 +116,17 @@ public class GameView extends StackPane implements View {
                 sound.pauseBackGroundTrack();
                 sound.startDoomSoundTrack();
             }
-            }
-            else if (sound.doomSoundTrackIsPlaying()){
-                sound.pauseDoomSoundTrack();
-                sound.resumeBackGroundTrack();
-            }
+        }
+        else if (sound.doomSoundTrackIsPlaying()) {
+            sound.pauseDoomSoundTrack();
+            sound.resumeBackGroundTrack();
+        }
 
+        if (nestorRunner.getShieldTimer() > 0) {
+            draw("Bubble", nestorRunner.getNestorX() - (nestorRunner.bubbleRadius - Nestor.WIDTH/2),
+                    nestorRunner.getNestorY() - (nestorRunner.bubbleRadius - 10),
+                    2 * nestorRunner.bubbleRadius, 2 * nestorRunner.bubbleRadius);
+        }
         draw("Nestor",
                 nestorRunner.getNestorX(), nestorRunner.getNestorY(),
                 Nestor.WIDTH, Nestor.HEIGHT);
