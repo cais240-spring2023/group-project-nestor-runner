@@ -1,14 +1,21 @@
 package edu.wsu.controller;
 
+import edu.wsu.App;
 import edu.wsu.model.Difficulty;
 import edu.wsu.model.NestorRunner;
 import edu.wsu.view.GameView;
 import edu.wsu.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class MenuController {
 
@@ -43,7 +50,9 @@ public class MenuController {
         gameController.start();
     }
 
-    public void handleHowToPlayAction(ActionEvent actionEvent) throws Exception {
-        // TODO: load some How to Play instruction pane here
+    public void handleHowToPlayAction(ActionEvent event) throws IOException {
+        FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/howToPlay.fxml"));
+        Parent root = menuLoader.load();
+        View.getStage(event).setScene(new Scene(root));
     }
 }

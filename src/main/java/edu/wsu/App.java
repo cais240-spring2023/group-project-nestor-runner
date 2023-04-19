@@ -14,7 +14,6 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
         stage.setScene(new Scene(menuLoader.load(), View.SCENE_WIDTH, View.SCENE_HEIGHT));
-
         stage.setTitle("Nestor Runner");
         stage.setResizable(false);
         stage.show();
