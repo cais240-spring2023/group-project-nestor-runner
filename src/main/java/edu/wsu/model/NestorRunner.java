@@ -1,6 +1,7 @@
 package edu.wsu.model;
 
 import edu.wsu.model.Entities.Entity;
+import javafx.scene.Parent;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,7 +14,8 @@ public class NestorRunner {
     public static final int GROUND_Y = 400;
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final double GRAVITY = 600; // m/s^2
-    public static int entitySpacing;
+    public final int bubbleRadius = 55;
+    private static int entitySpacing;
     private Nestor nestor;
     private CannonBall cannonBall;
     private EntityFactory entityFactory;
@@ -26,7 +28,6 @@ public class NestorRunner {
     private double jumpSpeed;
     private int entitySpeed;
     Difficulty difficulty;
-    private double deltaTimeCounter;
     private double deltaTimeModifier;
 
     private NestorRunner() {
@@ -82,10 +83,10 @@ public class NestorRunner {
 
         if (ticks % 10 == 0) {
             score++;
-            if (deltaTimeModifier < 3.5){
-                deltaTimeModifier += 0.01;
+            if (deltaTimeModifier < 3.5) {
+                deltaTimeModifier += 0.005;
             }
-            if (entitySpacing > 60){
+            if (entitySpacing > 60) {
                 entitySpacing--;
             }
         }
@@ -166,11 +167,22 @@ public class NestorRunner {
         Entity entity = entities.peek();
         if (entity == null) return false;
 
+        int leftHitBox = nestor.getX() + Nestor.WIDTH;
+        int rightHitBox = nestor.getX();
+        int bottomHitBox = nestor.getY() + Nestor.HEIGHT;
+        int topHitBox = nestor.getY();
+
+        if (shieldTimer > 0) {
+            leftHitBox += bubbleRadius - Nestor.WIDTH/2;
+            rightHitBox -= bubbleRadius - Nestor.WIDTH/2;
+            topHitBox -= bubbleRadius;
+        }
+
         // checks for any overlap between Nestor and any entity
-        return ((nestor.getX() + Nestor.WIDTH) > entity.getX())
-                && (nestor.getX() < (entity.getX() + entity.getWidth()))
-                && ((nestor.getY() + Nestor.HEIGHT) > entity.getY())
-                && (nestor.getY() < (entity.getY() + entity.getHeight()));
+        return (leftHitBox > entity.getX())
+                && (rightHitBox < (entity.getX() + entity.getWidth()))
+                && ((bottomHitBox) > entity.getY())
+                && (topHitBox < (entity.getY() + entity.getHeight()));
     }
 
     private void handleCollision() {
@@ -265,7 +277,6 @@ public class NestorRunner {
         assert cannonBall != null;
         return cannonBall.getX() > Entity.START_X;
     }
-
 
     public int getCannonTimer() {
         return cannonTimer;
