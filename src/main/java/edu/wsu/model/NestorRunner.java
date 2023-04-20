@@ -207,8 +207,8 @@ public class NestorRunner {
                 break;
             case Hole:
                 // if nestor still on screen, keep falling
-                while (nestor.getY() < 400) {
-                    nestor.setY(nestor.getY() + BASE_JUMP_SPEED);
+                if (nestor.getY() < 400) {
+                    nestor.setY(nestor.getY() + 2);
                 }
                 state = GameState.OVER;
                 break;

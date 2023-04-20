@@ -16,7 +16,6 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
         stage.setScene(new Scene(menuLoader.load(), View.SCENE_WIDTH, View.SCENE_HEIGHT));
-
         stage.setTitle("Nestor Runner");
         stage.getIcons().add(
                 new Image(Objects.requireNonNull(App.class.getResourceAsStream("/edu/wsu/sprites/Nestor.png")))
