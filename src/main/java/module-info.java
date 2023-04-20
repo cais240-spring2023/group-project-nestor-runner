@@ -2,6 +2,7 @@ module edu.wsu {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.media;
+    requires org.testng;
 
     opens edu.wsu to javafx.fxml;
     exports edu.wsu;
