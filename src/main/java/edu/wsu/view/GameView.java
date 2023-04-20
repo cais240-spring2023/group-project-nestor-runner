@@ -143,8 +143,8 @@ public class GameView extends StackPane implements View {
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
         if (spriteName.equals("Hole")) {
-            int holeViewWidth = 3 * width;
-            int viewXPos = xPos - ((holeViewWidth-width) / 2);
+            int holeViewWidth = 125;
+            int viewXPos = xPos - Nestor.WIDTH;
 
             gc.setFill(Color.LIGHTBLUE);
             gc.fillRect(viewXPos, yPos, holeViewWidth, ground.getHeight());

@@ -93,7 +93,14 @@ public class NestorRunner {
         if (ticks % entitySpacing == 0) {
             entities.add(entityFactory.generate());
         }
-        if (hasCollided()) handleCollision();
+        if (hasCollided()) {
+            if (entities.peek().type().equals(Entity.Type.Hole) && getNestorY() < 480) {
+                nestor.setY(getNestorY() + 15);
+                // this is necessary for some reason, otherwise gameState never changes
+                if (getNestorY() >= 480) handleCollision();
+            } else
+                handleCollision();
+        }
         if (entityPassedLeft()) entities.poll();
         if (isJumping()) jump(deltaTimeModified);
         ticks++;
@@ -195,9 +202,6 @@ public class NestorRunner {
                 break;
             case Hole:
                 // if nestor still on screen, keep falling
-                if (nestor.getY() < 400) {
-                    nestor.setY(nestor.getY() + 2);
-                }
                 state = GameState.OVER;
                 break;
             default:
