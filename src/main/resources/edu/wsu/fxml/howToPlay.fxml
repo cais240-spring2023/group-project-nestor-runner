@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="howToPlayRoot" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wsu.controller.HowToPlayController">
+<AnchorPane fx:id="howToPlayRoot" prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wsu.controller.HowToPlayController">
    <children>
       <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE">
          <tabs>
@@ -19,7 +28,7 @@
                            <children>
                               <Label alignment="CENTER" prefWidth="640.0" text="How to Play">
                                  <font>
-                                    <Font size="32.0" />
+                                    <Font name="Blackadder ITC" size="53.0" />
                                  </font>
                               </Label>
                               <Text lineSpacing="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Nestor Runner! In this game, you will play as Nestor the owl. You must help him collect points, obtain powerups, and avoid deadly obstacles. The longer you play, the harder it gets, as Nestor will speed up as time goes on. Choose between easy, normal, and hard difficulties. See how long you can survive!" textAlignment="CENTER" wrappingWidth="630.0">
@@ -27,12 +36,12 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="Franklin Gothic Medium Cond" size="14.0" />
                                  </font>
                               </Text>
                               <Label alignment="CENTER" prefWidth="640.0" text="Controls">
                                  <font>
-                                    <Font size="32.0" />
+                                    <Font name="Blackadder ITC" size="50.0" />
                                  </font>
                               </Label>
                               <GridPane prefHeight="301.0" prefWidth="640.0">
@@ -66,17 +75,17 @@
                                     </Label>
                                     <Label text="Jump" GridPane.columnIndex="1">
                                        <font>
-                                          <Font name="System Font" size="24.0" />
+                                          <Font name="Franklin Gothic Medium" size="24.0" />
                                        </font>
                                     </Label>
                                     <Label text="Pause/Unpause" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <font>
-                                          <Font name="System Font" size="24.0" />
+                                          <Font name="Franklin Gothic Medium" size="24.0" />
                                        </font>
                                     </Label>
                                     <Label text="Fire Cannon (when equipped)" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <font>
-                                          <Font name="System Font" size="24.0" />
+                                          <Font name="Franklin Gothic Medium" size="24.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -114,7 +123,7 @@
                               </ImageView>
                               <Label text="Obstacles" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="32.0" />
+                                    <Font name="Blackadder ITC" size="50.0" />
                                  </font>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
@@ -122,9 +131,9 @@
                                     <Image url="@../sprites/SmallObstacle.png" />
                                  </image>
                               </ImageView>
-                              <Label text="Powerups" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                              <Label text="Power-Ups" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="32.0" />
+                                    <Font name="Blackadder ITC" size="50.0" />
                                  </font>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
@@ -149,22 +158,22 @@
                               </ImageView>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="C++ Textbook" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Computer" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Flash Drive" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coin - increases score by 10 points" wrappingWidth="148.0" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                                  <GridPane.margin>
                                     <Insets />
@@ -172,17 +181,17 @@
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Shield - protects you from the next obstacle you collide with" wrappingWidth="148.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cannon - temporarily allows you to destroy obstacles you hit with cannonballs" wrappingWidth="147.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                                  <font>
-                                    <Font size="16.0" />
+                                    <Font name="Franklin Gothic Medium" size="16.0" />
                                  </font>
                               </Text>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Watch out for holes! Jump over them to avoid falling in." textAlignment="CENTER" wrappingWidth="320.0" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                  <font>
-                                    <Font size="18.0" />
+                                    <Font name="Franklin Gothic Medium" size="18.0" />
                                  </font>
                               </Text>
                            </children>

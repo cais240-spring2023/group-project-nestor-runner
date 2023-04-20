@@ -8,7 +8,7 @@ public interface View {
 
     int SCENE_WIDTH = 640;
     int SCENE_HEIGHT = 480;
-    String TITLE_FONT = "Blackadder ITC";
+    String TITLE_FONT_WIN = "Blackadder ITC";
     String BASE_FONT = "Franklin Gothic Medium";
 
     static Stage getStage(ActionEvent actionEvent) {
