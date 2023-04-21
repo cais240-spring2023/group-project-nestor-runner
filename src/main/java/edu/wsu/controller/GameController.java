@@ -16,17 +16,15 @@ public class GameController{
     public GameController(GameView gameView) {
         nestorRunner = NestorRunner.getInstance();
         this.gameView = gameView;
-        //gameView.getPausePane().setButton1Action();
-
     }
 
-    public void togglePause() {
-        gameView.togglePause();
-        nestorRunner.togglePause();
+    public void pause() {
+        gameView.pause();
+        nestorRunner.pause();
     }
-
-    private void animationTimerContent(long now) {
-
+    public void unPause() {
+        gameView.unPause();
+        nestorRunner.unPause();
     }
 
     public void start() {
@@ -39,15 +37,13 @@ public class GameController{
             start();
         });
         gameView.getPausePane().setButton1Action(e -> {
-            togglePause();
+            unPause();
         });
         gameView.getPausePane().setButton2Action(e -> {
-            nestorRunner.togglePause();
             timer.stop();
             gameView.getSound().stopBackGroundTrack();
             gameView.getSound().stopDoomSoundTrack();
             gameView.swapToMainMenu(e);
-            gameView.togglePause();
         });
 
 
@@ -68,20 +64,17 @@ public class GameController{
                 gameView.update(nestorRunner);
 
                 gameView.setEventHandler(event -> {
-                    if (event.getCode() == KeyCode.SPACE) {
-                        if (!nestorRunner.isJumping()) {
-                            gameView.getSound().playJumpSound();
-                        }
-                        nestorRunner.setJump();
-                    }
-                    // escape to toggle pause/unpause
-                    if (event.getCode() == KeyCode.ESCAPE) {
-                        togglePause();
-                    }
-                    if (event.getCode() == KeyCode.D) {
-                        if (nestorRunner.getCannonTimer() > 0) {
-                            nestorRunner.fireCannon();
-                        }
+                    switch (event.getCode()) {
+                        case SPACE:
+                            if (!nestorRunner.isJumping()) gameView.getSound().playJumpSound();
+                            nestorRunner.setJump();
+                            break;
+                        case ESCAPE:
+                            pause();
+                            break;
+                        case D:
+                            if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();
+                            break;
                     }
                 });
 

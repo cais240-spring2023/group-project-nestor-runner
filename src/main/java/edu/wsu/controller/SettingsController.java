@@ -20,24 +20,15 @@ public class SettingsController {
     @FXML
     public Slider soundEffectsSlider;
 
-    private double sfxSliderValue;
-    private double musicSliderValue;
-
     public void handleMainMenuAction(ActionEvent event) throws IOException {
         FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
         Parent root = menuLoader.load();
+
         MenuController mc = menuLoader.getController();
-        mc.setMusicVolume(musicSliderValue);
-        mc.setSfxVolume(sfxSliderValue);
+        mc.setMusicVolume(musicVolumeSlider.getValue() / 100);
+        mc.setSfxVolume(soundEffectsSlider.getValue() / 100);
+
         View.getStage(event).setScene(new Scene(root));
-    }
-
-    public void handleChangingSfxVolume() {
-        soundEffectsSlider.setOnMouseDragReleased(mouseDragEvent -> sfxSliderValue = soundEffectsSlider.getValue());
-    }
-
-    public void handleChangingMusicVolume() {
-        musicVolumeSlider.setOnMouseDragReleased(mouseDragEvent -> musicSliderValue = musicVolumeSlider.getValue());
     }
 
 }

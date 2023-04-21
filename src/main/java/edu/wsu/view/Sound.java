@@ -7,12 +7,15 @@ import java.util.Objects;
 
 public class Sound {
 
-    private MediaPlayer deathPlayer;
-    private MediaPlayer jumpPlayer;
+    private final MediaPlayer deathPlayer;
+    private final MediaPlayer jumpPlayer;
     private MediaPlayer collectPlayer;
     private MediaPlayer explosionPlayer;
-    private MediaPlayer backGroundPlayer;
-    private MediaPlayer doomPlayer;
+    private final MediaPlayer backGroundPlayer;
+    private final MediaPlayer doomPlayer;
+
+    // used by gameView to decide what player to play when unPausing.
+    public boolean doomIsActive;
 
     private MediaPlayer generateMediaPlayer(String sound) {
         String soundFileURL = "/edu/wsu/sound/" + sound;
@@ -22,6 +25,8 @@ public class Sound {
     }
 
     public Sound(double musicVolume, double sfxVolume) {
+        doomIsActive = true;
+
         deathPlayer = generateMediaPlayer("deathSound.wav");
         deathPlayer.setVolume(sfxVolume);
 

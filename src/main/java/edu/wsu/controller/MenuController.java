@@ -37,8 +37,8 @@ public class MenuController {
         selectDifficulty.getItems().add("Medium");
         selectDifficulty.getItems().add("Hard");
         selectDifficulty.setValue("Easy");
-        musicVolume = 100;
-        sfxVolume = 100;
+        musicVolume = 1.0;
+        sfxVolume = 1.0;
     }
 
     public void handleStartGameAction(ActionEvent actionEvent) {
@@ -66,6 +66,11 @@ public class MenuController {
     public void handleSettingsAction(ActionEvent event) throws IOException {
         FXMLLoader settingsLoader = new FXMLLoader(App.class.getResource("fxml/settings.fxml"));
         Parent root = settingsLoader.load();
+
+        SettingsController settingsController = settingsLoader.getController();
+        settingsController.soundEffectsSlider.setValue(sfxVolume * 100);
+        settingsController.musicVolumeSlider.setValue(musicVolume * 100);
+
         View.getStage(event).setScene(new Scene(root));
     }
 

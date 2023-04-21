@@ -7,7 +7,6 @@ public interface Entity {
     }
 
     int START_X = 640;
-    int SPEED = 200;
 
     int getX();
     void setX(int x);
