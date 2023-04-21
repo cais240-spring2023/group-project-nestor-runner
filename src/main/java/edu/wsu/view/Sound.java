@@ -3,27 +3,42 @@ package edu.wsu.view;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import java.io.File;
+import java.util.Objects;
 
 public class Sound {
 
     private MediaPlayer deathPlayer;
     private MediaPlayer jumpPlayer;
     private MediaPlayer collectPlayer;
+    private MediaPlayer explosionPlayer;
     private MediaPlayer backGroundPlayer;
     private MediaPlayer doomPlayer;
 
-    private static MediaPlayer generateMediaPlayer(String sound) {
-        Media media = new Media(new File("src/main/resources/edu/wsu/sound/" + sound).toURI().toString());
+    private MediaPlayer generateMediaPlayer(String sound) {
+        String soundFileURL = "/edu/wsu/sound/" + sound;
+        Media media = new Media(
+                Objects.requireNonNull(getClass().getResource(soundFileURL)).toString());
         return new MediaPlayer(media);
     }
 
-    public Sound() {
+    public Sound(double musicVolume, double sfxVolume) {
         deathPlayer = generateMediaPlayer("deathSound.wav");
+        deathPlayer.setVolume(sfxVolume);
+
         jumpPlayer = generateMediaPlayer("jumpSound.mp3");
-        // collectPlayer = generateMediaPlayer("");
+        jumpPlayer.setVolume(sfxVolume);
+
+        // collectPlayer = generateMediaPlayer("collectSound.xyz");
+        // collectPlayer.setVolume(sfxVolume);
+
+        // explosionPlayer = generateMediaPlayer("explosionSound.xyz");
+        // explosionPlayer.setVolume(sfxVolume);
+
         backGroundPlayer = generateMediaPlayer("Fluffing-a-Duck.mp3");
+        backGroundPlayer.setVolume(musicVolume);
+
         doomPlayer = generateMediaPlayer("Rip-and-Tear-Doom-OST.mp3");
+        doomPlayer.setVolume(musicVolume);
     }
     public void playDeathSound() {
         deathPlayer.seek(deathPlayer.getStartTime());
@@ -40,10 +55,14 @@ public class Sound {
         collectPlayer.play();
     }
 
+    public void playExplosionSound() {
+        explosionPlayer.seek(explosionPlayer.getStartTime());
+        explosionPlayer.play();
+    }
+
     public void startBackGroundTrack() {
         backGroundPlayer.seek(backGroundPlayer.getStartTime());
         backGroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        backGroundPlayer.setVolume(0.2);
         backGroundPlayer.play();
     }
 
@@ -62,7 +81,6 @@ public class Sound {
     public void startDoomSoundTrack() {
         doomPlayer.seek(doomPlayer.getStartTime());
         doomPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        doomPlayer.setVolume(0.2);
         doomPlayer.play();
     }
 

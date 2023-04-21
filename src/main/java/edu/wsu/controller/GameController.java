@@ -3,11 +3,7 @@ package edu.wsu.controller;
 import edu.wsu.model.GameState;
 import edu.wsu.model.NestorRunner;
 import edu.wsu.view.GameView;
-import edu.wsu.view.View;
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventTarget;
 import javafx.scene.input.KeyCode;
 
 public class GameController{
@@ -48,6 +44,8 @@ public class GameController{
         gameView.getPausePane().setButton2Action(e -> {
             nestorRunner.togglePause();
             timer.stop();
+            gameView.getSound().stopBackGroundTrack();
+            gameView.getSound().stopDoomSoundTrack();
             gameView.swapToMainMenu(e);
             gameView.togglePause();
         });

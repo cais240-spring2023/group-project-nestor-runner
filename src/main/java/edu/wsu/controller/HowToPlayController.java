@@ -19,7 +19,6 @@ public class HowToPlayController {
     public void handleMainMenuAction(ActionEvent event) throws IOException {
         FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
         Parent root = menuLoader.load();
-
         View.getStage(event).setScene(new Scene(root));
     }
 
