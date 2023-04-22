@@ -38,7 +38,7 @@ public class GameView extends StackPane implements View {
     private final Canvas canvas;
     private boolean paused = false;
 
-    public GameView(int groundLevel) {
+    public GameView(int groundLevel, double musicVolume, double sfxVolume) {
         super();
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-background-color: #add8e6;");
@@ -47,7 +47,7 @@ public class GameView extends StackPane implements View {
         endPane.setButton2Action(this::swapToMainMenu);
         pausePane = new FreezePane("Game Paused.", "Resume", "Main Menu");
         endPane.setButton2Action(this::swapToMainMenu);
-        sound = new Sound();
+        sound = new Sound(musicVolume, sfxVolume);
         canvas = new Canvas(SCENE_WIDTH, SCENE_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         canvas.setFocusTraversable(true);
@@ -87,11 +87,6 @@ public class GameView extends StackPane implements View {
             throw new RuntimeException(e);
         }
     }
-    public void getStage(){
-
-    }
-
-
 
     public void update(NestorRunner nestorRunner) {
         wipeGC();
@@ -115,11 +110,13 @@ public class GameView extends StackPane implements View {
             if (sound.backGroundTrackIsPlaying()) {
                 sound.pauseBackGroundTrack();
                 sound.startDoomSoundTrack();
+                sound.doomIsActive = true;
             }
         }
         else if (sound.doomSoundTrackIsPlaying()) {
             sound.pauseDoomSoundTrack();
             sound.resumeBackGroundTrack();
+            sound.doomIsActive = false;
         }
 
         if (nestorRunner.getShieldTimer() > 0) {
@@ -175,16 +172,23 @@ public class GameView extends StackPane implements View {
         sound.startBackGroundTrack();
     }
 
-    public void togglePause() {
-        if (paused) {
-            paused = false;
-            getChildren().remove(pausePane);
-            sound.resumeBackGroundTrack();
-        } else {
-            paused = true;
-            getChildren().add(pausePane);
-            sound.pauseBackGroundTrack();
-        }
+    public void pause() {
+        if (paused) return;
+
+        getChildren().add(pausePane);
+        if (sound.backGroundTrackIsPlaying()) sound.pauseBackGroundTrack();
+        else if (sound.doomSoundTrackIsPlaying()) sound.pauseDoomSoundTrack();
+
+        paused = true;
+    }
+    public void unPause() {
+        if (!paused) return;
+
+        getChildren().remove(pausePane);
+        if (sound.doomIsActive) sound.resumeDoomSoundTrack();
+        else sound.resumeBackGroundTrack();
+
+        paused = false;
     }
 
     public FreezePane getPausePane() {

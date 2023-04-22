@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane fx:id="settingsRoot" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wsu.controller.SettingsController">
+
+    <Pane fx:id="background" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: LIGHTBLUE;" StackPane.alignment="CENTER">
+
+        <Rectangle arcHeight="5.0" arcWidth="5.0" height="80.0" layoutY="400.0" nodeOrientation="LEFT_TO_RIGHT" stroke="BLACK" strokeType="INSIDE" width="640.0" />
+
+        <ImageView fitHeight="50.0" fitWidth="40.0" layoutX="50.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../sprites/Nestor.png" />
+        </ImageView>
+
+    </Pane>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+        <top>
+            <Label fx:id="title" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="530.0" text="Settings" textAlignment="CENTER" BorderPane.alignment="TOP_CENTER">
+                <font>
+                    <Font name="Blackadder ITC" size="100.0" />
+                </font>
+            </Label>
+        </top>
+        <center>
+            <VBox alignment="TOP_CENTER" prefHeight="296.0" prefWidth="620.0" BorderPane.alignment="CENTER">
+            <Label text="Music Volume">
+               <font>
+                  <Font name="Franklin Gothic Medium" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <Slider fx:id="musicVolumeSlider" showTickLabels="true" showTickMarks="true" value="100.0">
+               <VBox.margin>
+                  <Insets bottom="15.0" left="30.0" right="30.0" top="5.0" />
+               </VBox.margin>
+            </Slider>
+            <Label text="Sound Effects Volume">
+               <font>
+                  <Font name="Franklin Gothic Medium" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Label>
+            <Slider fx:id="soundEffectsSlider" showTickLabels="true" showTickMarks="true" value="100.0">
+               <VBox.margin>
+                  <Insets bottom="15.0" left="30.0" right="30.0" top="5.0" />
+               </VBox.margin>
+            </Slider>
+                <Button fx:id="mainMenuButton" mnemonicParsing="false" onAction="#handleMainMenuAction" style="-fx-background-color: BLACK;" text="Main Menu" textFill="WHITE">
+                    <font>
+                        <Font name="Franklin Gothic Medium" size="20.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </VBox.margin>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <HBox prefHeight="100.0" prefWidth="200.0" />
+                <padding>
+                    <Insets bottom="30.0" left="30.0" right="30.0" />
+                </padding>
+            </VBox>
+        </center>
+    </BorderPane>
+</StackPane>

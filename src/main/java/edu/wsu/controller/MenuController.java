@@ -8,23 +8,28 @@ import edu.wsu.view.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class MenuController {
 
     @FXML
-    public Button howToPlay;
+    public Button howToPlayButton;
     @FXML
-    public Button startGame;
+    public Button startGameButton;
+    @FXML
+    public Button settingsButton;
     @FXML
     public ComboBox<String> selectDifficulty;
+    public CheckBox enableSpectate;
+
+    private double musicVolume;
+    private double sfxVolume;
 
     @FXML
     public void initialize() {
@@ -32,6 +37,8 @@ public class MenuController {
         selectDifficulty.getItems().add("Medium");
         selectDifficulty.getItems().add("Hard");
         selectDifficulty.setValue("Easy");
+        musicVolume = 1.0;
+        sfxVolume = 1.0;
     }
 
     public void handleStartGameAction(ActionEvent actionEvent) {
@@ -44,15 +51,34 @@ public class MenuController {
             case "Hard":
                 nestorRunner.setDifficulty(Difficulty.HARD);
         }
-        GameView gameView = new GameView(NestorRunner.GROUND_Y);
+        GameView gameView = new GameView(NestorRunner.GROUND_Y, musicVolume, sfxVolume);
         GameController gameController = new GameController(gameView);
         View.getStage(actionEvent).setScene(new Scene(gameView));
         gameController.start();
     }
 
     public void handleHowToPlayAction(ActionEvent event) throws IOException {
-        FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/howToPlay.fxml"));
-        Parent root = menuLoader.load();
+        FXMLLoader howToPlayLoader = new FXMLLoader(App.class.getResource("fxml/howToPlay.fxml"));
+        Parent root = howToPlayLoader.load();
         View.getStage(event).setScene(new Scene(root));
+    }
+
+    public void handleSettingsAction(ActionEvent event) throws IOException {
+        FXMLLoader settingsLoader = new FXMLLoader(App.class.getResource("fxml/settings.fxml"));
+        Parent root = settingsLoader.load();
+
+        SettingsController settingsController = settingsLoader.getController();
+        settingsController.soundEffectsSlider.setValue(sfxVolume * 100);
+        settingsController.musicVolumeSlider.setValue(musicVolume * 100);
+
+        View.getStage(event).setScene(new Scene(root));
+    }
+
+    public void setMusicVolume(double musicVolume) {
+        this.musicVolume = musicVolume;
+    }
+
+    public void setSfxVolume(double sfxVolume) {
+        this.sfxVolume = sfxVolume;
     }
 }

@@ -48,6 +48,7 @@ public class NestorRunner {
     public int getNestorY() {
         return nestor.getY();
     }
+
     public int getCannonBallX() {
         if (cannonBall == null) return -1;
         return cannonBall.getX();
@@ -57,12 +58,13 @@ public class NestorRunner {
         return cannonBall.getY();
     }
 
-    public void togglePause() {
-        if (state == GameState.PAUSED) {
-            state = GameState.PLAYING;
-        } else {
-            state = GameState.PAUSED;
-        }
+    public void pause() {
+        if (state != GameState.PLAYING) return;
+        state = GameState.PAUSED;
+    }
+    public void unPause() {
+        if (state != GameState.PAUSED) return;
+        state = GameState.PLAYING;
     }
 
     public void update(double deltaTime) {
