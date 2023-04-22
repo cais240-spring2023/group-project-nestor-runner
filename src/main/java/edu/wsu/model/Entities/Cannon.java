@@ -4,10 +4,13 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Cannon implements Entity {
 
-    private int width = 80;
-    private int height = 60;
-    private int x = START_X;
-    public int y = GROUND_Y - height - 7;
+    private int x;
+    public int y;
+
+    public Cannon() {
+        x = START_X;
+        y = GROUND_Y - getHeight() - 7;
+    }
 
     @Override
     public int getX() {
@@ -31,12 +34,17 @@ public class Cannon implements Entity {
 
     @Override
     public int getWidth() {
-        return width;
+        return 80;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return 60;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return (x + getWidth() <= 0);
     }
 
     @Override

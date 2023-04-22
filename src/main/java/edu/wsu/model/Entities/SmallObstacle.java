@@ -4,10 +4,13 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class SmallObstacle implements Entity {
 
-    public int width = 50;
-    public int height = 50;
-    public int x = START_X;
-    public int y = GROUND_Y - height;
+    private int x;
+    private int y;
+
+    public SmallObstacle() {
+        x = START_X;
+        y = GROUND_Y - getHeight();
+    }
 
     @Override
     public int getX() {
@@ -31,12 +34,17 @@ public class SmallObstacle implements Entity {
 
     @Override
     public int getWidth() {
-        return width;
+        return 50;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return 50;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return (x + getWidth() <= 0);
     }
 
     @Override

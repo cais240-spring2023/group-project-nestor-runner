@@ -4,7 +4,6 @@ import edu.wsu.model.GameState;
 import edu.wsu.model.NestorRunner;
 import edu.wsu.view.GameView;
 import javafx.animation.AnimationTimer;
-import javafx.scene.input.KeyCode;
 
 public class GameController{
 
@@ -36,9 +35,7 @@ public class GameController{
             gameView.again();
             start();
         });
-        gameView.getPausePane().setButton1Action(e -> {
-            unPause();
-        });
+        gameView.getPausePane().setButton1Action(e -> unPause());
         gameView.getPausePane().setButton2Action(e -> {
             timer.stop();
             gameView.getSound().stopBackGroundTrack();
@@ -56,13 +53,13 @@ public class GameController{
                     lastTime = now;
                     return;
                 }
+
                 // 1e9 = 10^-9
                 double deltaTime = (now - lastTime) / 1e9;
                 lastTime = now;
 
                 nestorRunner.update(deltaTime);
                 gameView.update(nestorRunner);
-
                 gameView.setEventHandler(event -> {
                     switch (event.getCode()) {
                         case SPACE:
@@ -77,13 +74,10 @@ public class GameController{
                             break;
                     }
                 });
-
                 if (nestorRunner.state == GameState.OVER) {
                     stop();
                     gameView.end();
-                } else if (nestorRunner.state == GameState.MAIN_MENU){
-                    stop();
-                }
+                } else if (nestorRunner.state == GameState.MAIN_MENU) stop();
             }
         };
         timer.start();

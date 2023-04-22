@@ -4,10 +4,13 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Shield implements Entity {
 
-    public int width = 35;
-    public int height = 45;
-    public int x = START_X;
-    public int y = GROUND_Y - height - 5;
+    private int x;
+    private int y;
+
+    public Shield() {
+        x = START_X;
+        y = GROUND_Y - getHeight() - 5;
+    }
 
     @Override
     public int getX() {
@@ -31,12 +34,17 @@ public class Shield implements Entity {
 
     @Override
     public int getWidth() {
-        return width;
+        return 35;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return 45;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return (x + getWidth() <= 0);
     }
 
     @Override

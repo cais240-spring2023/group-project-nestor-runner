@@ -13,6 +13,4 @@ module edu.wsu {
 
     opens edu.wsu.view to javafx.fxml;
     exports edu.wsu.view;
-
-    exports edu.wsu.model.testing;
 }

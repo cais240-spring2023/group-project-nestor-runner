@@ -46,7 +46,6 @@ public class GameView extends StackPane implements View {
         endPane = new FreezePane("Game Over!", "Play Again", "Main Menu");
         endPane.setButton2Action(this::swapToMainMenu);
         pausePane = new FreezePane("Game Paused.", "Resume", "Main Menu");
-        endPane.setButton2Action(this::swapToMainMenu);
         sound = new Sound(musicVolume, sfxVolume);
         canvas = new Canvas(SCENE_WIDTH, SCENE_HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -88,7 +87,10 @@ public class GameView extends StackPane implements View {
         }
     }
 
-    public void update(NestorRunner nestorRunner) {
+    public void update(Object obj) {
+        assert obj instanceof NestorRunner;
+        NestorRunner nestorRunner = (NestorRunner) obj;
+
         wipeGC();
         for (Entity entity : nestorRunner.getEntities()) {
             draw(
@@ -124,6 +126,7 @@ public class GameView extends StackPane implements View {
                     nestorRunner.getNestorY() - (nestorRunner.bubbleRadius - 10),
                     2 * nestorRunner.bubbleRadius, 2 * nestorRunner.bubbleRadius);
         }
+
         draw("Nestor",
                 nestorRunner.getNestorX(), nestorRunner.getNestorY(),
                 Nestor.WIDTH, Nestor.HEIGHT);
@@ -167,6 +170,7 @@ public class GameView extends StackPane implements View {
         sound.stopDoomSoundTrack();
         sound.playDeathSound();
     }
+
     public void again() {
         getChildren().remove(endPane);
         sound.startBackGroundTrack();
@@ -181,6 +185,7 @@ public class GameView extends StackPane implements View {
 
         paused = true;
     }
+
     public void unPause() {
         if (!paused) return;
 

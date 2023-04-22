@@ -4,10 +4,13 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Flyer implements Entity {
 
-    public int width = 30;
-    public int height = 20;
-    public int x = START_X;
-    public int y = GROUND_Y - height - 60;
+    private int x;
+    private int y;
+
+    public Flyer() {
+        x = START_X;
+        y = GROUND_Y - getHeight() - 60;
+    }
 
     @Override
     public int getX() {
@@ -31,12 +34,17 @@ public class Flyer implements Entity {
 
     @Override
     public int getWidth() {
-        return width;
+        return 30;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return 20;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return (x + getWidth() <= 0);
     }
 
     @Override

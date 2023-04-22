@@ -1,7 +1,9 @@
 package edu.wsu.model.Entities;
 
 public interface Entity {
-    enum Type {  // these need to mirror the Sprite file names.
+
+    // these need to mirror the Sprite file names.
+    enum Type {
         Flyer, Hole, Coin, SmallObstacle,
         Shield, LargeObstacle, Cannon
     }
@@ -14,6 +16,7 @@ public interface Entity {
     void setY(int y);
     int getWidth();
     int getHeight();
+    boolean hasPassedLeft();
 
     Type type();
 }

@@ -4,10 +4,13 @@ import static edu.wsu.model.NestorRunner.GROUND_Y;
 
 public class Hole implements Entity {
 
-    public int width = 85;
-    public int height = 480 - GROUND_Y + 1;
-    public int x = START_X;
-    public int y = GROUND_Y - 1;
+    private int x;
+    private int y;
+
+    public Hole() {
+        x = START_X;
+        y = GROUND_Y - 1;
+    }
 
     @Override
     public int getX() {
@@ -31,12 +34,17 @@ public class Hole implements Entity {
 
     @Override
     public int getWidth() {
-        return width;
+        return 85;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return 480 - GROUND_Y + 1;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return (x + getWidth() <= 0);
     }
 
     @Override

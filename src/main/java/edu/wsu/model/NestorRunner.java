@@ -1,18 +1,17 @@
 package edu.wsu.model;
 
 import edu.wsu.model.Entities.Entity;
-import javafx.scene.Parent;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 public class NestorRunner {
     private static NestorRunner gameInstance;
     public GameState state;
 
+    public static final int FALL_SPEED = 10;
+
     public static final int GROUND_Y = 400;
-    public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final double GRAVITY = 600; // m/s^2
     public final int bubbleRadius = 55;
     private static int entitySpacing;
@@ -24,8 +23,6 @@ public class NestorRunner {
     private int score;
     public int shieldTimer;
     public int cannonTimer;
-    private boolean isJumping;
-    private double jumpSpeed;
     private int entitySpeed;
     Difficulty difficulty;
     private double deltaTimeModifier;
@@ -71,41 +68,36 @@ public class NestorRunner {
         if (state == GameState.PAUSED) return;
 
         double deltaTimeModified = deltaTime * deltaTimeModifier;
-        moveEntities(deltaTimeModified);
+        Entity headEntity = entities.peek();
 
-        // recoil from cannon
-        if (nestor.getX() < 50) nestor.setX(nestor.getX() + 1);
+        moveEntitiesLeft(deltaTimeModified);
+        if (nestor.getX() < 50) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
         if (cannonBall != null) {
-            moveCannonBall();
-            if (cannonBallOffScreen()) cannonBall = null;
-            if (cannonBallHasHit()) handleCannonBallCollision();
+            cannonBall.moveLeft();
+            if (cannonBall.hasPassedRight()) cannonBall = null;
+            else if (cannonBall.hasCollided(headEntity)) {
+                assert headEntity != null;
+                handleCannonBallCollision(headEntity);
+            }
         }
-
-
         if (ticks % 10 == 0) {
             score++;
-            if (deltaTimeModifier < 3.5) {
-                deltaTimeModifier += 0.005;
-            }
-            if (entitySpacing > 60) {
-                entitySpacing--;
-            }
+            if (deltaTimeModifier < 3.5) deltaTimeModifier += 0.005;
+            if (entitySpacing > 60) entitySpacing--;
         }
         if (shieldTimer > 0) shieldTimer--;
-        if (ticks % entitySpacing == 0) {
-            entities.add(entityFactory.generate());
+        if (ticks % entitySpacing == 0) entities.add(entityFactory.generate());
+        if (nestor.hasCollided(headEntity, shieldTimer > 0, bubbleRadius)) {
+            assert headEntity != null;
+            handleCollision(headEntity);
         }
-        if (hasCollided()) {
-            if (entities.peek().type().equals(Entity.Type.Hole) && getNestorY() < 480) {
-                nestor.setY(getNestorY() + 15);
-                // this is necessary for some reason, otherwise gameState never changes
-                if (getNestorY() >= 480) handleCollision();
-            } else
-                handleCollision();
+        if (nestor.getY() >= 480) {
+            state = GameState.OVER;
+            return;
         }
-        if (entityPassedLeft()) entities.poll();
-        if (isJumping()) jump(deltaTimeModified);
+        if (headEntity != null && headEntity.hasPassedLeft()) entities.poll();
+        if (nestor.isJumping()) nestor.jump(deltaTimeModified, GRAVITY);
         ticks++;
     }
 
@@ -119,8 +111,6 @@ public class NestorRunner {
         score = 0;
         shieldTimer = 0;
         cannonTimer = 0;
-        isJumping = false;
-        jumpSpeed = 0;
         deltaTimeModifier = 1;
         entitySpacing = 200;
     }
@@ -143,63 +133,15 @@ public class NestorRunner {
     }
 
     public boolean isJumping() {
-        return isJumping;
+        return nestor.isJumping();
     }
 
     public void setJump() {
-        if (!isJumping()) {
-            if (cannonTimer > 0) jumpSpeed = -BASE_JUMP_SPEED - 100;
-            else jumpSpeed = -BASE_JUMP_SPEED;
-            isJumping = true;
-        }
+        nestor.setJump(cannonTimer > 0);
     }
 
-    private void jump(double deltaTime) {
-        jumpSpeed += GRAVITY * deltaTime;
-        nestor.setY((int)(nestor.getY() + (jumpSpeed * deltaTime)));
-
-        if (nestor.getY() >= GROUND_Y - Nestor.HEIGHT) {
-            nestor.setY(GROUND_Y - Nestor.HEIGHT);
-            jumpSpeed = 0;
-            isJumping = false;
-        }
-    }
-
-    /**
-     * This method checks for a valid collision between any
-     * entity and Nestor. A collision is valid if Nestor is
-     * not shielded.
-     * @return true if Nestor overlaps with an entity,
-     * false otherwise
-     */
-    public boolean hasCollided() {
-        Entity entity = entities.peek();
-        if (entity == null) return false;
-
-        int leftHitBox = nestor.getX() + Nestor.WIDTH;
-        int rightHitBox = nestor.getX();
-        int bottomHitBox = nestor.getY() + Nestor.HEIGHT;
-        int topHitBox = nestor.getY();
-
-        if (shieldTimer > 0) {
-            leftHitBox += bubbleRadius - Nestor.WIDTH/2;
-            rightHitBox -= bubbleRadius - Nestor.WIDTH/2;
-            topHitBox -= bubbleRadius;
-        }
-
-        // checks for any overlap between Nestor and any entity
-        return (leftHitBox > entity.getX())
-                && (rightHitBox < (entity.getX() + entity.getWidth()))
-                && ((bottomHitBox) > entity.getY())
-                && (topHitBox < (entity.getY() + entity.getHeight()));
-    }
-
-    private void handleCollision() {
-        assert entities.peek() != null;
-        Entity entity = entities.peek();
-        Entity.Type entityType = entity.type();
-
-        switch (entityType) {
+    private void handleCollision(Entity entity) {
+        switch (entity.type()) {
             case Coin:
                 // coin is consumed and score is increased
                 score += 10;
@@ -216,7 +158,7 @@ public class NestorRunner {
                 break;
             case Hole:
                 // if nestor still on screen, keep falling
-                state = GameState.OVER;
+                nestor.fall(FALL_SPEED);
                 break;
             default:
                 if (shieldTimer > 0) {
@@ -224,50 +166,29 @@ public class NestorRunner {
                     entities.poll();
                 } else {
                     state = GameState.OVER;
+                    return;
                 }
                 break;
         }
     }
 
-    private boolean entityPassedLeft() {
-        Entity headEntity = entities.peek();
-        if (headEntity == null) return false;
-
-        return (headEntity.getX() + headEntity.getWidth() <= 0);
-        //return (headEntity.getX() + headEntity.getWidth() <= 0);
-    }
-
-    private void moveEntities(double deltaTime) {
+    private void moveEntitiesLeft(double deltaTime) {
         for (Entity entity : entities) {
             entity.setX(entity.getX() - (int) (entitySpeed * deltaTime * 1.5));;
         }
     }
 
     public void fireCannon() {
+        if (cannonBall != null) return;
+
         assert cannonTimer > 0;
         int recoil = 30;
 
-        if (cannonBall != null) return;
         nestor.setX(nestor.getX() - recoil);
         cannonBall = new CannonBall(getNestorY());
     }
 
-    private void moveCannonBall() {
-        assert cannonBall != null;
-        cannonBall.setX(cannonBall.getX() + CannonBall.SPEED);
-    }
-
-    private boolean cannonBallHasHit() {
-        Entity headEntity = entities.peek();
-        if (headEntity == null || cannonBall == null) return false;
-
-        return (cannonBall.getX() + CannonBall.WIDTH > headEntity.getX() &&
-                cannonBall.getY() + CannonBall.HEIGHT > headEntity.getY());
-    }
-
-    private void handleCannonBallCollision() {
-        assert entities.peek() != null;
-        Entity entity = entities.peek();
+    private void handleCannonBallCollision(Entity entity) {
         Entity.Type entityType = entity.type();
 
         if (entityType == Entity.Type.LargeObstacle ||
@@ -277,11 +198,6 @@ public class NestorRunner {
             cannonBall = null;
             score += 100;
         }
-    }
-
-    private boolean cannonBallOffScreen() {
-        assert cannonBall != null;
-        return cannonBall.getX() > Entity.START_X;
     }
 
     public int getCannonTimer() {

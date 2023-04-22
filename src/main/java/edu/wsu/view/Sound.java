@@ -33,18 +33,13 @@ public class Sound {
         jumpPlayer = generateMediaPlayer("jumpSound.mp3");
         jumpPlayer.setVolume(sfxVolume);
 
-        // collectPlayer = generateMediaPlayer("collectSound.xyz");
-        // collectPlayer.setVolume(sfxVolume);
-
-        // explosionPlayer = generateMediaPlayer("explosionSound.xyz");
-        // explosionPlayer.setVolume(sfxVolume);
-
         backGroundPlayer = generateMediaPlayer("Fluffing-a-Duck.mp3");
         backGroundPlayer.setVolume(musicVolume);
 
         doomPlayer = generateMediaPlayer("Rip-and-Tear-Doom-OST.mp3");
         doomPlayer.setVolume(musicVolume);
     }
+
     public void playDeathSound() {
         deathPlayer.seek(deathPlayer.getStartTime());
         deathPlayer.play();
