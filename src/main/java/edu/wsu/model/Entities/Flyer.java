@@ -48,6 +48,11 @@ public class Flyer implements Entity {
     }
 
     @Override
+    public void moveLeft(int entitySpeed, double deltaTime) {
+        x -= (int) (entitySpeed * deltaTime * 1.5);
+    }
+
+    @Override
     public Type type() {
         return Type.Flyer;
     }

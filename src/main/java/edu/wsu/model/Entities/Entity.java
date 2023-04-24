@@ -17,6 +17,7 @@ public interface Entity {
     int getWidth();
     int getHeight();
     boolean hasPassedLeft();
+    void moveLeft(int entitySpeed, double deltaTime);
 
     Type type();
 }

@@ -9,7 +9,7 @@ public class Nestor {
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
     public static final int BASE_JUMP_SPEED = 400; // m/s
-    public static final int BASE_HEIGHT = GROUND_Y - HEIGHT;
+    public static final int BASE_Y_POS = GROUND_Y - HEIGHT;
     private int x;
     private int y;
     private double jumpSpeed;
@@ -17,8 +17,7 @@ public class Nestor {
 
     public Nestor() {
         x = 50;
-        y = BASE_HEIGHT;
-        jumpSpeed = 0;
+        y = BASE_Y_POS;
     }
 
     public boolean isJumping() {
@@ -57,6 +56,10 @@ public class Nestor {
             jumpSpeed = 0;
             isJumping = false;
         }
+    }
+
+    public void moveLeft(int amount) {
+        x -= amount;
     }
 
     public void moveRight(int amount) {

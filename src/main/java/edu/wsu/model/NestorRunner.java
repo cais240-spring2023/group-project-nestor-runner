@@ -2,8 +2,7 @@ package edu.wsu.model;
 
 import edu.wsu.model.Entities.Entity;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class NestorRunner {
     private static NestorRunner gameInstance;
@@ -12,6 +11,7 @@ public class NestorRunner {
     public static final int FALL_SPEED = 10;
 
     public static final int GROUND_Y = 400;
+    public static final int CANNON_RECOIL = 30;
     public static final double GRAVITY = 600; // m/s^2
     public final int bubbleRadius = 55;
     private static int entitySpacing;
@@ -19,7 +19,7 @@ public class NestorRunner {
     private CannonBall cannonBall;
     private EntityFactory entityFactory;
     private int ticks;
-    private Queue<Entity> entities;
+    private ArrayList<Entity> entities;
     private int score;
     public int shieldTimer;
     public int cannonTimer;
@@ -59,6 +59,7 @@ public class NestorRunner {
         if (state != GameState.PLAYING) return;
         state = GameState.PAUSED;
     }
+
     public void unPause() {
         if (state != GameState.PAUSED) return;
         state = GameState.PLAYING;
@@ -68,18 +69,16 @@ public class NestorRunner {
         if (state == GameState.PAUSED) return;
 
         double deltaTimeModified = deltaTime * deltaTimeModifier;
-        Entity headEntity = entities.peek();
 
+        // collision detection and response
+        handleCollisions(getCollisions());
         moveEntitiesLeft(deltaTimeModified);
+
         if (nestor.getX() < 50) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
         if (cannonBall != null) {
             cannonBall.moveLeft();
             if (cannonBall.hasPassedRight()) cannonBall = null;
-            else if (cannonBall.hasCollided(headEntity)) {
-                assert headEntity != null;
-                handleCannonBallCollision(headEntity);
-            }
         }
         if (ticks % 10 == 0) {
             score++;
@@ -88,24 +87,111 @@ public class NestorRunner {
         }
         if (shieldTimer > 0) shieldTimer--;
         if (ticks % entitySpacing == 0) entities.add(entityFactory.generate());
-        if (nestor.hasCollided(headEntity, shieldTimer > 0, bubbleRadius)) {
-            assert headEntity != null;
-            handleCollision(headEntity);
-        }
+
         if (nestor.getY() >= 480) {
             state = GameState.OVER;
             return;
         }
-        if (headEntity != null && headEntity.hasPassedLeft()) entities.poll();
+
+        Entity headEntity;
+        try {
+            headEntity = entities.get(0);
+        }
+        catch (IndexOutOfBoundsException e) {
+            headEntity = null;
+        }
+        if (headEntity != null && headEntity.hasPassedLeft()) entities.remove(0);
         if (nestor.isJumping()) nestor.jump(deltaTimeModified, GRAVITY);
         ticks++;
+    }
+
+    /**
+     * Returns a stack of CollisionEvents that happened during the tick the method was called in.
+     * CannonBall collisions take precedence, and three-way collisions aren't a thing.
+     * That means if both nestor and a cannonBall collide with the same entity, nestor's collisionEvent is ignored.
+     * (Where the game is right now, this system is slightly overkill. However, it's very robust and will serve us well
+     * if things get more complicated.)
+     */
+    private Stack<CollisionEvent<?>> getCollisions() {
+        Stack<CollisionEvent<?>> collisionEvents = new Stack<>();
+        for (Entity entity : entities) {
+            if (cannonBall != null && cannonBall.hasCollided(entity)) {
+                collisionEvents.push(new CollisionEvent<>(cannonBall, entity));
+            }
+            else if (nestor.hasCollided(entity, shieldTimer > 0, bubbleRadius)) {
+                collisionEvents.push(new CollisionEvent<>(nestor, entity));
+            }
+        }
+        return collisionEvents;
+    }
+
+    /**
+     * goes through each collision in the current tick and handles it.
+     * @param collisionEventStack stack of collisionEvents that happened in the current tick.
+     */
+    private void handleCollisions(Stack<CollisionEvent<?>> collisionEventStack) {
+        while (!collisionEventStack.empty()) {
+            CollisionEvent<?> collisionEvent = collisionEventStack.pop();
+
+            Entity collided = collisionEvent.getCollided();
+
+            // cannonBall collisions first
+            if (collisionEvent.getCollider() instanceof CannonBall) {
+
+                if (collided.type() == Entity.Type.LargeObstacle ||
+                        collided.type() == Entity.Type.SmallObstacle ||
+                        collided.type() == Entity.Type.Flyer) {
+                    entities.remove(collided);
+                    cannonBall = null;
+                    score += 100;
+                }
+            }
+            else {
+                switch (collided.type()) {
+                    case Coin:
+                        // coin is consumed and score is increased
+                        score += 10;
+                        entities.remove(collided);
+                        break;
+                    case Shield:
+                        // shield is consumed and equipped
+                        shieldTimer = 500;
+                        entities.remove(collided);
+                        break;
+                    case Cannon:
+                        cannonTimer = 1_000;
+                        entities.remove(collided);
+                        break;
+                    case Hole:
+                        // if nestor still on screen, keep falling
+                        nestor.fall(FALL_SPEED);
+                        break;
+                    default:
+                        if (shieldTimer > 0) {
+                            shieldTimer = 0;
+                            entities.remove(collided);
+                        } else {
+                            state = GameState.OVER;
+                            return;
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Move each entity in entities to the left.
+     */
+    private void moveEntitiesLeft(double deltaTimeModified) {
+        for (Entity entity : entities) entity.moveLeft(entitySpeed, deltaTimeModified);
     }
 
     public void startNewGame() {
         nestor = new Nestor();
         cannonBall = null;
         entityFactory = new EntityFactory();
-        entities = new LinkedList<>();
+        entities = new ArrayList<>();
         state = GameState.PLAYING;
         ticks = 0;
         score = 0;
@@ -140,64 +226,13 @@ public class NestorRunner {
         nestor.setJump(cannonTimer > 0);
     }
 
-    private void handleCollision(Entity entity) {
-        switch (entity.type()) {
-            case Coin:
-                // coin is consumed and score is increased
-                score += 10;
-                entities.poll();
-                break;
-            case Shield:
-                // shield is consumed and equipped
-                shieldTimer = 500;
-                entities.poll();
-                break;
-            case Cannon:
-                cannonTimer = 1_000;
-                entities.poll();
-                break;
-            case Hole:
-                // if nestor still on screen, keep falling
-                nestor.fall(FALL_SPEED);
-                break;
-            default:
-                if (shieldTimer > 0) {
-                    shieldTimer = 0;
-                    entities.poll();
-                } else {
-                    state = GameState.OVER;
-                    return;
-                }
-                break;
-        }
-    }
-
-    private void moveEntitiesLeft(double deltaTime) {
-        for (Entity entity : entities) {
-            entity.setX(entity.getX() - (int) (entitySpeed * deltaTime * 1.5));;
-        }
-    }
-
     public void fireCannon() {
         if (cannonBall != null) return;
 
         assert cannonTimer > 0;
-        int recoil = 30;
 
-        nestor.setX(nestor.getX() - recoil);
+        nestor.moveLeft(CANNON_RECOIL);
         cannonBall = new CannonBall(getNestorY());
-    }
-
-    private void handleCannonBallCollision(Entity entity) {
-        Entity.Type entityType = entity.type();
-
-        if (entityType == Entity.Type.LargeObstacle ||
-                entityType == Entity.Type.SmallObstacle ||
-                entityType == Entity.Type.Flyer) {
-            entities.poll();
-            cannonBall = null;
-            score += 100;
-        }
     }
 
     public int getCannonTimer() {
@@ -215,8 +250,8 @@ public class NestorRunner {
         return score;
     }
 
-    public Queue<Entity> getEntities() {
-        return entities;
+    public ArrayList<Entity> getEntities() {
+        return new ArrayList<>(entities);
     }
 
     public Difficulty getDifficulty() {
