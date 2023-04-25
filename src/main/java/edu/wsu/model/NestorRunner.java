@@ -4,6 +4,9 @@ import edu.wsu.model.Entities.Entity;
 
 import java.util.*;
 
+/**
+ * Singleton for managing model interactions + other metadata.
+ */
 public class NestorRunner {
     private static NestorRunner gameInstance;
     public GameState state;
@@ -17,7 +20,7 @@ public class NestorRunner {
     private static int entitySpacing;
     private Nestor nestor;
     private CannonBall cannonBall;
-    private EntityFactory entityFactory;
+    private EntitySpawner entitySpawner;
     private int ticks;
     private ArrayList<Entity> entities;
     private int score;
@@ -72,8 +75,8 @@ public class NestorRunner {
 
         // collision detection and response
         handleCollisions(getCollisions());
-        moveEntitiesLeft(deltaTimeModified);
 
+        moveEntitiesLeft(deltaTimeModified);
         if (nestor.getX() < 50) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
         if (cannonBall != null) {
@@ -86,7 +89,7 @@ public class NestorRunner {
             if (entitySpacing > 60) entitySpacing--;
         }
         if (shieldTimer > 0) shieldTimer--;
-        if (ticks % entitySpacing == 0) entities.add(entityFactory.generate());
+        if (ticks % entitySpacing == 0) entities.add(entitySpawner.spawnEntity());
 
         if (nestor.getY() >= 480) {
             state = GameState.OVER;
@@ -106,10 +109,12 @@ public class NestorRunner {
     }
 
     /**
-     * Returns a stack of CollisionEvents that happened during the tick the method was called in.
-     * CannonBall collisions take precedence, and three-way collisions aren't a thing.
-     * That means if both nestor and a cannonBall collide with the same entity, nestor's collisionEvent is ignored.
-     * (Where the game is right now, this system is slightly overkill. However, it's very robust and will serve us well
+     * @return a stack of CollisionEvents that happened during the tick the method was called in.
+     * Three-way Collisions are a thing, in which a single entity can be colliding with multiple entities at once.
+     * However, as it is now, if cannonBall and Nestor collide with an entity at the same time, the CannonBall's collision
+     * is prioritized.
+     *
+     * (Where the game is right now, this system is overkill. However, it's very robust and will serve us well
      * if things get more complicated.)
      */
     private Stack<CollisionEvent<?>> getCollisions() {
@@ -118,7 +123,7 @@ public class NestorRunner {
             if (cannonBall != null && cannonBall.hasCollided(entity)) {
                 collisionEvents.push(new CollisionEvent<>(cannonBall, entity));
             }
-            else if (nestor.hasCollided(entity, shieldTimer > 0, bubbleRadius)) {
+            if (nestor.hasCollided(entity, shieldTimer > 0, bubbleRadius)) {
                 collisionEvents.push(new CollisionEvent<>(nestor, entity));
             }
         }
@@ -126,7 +131,7 @@ public class NestorRunner {
     }
 
     /**
-     * goes through each collision in the current tick and handles it.
+     * Goes through each collision in the current tick and handles it.
      * @param collisionEventStack stack of collisionEvents that happened in the current tick.
      */
     private void handleCollisions(Stack<CollisionEvent<?>> collisionEventStack) {
@@ -135,15 +140,20 @@ public class NestorRunner {
 
             Entity collided = collisionEvent.getCollided();
 
+            // if a collision has already been handled involving collided
+            // that resulted in collided being removed, then skip the processing.
+            if (!entities.contains(collided)) continue;
+
             // cannonBall collisions first
             if (collisionEvent.getCollider() instanceof CannonBall) {
 
                 if (collided.type() == Entity.Type.LargeObstacle ||
                         collided.type() == Entity.Type.SmallObstacle ||
                         collided.type() == Entity.Type.Flyer) {
-                    entities.remove(collided);
-                    cannonBall = null;
-                    score += 100;
+                    if (entities.remove(collided)) {
+                        cannonBall = null;
+                        score += 100;
+                    }
                 }
             }
             else {
@@ -163,14 +173,14 @@ public class NestorRunner {
                         entities.remove(collided);
                         break;
                     case Hole:
-                        // if nestor still on screen, keep falling
                         nestor.fall(FALL_SPEED);
                         break;
                     default:
                         if (shieldTimer > 0) {
                             shieldTimer = 0;
                             entities.remove(collided);
-                        } else {
+                        }
+                        else {
                             state = GameState.OVER;
                             return;
                         }
@@ -184,21 +194,22 @@ public class NestorRunner {
      * Move each entity in entities to the left.
      */
     private void moveEntitiesLeft(double deltaTimeModified) {
-        for (Entity entity : entities) entity.moveLeft(entitySpeed, deltaTimeModified);
+        for (Entity entity : entities) entity.moveLeft((int) (entitySpeed * deltaTimeModified * 1.5));
     }
 
     public void startNewGame() {
+        entitySpawner = new EntitySpawner();
         nestor = new Nestor();
         cannonBall = null;
-        entityFactory = new EntityFactory();
         entities = new ArrayList<>();
-        state = GameState.PLAYING;
         ticks = 0;
         score = 0;
         shieldTimer = 0;
         cannonTimer = 0;
         deltaTimeModifier = 1;
         entitySpacing = 200;
+
+        state = GameState.PLAYING;
     }
 
     public void setDifficulty(Difficulty difficulty) {

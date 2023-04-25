@@ -48,8 +48,23 @@ public class Shield implements Entity {
     }
 
     @Override
-    public void moveLeft(int entitySpeed, double deltaTime) {
-        x -= (int) (entitySpeed * deltaTime * 1.5);
+    public void moveLeft(int amount) {
+        x -= amount;
+    }
+
+    @Override
+    public void moveRight(int amount) {
+        x += amount;
+    }
+
+    @Override
+    public void moveUp(int amount) {
+        y -= amount;
+    }
+
+    @Override
+    public void moveDown(int amount) {
+        y += amount;
     }
 
     @Override
