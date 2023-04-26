@@ -2,17 +2,17 @@ package edu.wsu.model;
 
 import edu.wsu.model.Entities.Entity;
 
-public class CollisionEvent<T> {
+public class CollisionEvent {
 
-    private final T collider;
+    private final Entity collider;
     private final Entity collided;
 
-    public CollisionEvent(T collider, Entity collided) {
+    public CollisionEvent(Entity collider, Entity collided) {
         this.collider = collider;
         this.collided = collided;
     }
 
-    public T getCollider() {
+    public Entity getCollider() {
         return collider;
     }
 

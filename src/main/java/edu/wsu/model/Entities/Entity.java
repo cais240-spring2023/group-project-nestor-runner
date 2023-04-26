@@ -5,7 +5,8 @@ public interface Entity {
     // these need to mirror the Sprite file names.
     enum Type {
         Flyer, Hole, Coin, SmallObstacle,
-        Shield, LargeObstacle, Cannon
+        Shield, LargeObstacle, Cannon,
+        Nestor, CannonBall
     }
 
     /**
@@ -22,6 +23,8 @@ public interface Entity {
             case Shield: return new Shield();
             case LargeObstacle: return new LargeObstacle();
             case Cannon: return new Cannon();
+            case Nestor: return new Nestor();
+            case CannonBall: return new CannonBall();
         }
         return null;
     }

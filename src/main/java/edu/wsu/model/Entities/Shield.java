@@ -44,7 +44,7 @@ public class Shield implements Entity {
 
     @Override
     public boolean hasPassedLeft() {
-        return (x + getWidth() <= 0);
+        return x + getWidth() <= 0;
     }
 
     @Override

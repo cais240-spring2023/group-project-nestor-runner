@@ -2,7 +2,7 @@ package edu.wsu.view;
 
 import edu.wsu.App;
 import edu.wsu.model.Entities.Entity;
-import edu.wsu.model.Nestor;
+import edu.wsu.model.Entities.Nestor;
 import edu.wsu.model.NestorRunner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -82,7 +82,8 @@ public class GameView extends StackPane implements View {
             Parent menuRoot = menuLoader.load();
             View.getStage(event).setScene(new Scene(menuRoot, 640, 480));
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -92,7 +93,7 @@ public class GameView extends StackPane implements View {
         NestorRunner nestorRunner = (NestorRunner) obj;
 
         wipeGC();
-        for (Entity entity : nestorRunner.getEntities()) {
+        for (Entity entity : nestorRunner.getScrollingEntities()) {
             draw(
                     entity.type().toString(),
                     entity.getX(), entity.getY(),
@@ -153,7 +154,8 @@ public class GameView extends StackPane implements View {
 
             gc.setFill(Color.LIGHTBLUE);
             gc.fillRect(viewXPos, yPos, holeViewWidth, ground.getHeight());
-        } else {
+        }
+        else {
             String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
             Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
             gc.drawImage(img, xPos, yPos, width, height);

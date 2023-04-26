@@ -1,10 +1,8 @@
-package edu.wsu.model;
-
-import edu.wsu.model.Entities.Entity;
+package edu.wsu.model.Entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class Nestor {
+public class Nestor implements Entity {
 
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
@@ -32,17 +30,32 @@ public class Nestor {
         }
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public void setY(int y) {
         this.y = y;
     }
+
+    @Override
+    public int getWidth() {
+        return 40;
+    }
+
+    @Override
+    public int getHeight() {
+        return 50;
+    }
+
+    @Override
     public void setX(int x) {
         this.x = x;
     }
@@ -58,16 +71,34 @@ public class Nestor {
         }
     }
 
+    @Override
     public void moveLeft(int amount) {
         x -= amount;
     }
 
+    @Override
     public void moveRight(int amount) {
         x += amount;
     }
 
-    public void fall(int amount) {
+    @Override
+    public void moveUp(int amount) {
+        y -= amount;
+    }
+
+    @Override
+    public void moveDown(int amount) {
         y += amount;
+    }
+
+    @Override
+    public boolean hasPassedLeft() {
+        return x + getWidth() <= 0;
+    }
+
+    @Override
+    public Type type() {
+        return Type.Nestor;
     }
 
     /**
