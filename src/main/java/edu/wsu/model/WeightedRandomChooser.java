@@ -31,7 +31,7 @@ public class WeightedRandomChooser<Choice> {
      * @param weight Weight applied that dictates how often that choice is randomly selected.
      */
     public void addChoice(Choice choice, int weight) {
-        //TODO: During runtime, entities cannot be removed from Spawn list once added.
+        //TODO: During runtime, choices cannot be removed from choice list once added.
         accumulatedWeight += weight;
         WeightedChoice<Choice> weightedChoice = new WeightedChoice<>();
         weightedChoice.choice = choice;
