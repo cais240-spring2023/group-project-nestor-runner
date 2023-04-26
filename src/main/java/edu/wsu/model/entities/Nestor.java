@@ -1,4 +1,4 @@
-package edu.wsu.model.Entities;
+package edu.wsu.model.entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
@@ -73,23 +73,23 @@ public class Nestor implements Entity {
     }
 
     @Override
-    public void moveLeft(int amount) {
-        x -= amount;
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
     }
 
     @Override
-    public void moveRight(int amount) {
-        x += amount;
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
     }
 
     @Override
-    public void moveUp(int amount) {
-        y -= amount;
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
     }
 
     @Override
-    public void moveDown(int amount) {
-        y += amount;
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Nestor implements Entity {
      * @return true if Nestor overlaps with an entity,
      * false otherwise
      */
-    public boolean hasCollided(Entity entity, boolean isShielded, int bubbleRadius) {
+    public boolean isCollidingWith(Entity entity, boolean isShielded, int bubbleRadius) {
         if (entity == null) return false;
 
         int leftHitBox = x + Nestor.WIDTH;

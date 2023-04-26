@@ -32,7 +32,7 @@ public class GameController{
         gameView.getSound().startDoomSoundTrack();
         gameView.getSound().pauseDoomSoundTrack();
         gameView.getEndPane().setButton1Action(e -> {
-            gameView.again();
+            gameView.restart();
             start();
         });
         gameView.getPausePane().setButton1Action(e -> unPause());

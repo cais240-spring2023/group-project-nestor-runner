@@ -1,6 +1,4 @@
-package edu.wsu.model;
-
-import edu.wsu.model.Entities.Entity;
+package edu.wsu.model.entities;
 
 public class CollisionEvent {
 

@@ -1,4 +1,4 @@
-package edu.wsu.model.Entities;
+package edu.wsu.model.entities;
 
 public interface Entity {
 
@@ -10,7 +10,7 @@ public interface Entity {
     }
 
     /**
-     * Constructs Entities if given an Entity.Type.
+     * Constructs Entities from an Entity.Type.
      * @param entityType type of entity you want to construct.
      * @return a new instance of entityType, null if entityType is for some reason not in Entity.Type.
      */
@@ -40,10 +40,10 @@ public interface Entity {
     int getWidth();
     int getHeight();
 
-    void moveLeft(int amount);
-    void moveRight(int amount);
-    void moveUp(int amount);
-    void moveDown(int amount);
+    void moveLeft(int amountPixels);
+    void moveRight(int amountPixels);
+    void moveUp(int amountPixels);
+    void moveDown(int amountPixels);
 
     boolean hasPassedLeft();
 

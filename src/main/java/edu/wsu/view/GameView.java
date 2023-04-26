@@ -1,8 +1,8 @@
 package edu.wsu.view;
 
 import edu.wsu.App;
-import edu.wsu.model.Entities.Entity;
-import edu.wsu.model.Entities.Nestor;
+import edu.wsu.model.entities.Entity;
+import edu.wsu.model.entities.Nestor;
 import edu.wsu.model.NestorRunner;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -36,10 +36,11 @@ public class GameView extends StackPane implements View {
     private final FreezePane pausePane;
     private final GraphicsContext gc;
     private final Canvas canvas;
-    private boolean paused = false;
+    private boolean paused;
 
     public GameView(int groundLevel, double musicVolume, double sfxVolume) {
         super();
+
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-background-color: #add8e6;");
 
@@ -149,11 +150,8 @@ public class GameView extends StackPane implements View {
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
         if (spriteName.equals("Hole")) {
-            int holeViewWidth = 125;
-            int viewXPos = xPos - Nestor.WIDTH;
-
             gc.setFill(Color.LIGHTBLUE);
-            gc.fillRect(viewXPos, yPos, holeViewWidth, ground.getHeight());
+            gc.fillRect(xPos, yPos, width, height);
         }
         else {
             String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
@@ -173,7 +171,7 @@ public class GameView extends StackPane implements View {
         sound.playDeathSound();
     }
 
-    public void again() {
+    public void restart() {
         getChildren().remove(endPane);
         sound.startBackGroundTrack();
     }

@@ -1,5 +1,5 @@
 package edu.wsu.model;
-import edu.wsu.model.Entities.*;
+import edu.wsu.model.entities.*;
 import org.testng.annotations.Test;
 import static org.testng.AssertJUnit.assertEquals;
 

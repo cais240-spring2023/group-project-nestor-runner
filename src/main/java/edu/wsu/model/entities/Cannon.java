@@ -1,15 +1,15 @@
-package edu.wsu.model.Entities;
+package edu.wsu.model.entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class SmallObstacle implements Entity {
+public class Cannon implements Entity {
 
     private int x;
-    private int y;
+    public int y;
 
-    public SmallObstacle() {
+    public Cannon() {
         x = START_X;
-        y = GROUND_Y - getHeight();
+        y = GROUND_Y - getHeight() - 7;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class SmallObstacle implements Entity {
 
     @Override
     public int getWidth() {
-        return 50;
+        return 80;
     }
 
     @Override
     public int getHeight() {
-        return 50;
+        return 60;
     }
 
     @Override
@@ -48,28 +48,27 @@ public class SmallObstacle implements Entity {
     }
 
     @Override
-    public void moveLeft(int amount) {
-        x -= amount;
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
     }
 
     @Override
-    public void moveRight(int amount) {
-        x += amount;
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
     }
 
     @Override
-    public void moveUp(int amount) {
-        y -= amount;
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
     }
 
     @Override
-    public void moveDown(int amount) {
-        y += amount;
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
     }
 
     @Override
     public Type type() {
-        return Type.SmallObstacle;
+        return Type.Cannon;
     }
-
 }

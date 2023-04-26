@@ -1,6 +1,4 @@
-package edu.wsu.model.Entities;
-
-import edu.wsu.model.Entities.Entity;
+package edu.wsu.model.entities;
 
 public class CannonBall implements Entity {
 
@@ -50,30 +48,30 @@ public class CannonBall implements Entity {
         return 30;
     }
 
-    public boolean hasCollided(Entity entity) {
+    public boolean isCollidingWith(Entity entity) {
         if (entity == null) return false;
 
-        return (x + WIDTH > entity.getX() &&
-                y + HEIGHT > entity.getY());
+        return x + WIDTH > entity.getX() &&
+                y + HEIGHT > entity.getY();
     }
 
-    public void moveLeft(int amount) {
-        x -= amount;
-    }
-
-    @Override
-    public void moveRight(int amount) {
-        x += amount;
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
     }
 
     @Override
-    public void moveUp(int amount) {
-        y -= amount;
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
     }
 
     @Override
-    public void moveDown(int amount) {
-        y += amount;
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
+    }
+
+    @Override
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
     }
 
     public boolean hasPassedRight() {

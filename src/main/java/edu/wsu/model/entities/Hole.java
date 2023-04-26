@@ -1,15 +1,15 @@
-package edu.wsu.model.Entities;
+package edu.wsu.model.entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class Flyer implements Entity {
+public class Hole implements Entity {
 
     private int x;
     private int y;
 
-    public Flyer() {
+    public Hole() {
         x = START_X;
-        y = GROUND_Y - getHeight() - 60;
+        y = GROUND_Y;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class Flyer implements Entity {
 
     @Override
     public int getWidth() {
-        return 30;
+        return 125;
     }
 
     @Override
     public int getHeight() {
-        return 20;
+        return 480 - GROUND_Y;
     }
 
     @Override
@@ -48,27 +48,28 @@ public class Flyer implements Entity {
     }
 
     @Override
-    public void moveLeft(int amount) {
-        x -= amount;
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
     }
 
     @Override
-    public void moveRight(int amount) {
-        x += amount;
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
     }
 
     @Override
-    public void moveUp(int amount) {
-        y -= amount;
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
     }
 
     @Override
-    public void moveDown(int amount) {
-        y += amount;
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
     }
 
     @Override
     public Type type() {
-        return Type.Flyer;
+        return Type.Hole;
     }
+
 }

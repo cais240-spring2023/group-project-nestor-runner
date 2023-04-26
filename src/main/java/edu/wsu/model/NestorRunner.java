@@ -1,8 +1,6 @@
 package edu.wsu.model;
 
-import edu.wsu.model.Entities.CannonBall;
-import edu.wsu.model.Entities.Entity;
-import edu.wsu.model.Entities.Nestor;
+import edu.wsu.model.entities.*;
 
 import java.util.*;
 
@@ -16,7 +14,7 @@ public class NestorRunner {
     public static final int CANNON_RECOIL = 30;
     public static final double GRAVITY = 600; // m/s^2
     public final int bubbleRadius = 55;
-    private final EntitySpawner entitySpawner;
+    private final WeightedRandomChooser<Entity.Type> entityFactory;
     public GameState state;
 
     private static int entitySpacing;
@@ -33,7 +31,16 @@ public class NestorRunner {
 
     private NestorRunner() {
         state = GameState.MAIN_MENU;
-        entitySpawner = new EntitySpawner();
+        entityFactory = new WeightedRandomChooser<>();
+
+        entityFactory.addChoice(Entity.Type.Coin, WeightedRandomChooser.UNCOMMON);
+        entityFactory.addChoice(Entity.Type.Hole, WeightedRandomChooser.COMMON);
+        entityFactory.addChoice(Entity.Type.Flyer, WeightedRandomChooser.COMMON);
+        entityFactory.addChoice(Entity.Type.SmallObstacle, WeightedRandomChooser.COMMON);
+        entityFactory.addChoice(Entity.Type.Shield, WeightedRandomChooser.UNCOMMON);
+        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.RARE);
+        entityFactory.addChoice(Entity.Type.LargeObstacle, WeightedRandomChooser.COMMON);
+
         startNewGame();
     }
 
@@ -77,6 +84,7 @@ public class NestorRunner {
 
         // collision detection and response
         handleCollisions(getCollisions());
+
         moveScrollingEntitiesLeft(deltaTimeModified);
         if (nestor.getX() < 50) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
@@ -90,7 +98,9 @@ public class NestorRunner {
             if (entitySpacing > 60) entitySpacing--;
         }
         if (shieldTimer > 0) shieldTimer--;
-        if (ticks % entitySpacing == 0) scrollingEntities.add(entitySpawner.spawnEntity());
+        if (ticks % entitySpacing == 0) {
+            scrollingEntities.add(Entity.init(entityFactory.choose()));
+        }
 
         if (nestor.getY() >= 480) {
             state = GameState.OVER;
@@ -112,17 +122,18 @@ public class NestorRunner {
      * Three-way Collisions are a thing, in which a single entity can be colliding with multiple scrollingEntities at once.
      * However, as it is now, if cannonBall and Nestor collide with an entity at the same time, the CannonBall's collision
      * is prioritized.
-     *
-     * (Where the game is right now, this system is overkill. However, it's very robust and will serve us well
-     * if things get more complicated.)
      */
     private Stack<CollisionEvent> getCollisions() {
+        /*
+        (Where the game is right now, this system is overkill. However, it's very robust and will serve us well
+         if things get more complicated.)
+         */
         Stack<CollisionEvent> collisionEvents = new Stack<>();
         for (Entity entity : scrollingEntities) {
-            if (cannonBall != null && cannonBall.hasCollided(entity)) {
+            if (cannonBall != null && cannonBall.isCollidingWith(entity)) {
                 collisionEvents.push(new CollisionEvent(cannonBall, entity));
             }
-            if (nestor.hasCollided(entity, shieldTimer > 0, bubbleRadius)) {
+            if (nestor.isCollidingWith(entity, shieldTimer > 0, bubbleRadius)) {
                 collisionEvents.push(new CollisionEvent(nestor, entity));
             }
         }
@@ -130,8 +141,8 @@ public class NestorRunner {
     }
 
     /**
-     * Goes through each collision in the current tick and handles it.
-     * @param collisionEventStack stack of collisionEvents that happened in the current tick.
+     * Handles/processes a stack of CollisionEvents.
+     * @param collisionEventStack stack of collisionEvents.
      */
     private void handleCollisions(Stack<CollisionEvent> collisionEventStack) {
         while (!collisionEventStack.empty()) {
@@ -139,13 +150,9 @@ public class NestorRunner {
 
             Entity collided = collisionEvent.getCollided();
 
-            // if a collision has already been handled involving collided
-            // that resulted in collided being removed, then skip the processing.
             if (!scrollingEntities.contains(collided)) continue;
 
-            // cannonBall collisions first
             if (collisionEvent.getCollider() instanceof CannonBall) {
-
                 if (collided.type() == Entity.Type.LargeObstacle ||
                         collided.type() == Entity.Type.SmallObstacle ||
                         collided.type() == Entity.Type.Flyer) {
@@ -154,15 +161,14 @@ public class NestorRunner {
                         score += 100;
                     }
                 }
-            } else {
+            }
+            else {
                 switch (collided.type()) {
                     case Coin:
-                        // coin is consumed and score is increased
                         score += 10;
                         scrollingEntities.remove(collided);
                         break;
                     case Shield:
-                        // shield is consumed and equipped
                         shieldTimer = 500;
                         scrollingEntities.remove(collided);
                         break;
@@ -266,4 +272,3 @@ public class NestorRunner {
         return difficulty;
     }
 }
-

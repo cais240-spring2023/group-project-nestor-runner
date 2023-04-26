@@ -1,15 +1,15 @@
-package edu.wsu.model.Entities;
+package edu.wsu.model.entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class Coin implements Entity {
+public class Flyer implements Entity {
 
     private int x;
     private int y;
 
-    public Coin() {
+    public Flyer() {
         x = START_X;
-        y = GROUND_Y - getHeight() - 50;
+        y = GROUND_Y - getHeight() - 60;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Coin implements Entity {
 
     @Override
     public int getHeight() {
-        return 30;
+        return 20;
     }
 
     @Override
@@ -48,28 +48,27 @@ public class Coin implements Entity {
     }
 
     @Override
-    public void moveLeft(int amount) {
-        x -= amount;
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
     }
 
     @Override
-    public void moveRight(int amount) {
-        x += amount;
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
     }
 
     @Override
-    public void moveUp(int amount) {
-        y -= amount;
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
     }
 
     @Override
-    public void moveDown(int amount) {
-        y += amount;
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
     }
 
     @Override
     public Type type() {
-        return Type.Coin;
+        return Type.Flyer;
     }
-
 }
