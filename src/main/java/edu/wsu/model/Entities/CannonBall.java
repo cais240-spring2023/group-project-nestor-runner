@@ -58,22 +58,22 @@ public class CannonBall implements Entity {
     }
 
     public void moveLeft(int amount) {
-        x += amount;
+        x -= amount;
     }
 
     @Override
     public void moveRight(int amount) {
-
+        x += amount;
     }
 
     @Override
     public void moveUp(int amount) {
-
+        y -= amount;
     }
 
     @Override
     public void moveDown(int amount) {
-
+        y += amount;
     }
 
     public boolean hasPassedRight() {

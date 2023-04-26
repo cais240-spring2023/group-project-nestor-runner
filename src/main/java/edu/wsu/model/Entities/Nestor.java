@@ -6,6 +6,7 @@ public class Nestor implements Entity {
 
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
+    public static final int FALL_SPEED = 10;
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final int BASE_Y_POS = GROUND_Y - HEIGHT;
     private int x;

@@ -11,29 +11,29 @@ import java.util.*;
  */
 public class NestorRunner {
     private static NestorRunner gameInstance;
-    public GameState state;
-
-    public static final int FALL_SPEED = 10;
 
     public static final int GROUND_Y = 400;
     public static final int CANNON_RECOIL = 30;
     public static final double GRAVITY = 600; // m/s^2
     public final int bubbleRadius = 55;
+    private final EntitySpawner entitySpawner;
+    public GameState state;
+
     private static int entitySpacing;
     private Nestor nestor;
     private CannonBall cannonBall;
-    private EntitySpawner entitySpawner;
     private int ticks;
     private ArrayList<Entity> scrollingEntities;
     private int score;
-    public int shieldTimer;
-    public int cannonTimer;
+    private int shieldTimer;
+    private int cannonTimer;
     private int entitySpeed;
     Difficulty difficulty;
     private double deltaTimeModifier;
 
     private NestorRunner() {
         state = GameState.MAIN_MENU;
+        entitySpawner = new EntitySpawner();
         startNewGame();
     }
 
@@ -81,7 +81,7 @@ public class NestorRunner {
         if (nestor.getX() < 50) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
         if (cannonBall != null) {
-            cannonBall.moveLeft(CannonBall.SPEED);
+            cannonBall.moveRight(CannonBall.SPEED);
             if (cannonBall.hasPassedRight()) cannonBall = null;
         }
         if (ticks % 10 == 0) {
@@ -171,7 +171,7 @@ public class NestorRunner {
                         scrollingEntities.remove(collided);
                         break;
                     case Hole:
-                        nestor.moveDown(FALL_SPEED);
+                        nestor.moveDown(Nestor.FALL_SPEED);
                         break;
                     default:
                         if (shieldTimer > 0) {
@@ -196,7 +196,6 @@ public class NestorRunner {
     }
 
     public void startNewGame() {
-        entitySpawner = new EntitySpawner();
         nestor = new Nestor();
         cannonBall = null;
         scrollingEntities = new ArrayList<>();
