@@ -45,6 +45,10 @@ public interface Entity {
     void moveUp(int amountPixels);
     void moveDown(int amountPixels);
 
+    /*
+    todo: Checks like these require data from view, which is just asking for coupling.
+            The responsibility for these checks should somehow be moved.
+     */
     boolean hasPassedLeft();
 
     Type type();

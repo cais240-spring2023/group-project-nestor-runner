@@ -1,6 +1,7 @@
 package edu.wsu.view;
 
 import edu.wsu.App;
+import edu.wsu.model.entities.CannonBall;
 import edu.wsu.model.entities.Entity;
 import edu.wsu.model.entities.Nestor;
 import edu.wsu.model.NestorRunner;
@@ -103,9 +104,9 @@ public class GameView extends StackPane implements View {
         }
 
         if (nestorRunner.cannonBallIsActive()) {
-            draw("CannonBall", nestorRunner.getCannonBallX() - 45,
-                    nestorRunner.getCannonBallY() - 5,
-                    80, 40);
+            draw("CannonBall", nestorRunner.getCannonBallX(),
+                    nestorRunner.getCannonBallY(),
+                    CannonBall.WIDTH, CannonBall.HEIGHT);
         }
 
         if (nestorRunner.getCannonTimer() > 0) {

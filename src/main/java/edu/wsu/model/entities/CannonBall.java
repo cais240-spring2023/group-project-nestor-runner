@@ -2,8 +2,8 @@ package edu.wsu.model.entities;
 
 public class CannonBall implements Entity {
 
-    public static final int WIDTH = 30;
-    public static final int HEIGHT = 30;
+    public static final int WIDTH = 35;
+    public static final int HEIGHT = 35;
     public static final int SPEED = 10;
     private int x;
     private int y;
@@ -40,12 +40,12 @@ public class CannonBall implements Entity {
 
     @Override
     public int getWidth() {
-        return 30;
+        return WIDTH;
     }
 
     @Override
     public int getHeight() {
-        return 30;
+        return HEIGHT;
     }
 
     public boolean isCollidingWith(Entity entity) {

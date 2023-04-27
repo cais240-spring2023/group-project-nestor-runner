@@ -38,7 +38,7 @@ public class NestorRunner {
         entityFactory.addChoice(Entity.Type.Flyer, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.SmallObstacle, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.Shield, WeightedRandomChooser.UNCOMMON);
-        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.RARE);
+        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.LargeObstacle, WeightedRandomChooser.COMMON);
 
         startNewGame();

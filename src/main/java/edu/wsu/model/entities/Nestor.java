@@ -48,12 +48,12 @@ public class Nestor implements Entity {
 
     @Override
     public int getWidth() {
-        return 40;
+        return WIDTH;
     }
 
     @Override
     public int getHeight() {
-        return 50;
+        return HEIGHT;
     }
 
     @Override

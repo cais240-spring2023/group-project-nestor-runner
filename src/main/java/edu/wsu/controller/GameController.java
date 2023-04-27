@@ -58,26 +58,36 @@ public class GameController{
                 double deltaTime = (now - lastTime) / 1e9;
                 lastTime = now;
 
-                nestorRunner.update(deltaTime);
-                gameView.update(nestorRunner);
-                gameView.setEventHandler(event -> {
-                    switch (event.getCode()) {
-                        case SPACE:
-                            if (!nestorRunner.isJumping()) gameView.getSound().playJumpSound();
-                            nestorRunner.setJump();
-                            break;
-                        case ESCAPE:
-                            pause();
-                            break;
-                        case D:
-                            if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();
-                            break;
-                    }
-                });
-                if (nestorRunner.state == GameState.OVER) {
-                    stop();
-                    gameView.end();
-                } else if (nestorRunner.state == GameState.MAIN_MENU) stop();
+                switch (nestorRunner.state) {
+                    case PLAYING:
+                        nestorRunner.update(deltaTime);
+                        gameView.update(nestorRunner);
+                        gameView.setEventHandler(event -> {
+                            switch (event.getCode()) {
+                                case SPACE:
+                                    if (!nestorRunner.isJumping()) gameView.getSound().playJumpSound();
+                                    nestorRunner.setJump();
+                                    break;
+                                case ESCAPE:
+                                    pause();
+                                    break;
+                                case D:
+                                    if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();
+                                    break;
+                            }
+                        });
+                        break;
+
+                    case OVER:
+                        stop();
+                        gameView.end();
+                        break;
+
+                    case MAIN_MENU:
+                        stop();
+                        break;
+
+                }
             }
         };
         timer.start();
