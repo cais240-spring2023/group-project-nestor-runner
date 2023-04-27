@@ -51,8 +51,16 @@ public class CannonBall implements Entity {
     public boolean isCollidingWith(Entity entity) {
         if (entity == null) return false;
 
-        return x + WIDTH > entity.getX() &&
-                y + HEIGHT > entity.getY();
+        int leftHitBox = x + CannonBall.WIDTH;
+        int rightHitBox = x;
+        int bottomHitBox = y + CannonBall.HEIGHT;
+        int topHitBox = y;
+
+        // checks for any overlap between Nestor and any entity
+        return (leftHitBox > entity.getX())
+                && (rightHitBox < (entity.getX() + entity.getWidth()))
+                && ((bottomHitBox) > entity.getY())
+                && (topHitBox < (entity.getY() + entity.getHeight()));
     }
 
     public void moveLeft(int amountPixels) {

@@ -21,7 +21,7 @@ public class NestorRunner {
     private Nestor nestor;
     private List<CannonBall> cannonBalls;
     private int ticks;
-    private ArrayList<Entity> scrollingEntities;
+    private List<Entity> scrollingEntities;
     private int score;
     private int shieldTimer;
     private int cannonTimer;
@@ -38,7 +38,7 @@ public class NestorRunner {
         entityFactory.addChoice(Entity.Type.Flyer, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.SmallObstacle, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.Shield, WeightedRandomChooser.UNCOMMON);
-        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.RARE);
+        entityFactory.addChoice(Entity.Type.Cannon, 50);
         entityFactory.addChoice(Entity.Type.LargeObstacle, WeightedRandomChooser.COMMON);
 
         startNewGame();
@@ -116,6 +116,7 @@ public class NestorRunner {
             headEntity = null;
         }
         if (headEntity != null && headEntity.hasPassedLeft()) scrollingEntities.remove(0);
+        if (cannonBalls.size() > 0 && cannonBalls.get(0).hasPassedRight()) cannonBalls.remove(0);
         if (nestor.isJumping()) nestor.jump(deltaTimeModified, GRAVITY);
         ticks++;
     }
@@ -210,7 +211,6 @@ public class NestorRunner {
     private void moveCannonBalls() {
         for (CannonBall cannonBall : cannonBalls) {
             cannonBall.moveRight(CannonBall.SPEED);
-            if (cannonBall.hasPassedRight()) cannonBalls.remove(cannonBall);
         }
     }
 

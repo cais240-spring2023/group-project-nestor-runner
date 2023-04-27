@@ -9,7 +9,7 @@ public class Flyer implements Entity {
 
     public Flyer() {
         x = START_X;
-        y = GROUND_Y - getHeight() - 60;
+        y = GROUND_Y - getHeight() - 50;
     }
 
     @Override
