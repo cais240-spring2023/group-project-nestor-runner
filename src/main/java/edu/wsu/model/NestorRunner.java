@@ -19,7 +19,7 @@ public class NestorRunner {
 
     private static int entitySpacing;
     private Nestor nestor;
-    private CannonBall cannonBall;
+    private List<CannonBall> cannonBalls;
     private int ticks;
     private ArrayList<Entity> scrollingEntities;
     private int score;
@@ -38,7 +38,7 @@ public class NestorRunner {
         entityFactory.addChoice(Entity.Type.Flyer, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.SmallObstacle, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.Shield, WeightedRandomChooser.UNCOMMON);
-        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.COMMON);
+        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.RARE);
         entityFactory.addChoice(Entity.Type.LargeObstacle, WeightedRandomChooser.COMMON);
 
         startNewGame();
@@ -51,21 +51,26 @@ public class NestorRunner {
         return gameInstance;
     }
 
+    public void startNewGame() {
+        nestor = new Nestor();
+        cannonBalls = new ArrayList<>();
+        scrollingEntities = new ArrayList<>();
+        ticks = 0;
+        score = 0;
+        shieldTimer = 0;
+        cannonTimer = 0;
+        deltaTimeModifier = 1;
+        entitySpacing = 200;
+
+        state = GameState.PLAYING;
+    }
+
     public int getNestorX() {
         return nestor.getX();
     }
 
     public int getNestorY() {
         return nestor.getY();
-    }
-
-    public int getCannonBallX() {
-        if (cannonBall == null) return -1;
-        return cannonBall.getX();
-    }
-    public int getCannonBallY() {
-        if (cannonBall == null) return -1;
-        return cannonBall.getY();
     }
 
     public void pause() {
@@ -86,12 +91,10 @@ public class NestorRunner {
         handleCollisions(getCollisions());
 
         moveScrollingEntitiesLeft(deltaTimeModified);
-        if (nestor.getX() < 50) nestor.moveRight(1);
+        moveCannonBalls();
+
+        if (nestor.getX() < Nestor.BASE_X_POS) nestor.moveRight(1);
         if (cannonTimer > 0) cannonTimer--;
-        if (cannonBall != null) {
-            cannonBall.moveRight(CannonBall.SPEED);
-            if (cannonBall.hasPassedRight()) cannonBall = null;
-        }
         if (ticks % 10 == 0) {
             score++;
             if (deltaTimeModifier < 3.5) deltaTimeModifier += 0.005;
@@ -130,8 +133,10 @@ public class NestorRunner {
          */
         Stack<CollisionEvent> collisionEvents = new Stack<>();
         for (Entity entity : scrollingEntities) {
-            if (cannonBall != null && cannonBall.isCollidingWith(entity)) {
-                collisionEvents.push(new CollisionEvent(cannonBall, entity));
+            for (CannonBall cannonBall : cannonBalls) {
+                if (cannonBall.isCollidingWith(entity)) {
+                    collisionEvents.push(new CollisionEvent(cannonBall, entity));
+                }
             }
             if (nestor.isCollidingWith(entity, shieldTimer > 0, bubbleRadius)) {
                 collisionEvents.push(new CollisionEvent(nestor, entity));
@@ -149,7 +154,6 @@ public class NestorRunner {
             CollisionEvent collisionEvent = collisionEventStack.pop();
 
             Entity collided = collisionEvent.getCollided();
-
             if (!scrollingEntities.contains(collided)) continue;
 
             if (collisionEvent.getCollider() instanceof CannonBall) {
@@ -157,7 +161,7 @@ public class NestorRunner {
                         collided.type() == Entity.Type.SmallObstacle ||
                         collided.type() == Entity.Type.Flyer) {
                     if (scrollingEntities.remove(collided)) {
-                        cannonBall = null;
+                        cannonBalls.remove((CannonBall) collisionEvent.getCollider());
                         score += 100;
                     }
                 }
@@ -198,21 +202,16 @@ public class NestorRunner {
      * Move each entity in scrollingEntities to the left.
      */
     private void moveScrollingEntitiesLeft(double deltaTimeModified) {
-        for (Entity entity : scrollingEntities) entity.moveLeft((int) (entitySpeed * deltaTimeModified * 1.5));
+        for (Entity entity : scrollingEntities) {
+            entity.moveLeft((int) (entitySpeed * deltaTimeModified * 1.5));
+        }
     }
 
-    public void startNewGame() {
-        nestor = new Nestor();
-        cannonBall = null;
-        scrollingEntities = new ArrayList<>();
-        ticks = 0;
-        score = 0;
-        shieldTimer = 0;
-        cannonTimer = 0;
-        deltaTimeModifier = 1;
-        entitySpacing = 200;
-
-        state = GameState.PLAYING;
+    private void moveCannonBalls() {
+        for (CannonBall cannonBall : cannonBalls) {
+            cannonBall.moveRight(CannonBall.SPEED);
+            if (cannonBall.hasPassedRight()) cannonBalls.remove(cannonBall);
+        }
     }
 
     public void setDifficulty(Difficulty difficulty) {
@@ -241,12 +240,11 @@ public class NestorRunner {
     }
 
     public void fireCannon() {
-        if (cannonBall != null) return;
-
         assert cannonTimer > 0;
+        if (nestor.getX() < Nestor.BASE_X_POS) return;
 
         nestor.moveLeft(CANNON_RECOIL);
-        cannonBall = new CannonBall(getNestorY());
+        cannonBalls.add(new CannonBall(getNestorY()));
     }
 
     public int getCannonTimer() {
@@ -256,16 +254,23 @@ public class NestorRunner {
     public int getShieldTimer() {
         return shieldTimer;
     }
-    public boolean cannonBallIsActive() {
-        return cannonBall != null;
-    }
 
     public int getScore(){
         return score;
     }
 
-    public ArrayList<Entity> getScrollingEntities() {
-        return new ArrayList<>(scrollingEntities);
+    /**
+     * @return a new array of all scrolling entities at the time of calling.
+     */
+    public Entity[] getScrollingEntities() {
+        return scrollingEntities.toArray(new Entity[scrollingEntities.size()]);
+    }
+
+    /**
+     * @return a new array of all cannonballs at the time of calling.
+     */
+    public CannonBall[] getCannonBalls() {
+        return cannonBalls.toArray(new CannonBall[cannonBalls.size()]);
     }
 
     public Difficulty getDifficulty() {

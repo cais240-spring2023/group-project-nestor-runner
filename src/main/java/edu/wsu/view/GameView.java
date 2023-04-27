@@ -102,13 +102,11 @@ public class GameView extends StackPane implements View {
                     entity.getWidth(), entity.getHeight()
             );
         }
-
-        if (nestorRunner.cannonBallIsActive()) {
-            draw("CannonBall", nestorRunner.getCannonBallX(),
-                    nestorRunner.getCannonBallY(),
+        for (CannonBall cannonBall : nestorRunner.getCannonBalls()) {
+            draw("CannonBall", cannonBall.getX(),
+                    cannonBall.getY(),
                     CannonBall.WIDTH, CannonBall.HEIGHT);
         }
-
         if (nestorRunner.getCannonTimer() > 0) {
             draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
                     73, 55);

@@ -9,13 +9,14 @@ public class Nestor implements Entity {
     public static final int FALL_SPEED = 10;
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final int BASE_Y_POS = GROUND_Y - HEIGHT;
+    public static final int BASE_X_POS = 50;
     private int x;
     private int y;
     private double jumpSpeed;
     private boolean isJumping;
 
     public Nestor() {
-        x = 50;
+        x = BASE_X_POS;
         y = BASE_Y_POS;
     }
 
