@@ -2,7 +2,7 @@ package edu.wsu.model.entities;
 
 import static edu.wsu.model.NestorRunner.GROUND_Y;
 
-public class Nestor implements Entity {
+public class Nestor extends Entity {
 
     public static final int WIDTH = 40;
     public static final int HEIGHT = 50;
@@ -10,14 +10,13 @@ public class Nestor implements Entity {
     public static final int BASE_JUMP_SPEED = 400; // m/s
     public static final int BASE_Y_POS = GROUND_Y - HEIGHT;
     public static final int BASE_X_POS = 50;
-    private int x;
-    private int y;
     private double jumpSpeed;
     private boolean isJumping;
 
     public Nestor() {
-        x = BASE_X_POS;
-        y = BASE_Y_POS;
+        super();
+        setX(BASE_X_POS);
+        setY(BASE_Y_POS);
     }
 
     public boolean isJumping() {
@@ -32,19 +31,15 @@ public class Nestor implements Entity {
         }
     }
 
-    @Override
-    public int getX() {
-        return x;
-    }
+    public void jump(double deltaTime, double gravity) {
+        jumpSpeed += gravity * deltaTime;
+        setY((int) (getY() + jumpSpeed*deltaTime));
 
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
+        if (getY() >= GROUND_Y - HEIGHT) {
+            setY(GROUND_Y - HEIGHT);
+            jumpSpeed = 0;
+            isJumping = false;
+        }
     }
 
     @Override
@@ -55,47 +50,6 @@ public class Nestor implements Entity {
     @Override
     public int getHeight() {
         return HEIGHT;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void jump(double deltaTime, double gravity) {
-        jumpSpeed += gravity * deltaTime;
-        y = (int) (y + jumpSpeed*deltaTime);
-
-        if (y >= GROUND_Y - HEIGHT) {
-            y = GROUND_Y - HEIGHT;
-            jumpSpeed = 0;
-            isJumping = false;
-        }
-    }
-
-    @Override
-    public void moveLeft(int amountPixels) {
-        x -= amountPixels;
-    }
-
-    @Override
-    public void moveRight(int amountPixels) {
-        x += amountPixels;
-    }
-
-    @Override
-    public void moveUp(int amountPixels) {
-        y -= amountPixels;
-    }
-
-    @Override
-    public void moveDown(int amountPixels) {
-        y += amountPixels;
-    }
-
-    @Override
-    public boolean hasPassedLeft() {
-        return x + getWidth() <= 0;
     }
 
     @Override
@@ -113,10 +67,10 @@ public class Nestor implements Entity {
     public boolean isCollidingWith(Entity entity, boolean isShielded, int bubbleRadius) {
         if (entity == null) return false;
 
-        int leftHitBox = x + Nestor.WIDTH;
-        int rightHitBox = x;
-        int bottomHitBox = y + Nestor.HEIGHT;
-        int topHitBox = y;
+        int leftHitBox = getX() + Nestor.WIDTH;
+        int rightHitBox = getX();
+        int bottomHitBox = getY() + Nestor.HEIGHT;
+        int topHitBox = getY();
 
         if (isShielded) {
             leftHitBox += bubbleRadius - Nestor.WIDTH/2;

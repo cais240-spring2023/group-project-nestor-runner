@@ -148,15 +148,9 @@ public class GameView extends StackPane implements View {
      * @param spriteName the name of the Sprite in resources.
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
-        if (spriteName.equals("Hole")) {
-            gc.setFill(Color.LIGHTBLUE);
-            gc.fillRect(xPos, yPos, width, height);
-        }
-        else {
-            String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
-            Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
-            gc.drawImage(img, xPos, yPos, width, height);
-        }
+        String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
+        Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
+        gc.drawImage(img, xPos, yPos, width, height);
     }
 
     public Sound getSound() {

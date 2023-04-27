@@ -20,26 +20,6 @@ public class test {
         assertEquals(nestor.getY(), 300);
     }
 
-
-    @Test
-    public void testHoleType() {
-        Hole hole = new Hole();
-        assertEquals(hole.type(), Entity.Type.Hole);
-    }
-
-    @Test
-    public void testHoleX() {
-        Hole hole = new Hole();
-        hole.setX(10);
-        assertEquals(hole.getX(), 10);
-    }
-    @Test
-    public void testHoleY() {
-        Hole hole = new Hole();
-        hole.setY(20);
-        assertEquals(hole.getY(), 20);
-    }
-
     @Test
     public void testCoinX() {
         Coin coin = new Coin();

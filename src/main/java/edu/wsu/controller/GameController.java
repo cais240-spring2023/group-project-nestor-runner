@@ -17,15 +17,6 @@ public class GameController{
         this.gameView = gameView;
     }
 
-    public void pause() {
-        gameView.pause();
-        nestorRunner.pause();
-    }
-    public void unPause() {
-        gameView.unPause();
-        nestorRunner.unPause();
-    }
-
     public void start() {
         nestorRunner.startNewGame();
         gameView.getSound().startBackGroundTrack();
@@ -35,7 +26,10 @@ public class GameController{
             gameView.restart();
             start();
         });
-        gameView.getPausePane().setButton1Action(e -> unPause());
+        gameView.getPausePane().setButton1Action(e -> {
+            gameView.unPause();
+            nestorRunner.unPause();
+        });
         gameView.getPausePane().setButton2Action(e -> {
             timer.stop();
             gameView.getSound().stopBackGroundTrack();
@@ -62,6 +56,7 @@ public class GameController{
                     case PLAYING:
                         nestorRunner.update(deltaTime);
                         gameView.update(nestorRunner);
+
                         gameView.setEventHandler(event -> {
                             switch (event.getCode()) {
                                 case SPACE:
@@ -69,7 +64,8 @@ public class GameController{
                                     nestorRunner.setJump();
                                     break;
                                 case ESCAPE:
-                                    pause();
+                                    gameView.pause();
+                                    nestorRunner.pause();
                                     break;
                                 case D:
                                     if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();

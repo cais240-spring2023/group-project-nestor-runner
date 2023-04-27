@@ -11,6 +11,7 @@ public class NestorRunner {
     private static NestorRunner gameInstance;
 
     public static final int GROUND_Y = 400;
+    public static final int KILL_BOX = 480;
     public static final int CANNON_RECOIL = 30;
     public static final double GRAVITY = 600; // m/s^2
     public final int bubbleRadius = 55;
@@ -20,8 +21,9 @@ public class NestorRunner {
     private static int entitySpacing;
     private Nestor nestor;
     private List<CannonBall> cannonBalls;
-    private int ticks;
     private List<Entity> scrollingEntities;
+    private List<FloorPiece> ground;
+    private int ticks;
     private int score;
     private int shieldTimer;
     private int cannonTimer;
@@ -34,11 +36,10 @@ public class NestorRunner {
         entityFactory = new WeightedRandomChooser<>();
 
         entityFactory.addChoice(Entity.Type.Coin, WeightedRandomChooser.UNCOMMON);
-        entityFactory.addChoice(Entity.Type.Hole, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.Flyer, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.SmallObstacle, WeightedRandomChooser.COMMON);
         entityFactory.addChoice(Entity.Type.Shield, WeightedRandomChooser.UNCOMMON);
-        entityFactory.addChoice(Entity.Type.Cannon, 50);
+        entityFactory.addChoice(Entity.Type.Cannon, WeightedRandomChooser.RARE);
         entityFactory.addChoice(Entity.Type.LargeObstacle, WeightedRandomChooser.COMMON);
 
         startNewGame();
@@ -84,7 +85,6 @@ public class NestorRunner {
     }
 
     public void update(double deltaTime) {
-        if (state == GameState.PAUSED) return;
         double deltaTimeModified = deltaTime * deltaTimeModifier;
 
         // collision detection and response
@@ -105,7 +105,7 @@ public class NestorRunner {
             scrollingEntities.add(Entity.init(entityFactory.choose()));
         }
 
-        if (nestor.getY() >= 480) {
+        if (nestor.getY() >= KILL_BOX) {
             state = GameState.OVER;
             return;
         }
@@ -115,8 +115,8 @@ public class NestorRunner {
         } catch (IndexOutOfBoundsException e) {
             headEntity = null;
         }
-        if (headEntity != null && headEntity.hasPassedLeft()) scrollingEntities.remove(0);
-        if (cannonBalls.size() > 0 && cannonBalls.get(0).hasPassedRight()) cannonBalls.remove(0);
+        if (headEntity != null && headEntity.isLeftOf(0)) scrollingEntities.remove(0);
+        if (cannonBalls.size() > 0 && cannonBalls.get(0).isRightOf(640)) cannonBalls.remove(0);
         if (nestor.isJumping()) nestor.jump(deltaTimeModified, GRAVITY);
         ticks++;
     }
@@ -171,30 +171,24 @@ public class NestorRunner {
                 switch (collided.type()) {
                     case Coin:
                         score += 10;
-                        scrollingEntities.remove(collided);
                         break;
                     case Shield:
                         shieldTimer = 500;
-                        scrollingEntities.remove(collided);
                         break;
                     case Cannon:
                         cannonTimer = 1_000;
-                        scrollingEntities.remove(collided);
-                        break;
-                    case Hole:
-                        nestor.moveDown(Nestor.FALL_SPEED);
                         break;
                     default:
                         if (shieldTimer > 0) {
                             shieldTimer = 0;
-                            scrollingEntities.remove(collided);
+                            break;
                         }
                         else {
                             state = GameState.OVER;
                             return;
                         }
-                        break;
                 }
+                scrollingEntities.remove(collided);
             }
         }
     }

@@ -1,41 +1,19 @@
 package edu.wsu.model.entities;
 
-public class CannonBall implements Entity {
+public class CannonBall extends Entity {
 
     public static final int WIDTH = 35;
     public static final int HEIGHT = 35;
     public static final int SPEED = 15;
-    private int x;
-    private int y;
-
-    public CannonBall() {
-        x = 100;
-        y = 15;
-    }
 
     public CannonBall(int nestorY) {
-        x = 100;
-        y = nestorY + 15;
+        super();
+        setX(100);
+        setY(nestorY + 15);
     }
 
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
+    public CannonBall() {
+        this(0);
     }
 
     @Override
@@ -51,44 +29,16 @@ public class CannonBall implements Entity {
     public boolean isCollidingWith(Entity entity) {
         if (entity == null) return false;
 
-        int leftHitBox = x + CannonBall.WIDTH;
-        int rightHitBox = x;
-        int bottomHitBox = y + CannonBall.HEIGHT;
-        int topHitBox = y;
+        int leftHitBox = getX() + CannonBall.WIDTH;
+        int rightHitBox = getX();
+        int bottomHitBox = getY() + CannonBall.HEIGHT;
+        int topHitBox = getY();
 
         // checks for any overlap between Nestor and any entity
         return (leftHitBox > entity.getX())
                 && (rightHitBox < (entity.getX() + entity.getWidth()))
                 && ((bottomHitBox) > entity.getY())
                 && (topHitBox < (entity.getY() + entity.getHeight()));
-    }
-
-    public void moveLeft(int amountPixels) {
-        x -= amountPixels;
-    }
-
-    @Override
-    public void moveRight(int amountPixels) {
-        x += amountPixels;
-    }
-
-    @Override
-    public void moveUp(int amountPixels) {
-        y -= amountPixels;
-    }
-
-    @Override
-    public void moveDown(int amountPixels) {
-        y += amountPixels;
-    }
-
-    public boolean hasPassedRight() {
-        return x > Entity.START_X;
-    }
-
-    @Override
-    public boolean hasPassedLeft() {
-        return x + getWidth() <= 0;
     }
 
     @Override

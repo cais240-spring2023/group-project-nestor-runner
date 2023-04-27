@@ -1,23 +1,25 @@
 package edu.wsu.model.entities;
 
-public interface Entity {
+public abstract class Entity {
 
     // these need to mirror the Sprite file names.
-    enum Type {
-        Flyer, Hole, Coin, SmallObstacle,
+    public enum Type {
+        Flyer, Coin, SmallObstacle,
         Shield, LargeObstacle, Cannon,
-        Nestor, CannonBall
+        Nestor, CannonBall, FloorPiece
     }
+
+    private int x;
+    private int y;
 
     /**
      * Constructs Entities from an Entity.Type.
      * @param entityType type of entity you want to construct.
      * @return a new instance of entityType, null if entityType is for some reason not in Entity.Type.
      */
-    static Entity init(Entity.Type entityType)  {
+    public static Entity init(Entity.Type entityType)  {
         switch (entityType) {
             case Flyer: return new Flyer();
-            case Hole: return new Hole();
             case Coin: return new Coin();
             case SmallObstacle: return new SmallObstacle();
             case Shield: return new Shield();
@@ -25,32 +27,62 @@ public interface Entity {
             case Cannon: return new Cannon();
             case Nestor: return new Nestor();
             case CannonBall: return new CannonBall();
+            case FloorPiece: return new FloorPiece();
         }
         return null;
     }
 
-    int START_X = 640;
+    public static int START_X = 640;
 
-    int getX();
-    int getY();
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
 
-    void setX(int x);
-    void setY(int y);
+    public void setX(int x) {
+        this.x = x;
+    }
+    public void setY(int y) {
+        this.y = y;
+    }
 
-    int getWidth();
-    int getHeight();
+    public abstract int getWidth();
+    public abstract int getHeight();
 
-    void moveLeft(int amountPixels);
-    void moveRight(int amountPixels);
-    void moveUp(int amountPixels);
-    void moveDown(int amountPixels);
+    public void moveLeft(int amountPixels) {
+        x -= amountPixels;
+    }
 
-    /*
-    todo: Checks like these require data from view, which is just asking for coupling.
-            The responsibility for these checks should somehow be moved.
-     */
-    boolean hasPassedLeft();
+    public void moveRight(int amountPixels) {
+        x += amountPixels;
+    }
 
-    Type type();
+    public void moveUp(int amountPixels) {
+        y -= amountPixels;
+    }
+
+    public void moveDown(int amountPixels) {
+        y += amountPixels;
+    }
+
+    public boolean isLeftOf(int xPosPixels) {
+        return x + getWidth() < xPosPixels;
+    }
+
+    public boolean isRightOf(int xPosPixels) {
+        return x > xPosPixels;
+    }
+
+    public boolean isAbove(int yPosPixels) {
+        return y + getHeight() < yPosPixels;
+    }
+
+    public boolean isBelow(int yPosPixels) {
+        return y > yPosPixels;
+    }
+
+    public abstract Type type();
 
 }
