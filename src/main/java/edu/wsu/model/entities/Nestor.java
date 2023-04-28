@@ -19,6 +19,45 @@ public class Nestor extends Entity {
         setY(BASE_Y_POS);
     }
 
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
+    public Type type() {
+        return Type.Nestor;
+    }
+
+    public boolean isCollidingWith(Entity other, boolean isShielded, int bubbleRadius) {
+        if (other == null) return false;
+
+        int thisLeftHitBox = getX() + getWidth();
+        int thisRightHitBox = getX();
+        int thisBottomHitBox = getY() + getHeight();
+        int thisTopHitBox = getY();
+
+        if (isShielded) {
+            thisLeftHitBox += bubbleRadius - Nestor.WIDTH/2;
+            thisRightHitBox -= bubbleRadius - Nestor.WIDTH/2;
+            thisTopHitBox -= bubbleRadius;
+        }
+
+        int otherLeftHitBox = other.getX() + other.getWidth();
+        int otherRightHitBox = other.getX();
+        int otherBottomHitBox = other.getY() + other.getHeight();
+        int otherTopHitBox = other.getY();
+
+        // checks for any overlap between Nestor and any other
+        return thisLeftHitBox >= otherRightHitBox && thisRightHitBox <= otherLeftHitBox
+                && thisBottomHitBox >= otherTopHitBox && thisTopHitBox <= otherBottomHitBox;
+    }
+
     public boolean isJumping() {
         return isJumping;
     }
@@ -42,46 +81,4 @@ public class Nestor extends Entity {
         }
     }
 
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public Type type() {
-        return Type.Nestor;
-    }
-
-    /**
-     * This method checks for a valid collision between any
-     * entity and Nestor. A collision is valid if Nestor is
-     * not shielded.
-     * @return true if Nestor overlaps with an entity,
-     * false otherwise
-     */
-    public boolean isCollidingWith(Entity entity, boolean isShielded, int bubbleRadius) {
-        if (entity == null) return false;
-
-        int leftHitBox = getX() + Nestor.WIDTH;
-        int rightHitBox = getX();
-        int bottomHitBox = getY() + Nestor.HEIGHT;
-        int topHitBox = getY();
-
-        if (isShielded) {
-            leftHitBox += bubbleRadius - Nestor.WIDTH/2;
-            rightHitBox -= bubbleRadius - Nestor.WIDTH/2;
-            topHitBox -= bubbleRadius;
-        }
-
-        // checks for any overlap between Nestor and any entity
-        return (leftHitBox > entity.getX())
-                && (rightHitBox < (entity.getX() + entity.getWidth()))
-                && ((bottomHitBox) > entity.getY())
-                && (topHitBox < (entity.getY() + entity.getHeight()));
-    }
 }

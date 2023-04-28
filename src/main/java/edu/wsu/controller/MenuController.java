@@ -51,7 +51,7 @@ public class MenuController {
             case "Hard":
                 nestorRunner.setDifficulty(Difficulty.HARD);
         }
-        GameView gameView = new GameView(NestorRunner.GROUND_Y, musicVolume, sfxVolume);
+        GameView gameView = new GameView(musicVolume, sfxVolume);
         GameController gameController = new GameController(gameView);
         View.getStage(actionEvent).setScene(new Scene(gameView));
         gameController.start();

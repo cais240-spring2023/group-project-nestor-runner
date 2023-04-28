@@ -83,6 +83,24 @@ public abstract class Entity {
         return y > yPosPixels;
     }
 
+    public boolean isCollidingWith(Entity other) {
+        if (other == null) return false;
+
+        int thisLeftHitBox = getX() + getWidth();
+        int thisRightHitBox = getX();
+        int thisBottomHitBox = getY() + getHeight();
+        int thisTopHitBox = getY();
+
+        int otherLeftHitBox = other.getX() + other.getWidth();
+        int otherRightHitBox = other.getX();
+        int otherBottomHitBox = other.getY() + other.getHeight();
+        int otherTopHitBox = other.getY();
+
+        // checks for any overlap between Nestor and any other
+        return thisLeftHitBox >= otherRightHitBox && thisRightHitBox <= otherLeftHitBox
+                && thisBottomHitBox >= otherTopHitBox && thisTopHitBox <= otherBottomHitBox;
+    }
+
     public abstract Type type();
 
 }

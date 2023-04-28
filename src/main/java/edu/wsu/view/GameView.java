@@ -3,6 +3,7 @@ package edu.wsu.view;
 import edu.wsu.App;
 import edu.wsu.model.entities.CannonBall;
 import edu.wsu.model.entities.Entity;
+import edu.wsu.model.entities.FloorPiece;
 import edu.wsu.model.entities.Nestor;
 import edu.wsu.model.NestorRunner;
 import javafx.event.ActionEvent;
@@ -21,7 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
@@ -32,14 +32,13 @@ public class GameView extends StackPane implements View {
 
     private final Label scoreField;
     private final Sound sound;
-    private final Rectangle ground;
     private final FreezePane endPane;
     private final FreezePane pausePane;
     private final GraphicsContext gc;
     private final Canvas canvas;
     private boolean paused;
 
-    public GameView(int groundLevel, double musicVolume, double sfxVolume) {
+    public GameView(double musicVolume, double sfxVolume) {
         super();
 
         this.setAlignment(Pos.CENTER);
@@ -54,10 +53,7 @@ public class GameView extends StackPane implements View {
         canvas.setFocusTraversable(true);
 
         StackPane playSpace = new StackPane();
-        ground = new Rectangle(SCENE_WIDTH, SCENE_HEIGHT - groundLevel);
-        StackPane.setAlignment(ground, Pos.BOTTOM_CENTER);
-        ground.setFill(Color.BLACK);
-        playSpace.getChildren().addAll(ground, canvas);
+        playSpace.getChildren().add(canvas);
         this.getChildren().add(playSpace);
 
         BorderPane hud = new BorderPane();
@@ -95,6 +91,7 @@ public class GameView extends StackPane implements View {
         NestorRunner nestorRunner = (NestorRunner) obj;
 
         wipeGC();
+
         for (Entity entity : nestorRunner.getScrollingEntities()) {
             draw(
                     entity.type().toString(),
@@ -102,11 +99,21 @@ public class GameView extends StackPane implements View {
                     entity.getWidth(), entity.getHeight()
             );
         }
-        for (CannonBall cannonBall : nestorRunner.getCannonBalls()) {
-            draw("CannonBall", cannonBall.getX(),
-                    cannonBall.getY(),
-                    CannonBall.WIDTH, CannonBall.HEIGHT);
+        for (FloorPiece floorPiece : nestorRunner.getFloorPieces()) {
+            draw(
+                    floorPiece.type().toString(),
+                    floorPiece.getX(), floorPiece.getY(),
+                    floorPiece.getWidth(), floorPiece.getHeight()
+            );
         }
+        for (CannonBall cannonBall : nestorRunner.getCannonBalls()) {
+            draw(
+                    cannonBall.type().toString(),
+                    cannonBall.getX(), cannonBall.getY(),
+                    cannonBall.getWidth(), cannonBall.getHeight()
+            );
+        }
+
         if (nestorRunner.getCannonTimer() > 0) {
             draw("Cannon", nestorRunner.getNestorX(), nestorRunner.getNestorY(),
                     73, 55);
@@ -131,6 +138,7 @@ public class GameView extends StackPane implements View {
         draw("Nestor",
                 nestorRunner.getNestorX(), nestorRunner.getNestorY(),
                 Nestor.WIDTH, Nestor.HEIGHT);
+
         drawScore(nestorRunner.getScore());
     }
 
@@ -148,9 +156,15 @@ public class GameView extends StackPane implements View {
      * @param spriteName the name of the Sprite in resources.
      */
     public void draw(String spriteName, int xPos, int yPos, int width, int height) {
-        String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
-        Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
-        gc.drawImage(img, xPos, yPos, width, height);
+        if (spriteName.equals("FloorPiece"))  {
+            gc.setFill(Color.BLACK);
+            gc.fillRect(xPos, yPos, width, height);
+        }
+        else {
+            String imgURL = "/edu/wsu/sprites/" + spriteName + ".png";
+            Image img = new Image(Objects.requireNonNull(getClass().getResource(imgURL)).toString());
+            gc.drawImage(img, xPos, yPos, width, height);
+        }
     }
 
     public Sound getSound() {

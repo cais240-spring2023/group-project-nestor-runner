@@ -22,7 +22,7 @@ public class NestorRunner {
     private Nestor nestor;
     private List<CannonBall> cannonBalls;
     private List<Entity> scrollingEntities;
-    private List<FloorPiece> ground;
+    private List<FloorPiece> floorPieces;
     private int ticks;
     private int score;
     private int shieldTimer;
@@ -56,6 +56,8 @@ public class NestorRunner {
         nestor = new Nestor();
         cannonBalls = new ArrayList<>();
         scrollingEntities = new ArrayList<>();
+        floorPieces = new ArrayList<>();
+        floorPieces.add(new FloorPiece(640));
         ticks = 0;
         score = 0;
         shieldTimer = 0;
@@ -129,8 +131,7 @@ public class NestorRunner {
      */
     private Stack<CollisionEvent> getCollisions() {
         /*
-        (Where the game is right now, this system is overkill. However, it's very robust and will serve us well
-         if things get more complicated.)
+        todo: should instead be some "onCollide" thing. This won't do.
          */
         Stack<CollisionEvent> collisionEvents = new Stack<>();
         for (Entity entity : scrollingEntities) {
@@ -141,6 +142,11 @@ public class NestorRunner {
             }
             if (nestor.isCollidingWith(entity, shieldTimer > 0, bubbleRadius)) {
                 collisionEvents.push(new CollisionEvent(nestor, entity));
+            }
+        }
+        for (FloorPiece floorPiece : floorPieces) {
+            if (nestor.isCollidingWith(floorPiece, shieldTimer > 0, bubbleRadius)) {
+                collisionEvents.push(new CollisionEvent(nestor, floorPiece));
             }
         }
         return collisionEvents;
@@ -177,6 +183,9 @@ public class NestorRunner {
                         break;
                     case Cannon:
                         cannonTimer = 1_000;
+                        break;
+                    case FloorPiece:
+                        System.out.println("On Floor");
                         break;
                     default:
                         if (shieldTimer > 0) {
@@ -266,6 +275,10 @@ public class NestorRunner {
     public CannonBall[] getCannonBalls() {
         return cannonBalls.toArray(new CannonBall[cannonBalls.size()]);
     }
+    public FloorPiece[] getFloorPieces() {
+        return floorPieces.toArray(new FloorPiece[floorPieces.size()]);
+    }
+
 
     public Difficulty getDifficulty() {
         return difficulty;

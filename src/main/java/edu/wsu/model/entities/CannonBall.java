@@ -26,21 +26,6 @@ public class CannonBall extends Entity {
         return HEIGHT;
     }
 
-    public boolean isCollidingWith(Entity entity) {
-        if (entity == null) return false;
-
-        int leftHitBox = getX() + CannonBall.WIDTH;
-        int rightHitBox = getX();
-        int bottomHitBox = getY() + CannonBall.HEIGHT;
-        int topHitBox = getY();
-
-        // checks for any overlap between Nestor and any entity
-        return (leftHitBox > entity.getX())
-                && (rightHitBox < (entity.getX() + entity.getWidth()))
-                && ((bottomHitBox) > entity.getY())
-                && (topHitBox < (entity.getY() + entity.getHeight()));
-    }
-
     @Override
     public Type type() {
         return Type.CannonBall;
