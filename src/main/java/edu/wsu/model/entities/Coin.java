@@ -7,7 +7,7 @@ public class Coin extends Entity {
     public Coin() {
         super();
         setX(START_X);
-        setY(GROUND_Y - getHeight() - 50);
+        setY(GROUND_Y - getHeight() - 60);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class Flyer extends Entity {
     public Flyer() {
         super();
         setX(START_X);
-        setY(GROUND_Y - getHeight() - 50);
+        setY(GROUND_Y - getHeight() - 60);
     }
 
     @Override
