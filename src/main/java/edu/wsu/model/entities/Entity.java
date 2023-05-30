@@ -12,6 +12,8 @@ public abstract class Entity {
     private int x;
     private int y;
 
+    public static int START_X = 640;
+
     /**
      * Constructs Entities from an Entity.Type.
      * @param entityType type of entity you want to construct.
@@ -32,11 +34,10 @@ public abstract class Entity {
         return null;
     }
 
-    public static int START_X = 640;
-
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
@@ -44,11 +45,13 @@ public abstract class Entity {
     public void setX(int x) {
         this.x = x;
     }
+
     public void setY(int y) {
         this.y = y;
     }
 
     public abstract int getWidth();
+
     public abstract int getHeight();
 
     public void moveLeft(int amountPixels) {

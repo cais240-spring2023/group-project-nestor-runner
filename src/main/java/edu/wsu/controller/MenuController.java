@@ -3,6 +3,7 @@ package edu.wsu.controller;
 import edu.wsu.App;
 import edu.wsu.model.Difficulty;
 import edu.wsu.model.NestorRunner;
+import edu.wsu.model.Settings;
 import edu.wsu.view.GameView;
 import edu.wsu.view.View;
 import javafx.event.ActionEvent;
@@ -28,21 +29,17 @@ public class MenuController {
     public ComboBox<String> selectDifficulty;
     public CheckBox enableSpectate;
 
-    private double musicVolume;
-    private double sfxVolume;
-
     @FXML
     public void initialize() {
         selectDifficulty.getItems().add("Easy");
         selectDifficulty.getItems().add("Medium");
         selectDifficulty.getItems().add("Hard");
         selectDifficulty.setValue("Easy");
-        musicVolume = 1.0;
-        sfxVolume = 1.0;
     }
 
     public void handleStartGameAction(ActionEvent actionEvent) {
         NestorRunner nestorRunner = NestorRunner.getInstance();
+
         switch (selectDifficulty.getValue()) {
             case "Easy":
                 nestorRunner.setDifficulty(Difficulty.EASY);
@@ -51,7 +48,10 @@ public class MenuController {
             case "Hard":
                 nestorRunner.setDifficulty(Difficulty.HARD);
         }
-        GameView gameView = new GameView(musicVolume, sfxVolume);
+
+        Settings settingsInstance = Settings.getInstance();
+        GameView gameView = new GameView(settingsInstance.getMusicVolPercent(), settingsInstance.getSfxVolPercent());
+
         GameController gameController = new GameController(gameView);
         View.getStage(actionEvent).setScene(new Scene(gameView));
         gameController.start();
@@ -66,19 +66,13 @@ public class MenuController {
     public void handleSettingsAction(ActionEvent event) throws IOException {
         FXMLLoader settingsLoader = new FXMLLoader(App.class.getResource("fxml/settings.fxml"));
         Parent root = settingsLoader.load();
+        Settings settingsInstance = Settings.getInstance();
 
         SettingsController settingsController = settingsLoader.getController();
-        settingsController.soundEffectsSlider.setValue(sfxVolume * 100);
-        settingsController.musicVolumeSlider.setValue(musicVolume * 100);
+        settingsController.soundEffectsSlider.setValue(settingsInstance.getSfxVolPercent() * 100);
+        settingsController.musicVolumeSlider.setValue(settingsInstance.getMusicVolPercent() * 100);
 
         View.getStage(event).setScene(new Scene(root));
     }
 
-    public void setMusicVolume(double musicVolume) {
-        this.musicVolume = musicVolume;
-    }
-
-    public void setSfxVolume(double sfxVolume) {
-        this.sfxVolume = sfxVolume;
-    }
 }

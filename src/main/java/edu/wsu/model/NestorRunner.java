@@ -125,13 +125,13 @@ public class NestorRunner {
 
     /**
      * @return a stack of CollisionEvents that happened during the tick the method was called in.
-     * Three-way Collisions are a thing, in which a single entity can be colliding with multiple scrollingEntities at once.
-     * However, as it is now, if cannonBall and Nestor collide with an entity at the same time, the CannonBall's collision
-     * is prioritized.
      */
     private Stack<CollisionEvent> getCollisions() {
         /*
-        todo: should instead be some "onCollide" thing. This won't do.
+            todo: should instead be some "onCollide" thing. This won't do.
+            This checks for collisions between nestor and every single entity each game tick.
+            Therefore, the majority of checks are pointless.
+            Entities should instead have some onCollision() method which defines collision behavior.
          */
         Stack<CollisionEvent> collisionEvents = new Stack<>();
         for (Entity entity : scrollingEntities) {
@@ -218,17 +218,16 @@ public class NestorRunner {
     }
 
     public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = Difficulty.EASY;
+
         switch (difficulty) {
             case EASY:
-                this.difficulty = Difficulty.EASY;
                 entitySpeed = 75;
                 break;
             case MEDIUM:
-                this.difficulty = Difficulty.MEDIUM;
                 entitySpeed = 100;
                 break;
             case HARD:
-                this.difficulty = Difficulty.HARD;
                 entitySpeed = 125;
                 break;
         }
