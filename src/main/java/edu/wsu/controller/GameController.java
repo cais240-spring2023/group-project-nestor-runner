@@ -1,19 +1,23 @@
 package edu.wsu.controller;
 
-import edu.wsu.model.GameState;
 import edu.wsu.model.NestorRunner;
+import edu.wsu.model.Settings;
 import edu.wsu.view.GameView;
 import javafx.animation.AnimationTimer;
 
 public class GameController{
 
     private final NestorRunner nestorRunner;
+
+    private final Settings settings;
     private final GameView gameView;
 
     AnimationTimer timer;
 
     public GameController(GameView gameView) {
         nestorRunner = NestorRunner.getInstance();
+        settings = Settings.getInstance();
+
         this.gameView = gameView;
     }
 
@@ -56,18 +60,17 @@ public class GameController{
                     case PLAYING:
                         nestorRunner.update(deltaTime);
                         gameView.update(nestorRunner);
-
                         gameView.setEventHandler(event -> {
-                            switch (event.getCode()) {
-                                case SPACE:
+                            switch (settings.getBoundAction(event.getCode())) {
+                                case JUMP:
                                     if (!nestorRunner.isJumping()) gameView.getSound().playJumpSound();
                                     nestorRunner.setJump();
                                     break;
-                                case ESCAPE:
+                                case PAUSE:
                                     gameView.pause();
                                     nestorRunner.pause();
                                     break;
-                                case D:
+                                case FIRE:
                                     if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();
                                     break;
                             }

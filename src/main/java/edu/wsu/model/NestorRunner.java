@@ -7,6 +7,7 @@ import java.util.*;
 /**
  * Singleton for managing model interactions + other metadata.
  */
+// TODO: should probably be broken up somehow since it's a massive class.
 public class NestorRunner {
     private static NestorRunner gameInstance;
 

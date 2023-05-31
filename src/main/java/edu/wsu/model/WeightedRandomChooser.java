@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+/**
+ * Makes a random selection, with probabilities influenced by an integer weight.
+ * @param <ChoiceType> The type/class of your choices.
+ */
 public class WeightedRandomChooser<ChoiceType> {
 
     private static class WeightedChoice<Ch> {

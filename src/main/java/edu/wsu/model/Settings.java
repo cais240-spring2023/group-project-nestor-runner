@@ -1,5 +1,13 @@
 package edu.wsu.model;
 
+import javafx.scene.input.KeyCode;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Garden-variety Settings Singleton.
+ */
 public class Settings {
 
     private static Settings settingsInstance;
@@ -8,9 +16,16 @@ public class Settings {
 
     private double sfxVolPercent;
 
+    private Map<KeyCode, UserAction> keyToAction;
+
     private Settings() {
         musicVolPercent = 1.0;
         sfxVolPercent = 1.0;
+        keyToAction = new HashMap<>();
+
+        keyToAction.put(KeyCode.SPACE, UserAction.JUMP);
+        keyToAction.put(KeyCode.D, UserAction.FIRE);
+        keyToAction.put(KeyCode.ESCAPE, UserAction.PAUSE);
     }
 
     public static Settings getInstance() {
@@ -34,5 +49,17 @@ public class Settings {
 
     public void setSfxVolPercent(double newSfxVolPercent) {
         sfxVolPercent = newSfxVolPercent;
+    }
+
+    public void addBind(KeyCode key, UserAction action) {
+        keyToAction.put(key, action);
+    }
+
+    public void removeBind(KeyCode key) {
+        keyToAction.remove(key);
+    }
+
+    public UserAction getBoundAction(KeyCode key) {
+        return keyToAction.get(key);
     }
 }
