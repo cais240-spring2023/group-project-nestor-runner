@@ -21,12 +21,16 @@ public class MenuController {
 
     @FXML
     public Button howToPlayButton;
+
     @FXML
     public Button startGameButton;
+
     @FXML
     public Button settingsButton;
+
     @FXML
     public ComboBox<String> selectDifficulty;
+
     public CheckBox enableSpectate;
 
     @FXML
@@ -63,15 +67,9 @@ public class MenuController {
         View.getStage(event).setScene(new Scene(root));
     }
 
-    public void handleSettingsAction(ActionEvent event) throws IOException {
-        FXMLLoader settingsLoader = new FXMLLoader(App.class.getResource("fxml/settings.fxml"));
-        Parent root = settingsLoader.load();
-        Settings settingsInstance = Settings.getInstance();
-
-        SettingsController settingsController = settingsLoader.getController();
-        settingsController.soundEffectsSlider.setValue(settingsInstance.getSfxVolPercent() * 100);
-        settingsController.musicVolumeSlider.setValue(settingsInstance.getMusicVolPercent() * 100);
-
+    public void handleOptionsAction(ActionEvent event) throws IOException {
+        FXMLLoader optionsLoader = new FXMLLoader(App.class.getResource("fxml/options.fxml"));
+        Parent root = optionsLoader.load();
         View.getStage(event).setScene(new Scene(root));
     }
 

@@ -2,17 +2,19 @@ package edu.wsu.controller;
 
 import edu.wsu.model.NestorRunner;
 import edu.wsu.model.Settings;
+import edu.wsu.model.UserAction;
 import edu.wsu.view.GameView;
 import javafx.animation.AnimationTimer;
 
-public class GameController{
+public class GameController {
 
     private final NestorRunner nestorRunner;
 
     private final Settings settings;
+
     private final GameView gameView;
 
-    AnimationTimer timer;
+    private AnimationTimer timer;
 
     public GameController(GameView gameView) {
         nestorRunner = NestorRunner.getInstance();
@@ -32,7 +34,7 @@ public class GameController{
         });
         gameView.getPausePane().setButton1Action(e -> {
             gameView.unPause();
-            nestorRunner.unPause();
+            nestorRunner.unpause();
         });
         gameView.getPausePane().setButton2Action(e -> {
             timer.stop();
@@ -58,10 +60,15 @@ public class GameController{
 
                 switch (nestorRunner.state) {
                     case PLAYING:
-                        nestorRunner.update(deltaTime);
+
+                        nestorRunner.tickForward(deltaTime);
                         gameView.update(nestorRunner);
+
                         gameView.setEventHandler(event -> {
-                            switch (settings.getBoundAction(event.getCode())) {
+                            UserAction userAction = settings.getBoundAction(event.getCode());
+
+                            if (userAction == null) return;
+                            switch (userAction) {
                                 case JUMP:
                                     if (!nestorRunner.isJumping()) gameView.getSound().playJumpSound();
                                     nestorRunner.setJump();
@@ -74,6 +81,7 @@ public class GameController{
                                     if (nestorRunner.getCannonTimer() > 0) nestorRunner.fireCannon();
                                     break;
                             }
+
                         });
                         break;
 
@@ -87,6 +95,7 @@ public class GameController{
                         break;
 
                 }
+
             }
         };
         timer.start();

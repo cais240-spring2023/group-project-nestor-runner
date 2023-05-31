@@ -13,24 +13,39 @@ import javafx.scene.control.Slider;
 
 import java.io.IOException;
 
-public class SettingsController {
+public class OptionsController {
+
+    Settings settingsInstance;
 
     @FXML
     public Button mainMenuButton;
+
+    @FXML
+    public Button saveButton;
+
     @FXML
     public Slider musicVolumeSlider;
+
     @FXML
     public Slider soundEffectsSlider;
+
+    @FXML
+    public void initialize() {
+        settingsInstance = Settings.getInstance();
+        musicVolumeSlider.setValue(settingsInstance.getMusicVolPercent() * 100);
+        soundEffectsSlider.setValue(settingsInstance.getSfxVolPercent() * 100);
+    }
 
     public void handleMainMenuAction(ActionEvent event) throws IOException {
         FXMLLoader menuLoader = new FXMLLoader(App.class.getResource("fxml/menu.fxml"));
         Parent root = menuLoader.load();
+        View.getStage(event).setScene(new Scene(root));
+    }
 
-        Settings settingsInstance = Settings.getInstance();
+    public void handleSaveAction(ActionEvent event) {
         settingsInstance.setMusicVolPercent(musicVolumeSlider.getValue() / 100);
         settingsInstance.setSfxVolPercent(soundEffectsSlider.getValue() / 100);
-
-        View.getStage(event).setScene(new Scene(root));
+        settingsInstance.writeToDat();
     }
 
 }
